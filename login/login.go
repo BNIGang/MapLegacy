@@ -1,25 +1,34 @@
 package login
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/BNIGang/MapLegacy/web"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html"
+)
 
-func Handler(c *fiber.Ctx) error {
-	// Check if the username and password are correct (use placeholder values for now)
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+func Handler(engine *html.Engine) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Check if the username and password are correct (use placeholder values for now)
+		username := c.FormValue("username")
+		password := c.FormValue("password")
 
-	if username == "user" && password == "pass" {
-		// Set a cookie to indicate that the user is logged in
-		cookie := &fiber.Cookie{
-			Name:  "token",
-			Value: "jwt-token",
-			Path:  "/",
+		if username == "user" && password == "pass" {
+			token, err := web.GenerateJWT(username, []byte("super-secret-key"))
+			if err != nil {
+				return err
+			}
+
+			cookie := &fiber.Cookie{
+				Name:  "token",
+				Value: token,
+				Path:  "/",
+			}
+			c.Cookie(cookie)
+
+			return c.Render("home", fiber.Map{"Name": token})
 		}
-		c.Cookie(cookie)
 
-		// Redirect to the home page
-		return c.Redirect("/home", fiber.StatusSeeOther)
+		// If the username and password are incorrect, render the login page again with an error message
+		return c.Render("login", fiber.Map{"Error": "Incorrect username or password"})
 	}
-
-	// If the username and password are incorrect, render the login page again with an error message
-	return c.Render("login", fiber.Map{"Error": "Incorrect username or password"})
 }

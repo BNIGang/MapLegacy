@@ -7,6 +7,10 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Welcome to home page!</h1>
+    {{ if .Name }}
+        <h1>Welcome, {{ .Name }}!</h1>
+    {{ else }}
+        <h1>Welcome, dpn!</h1>
+    {{ end }}
 </body>
 </html>
