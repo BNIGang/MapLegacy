@@ -7,7 +7,10 @@ import (
 	"github.com/gofiber/template/html"
 )
 
+var secret []byte = []byte("super-secret-key")
+
 func main() {
+
 	engine := html.New("./web/template", ".html")
 
 	app := fiber.New(fiber.Config{
@@ -21,9 +24,12 @@ func main() {
 
 	app.Post("/login", login.Handler(engine))
 
-	app.Get("/home", web.JWTMiddleware([]byte("super-secret-key"), engine), func(c *fiber.Ctx) error {
+	app.Get("/home", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		// TODO: add name
 		return c.Render("home", fiber.Map{})
 	})
+
+	app.Get("/logout", login.LogoutHandler)
 
 	port := ":8000"
 	app.Listen(port)

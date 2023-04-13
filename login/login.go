@@ -8,14 +8,13 @@ import (
 
 func Handler(engine *html.Engine) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// Check if the username and password are correct (use placeholder values for now)
 		username := c.FormValue("username")
 		password := c.FormValue("password")
 
 		if username == "user" && password == "pass" {
 			token, err := web.GenerateJWT(username, []byte("super-secret-key"))
 			if err != nil {
-				return err
+				return c.Render("login", fiber.Map{"Error": err})
 			}
 
 			cookie := &fiber.Cookie{
@@ -23,12 +22,13 @@ func Handler(engine *html.Engine) fiber.Handler {
 				Value: token,
 				Path:  "/",
 			}
+
 			c.Cookie(cookie)
 
-			return c.Render("home", fiber.Map{"Name": token})
+			// return c.Render("home", fiber.Map{"Name": username})
+			return c.Redirect("/home")
 		}
 
-		// If the username and password are incorrect, render the login page again with an error message
 		return c.Render("login", fiber.Map{"Error": "Incorrect username or password"})
 	}
 }
