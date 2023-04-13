@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
+	"github.com/golang-jwt/jwt"
 )
 
 func GenerateJWT(username string, secret []byte) (string, error) {
