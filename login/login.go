@@ -11,7 +11,7 @@ func Handler(engine *html.Engine) fiber.Handler {
 		username := c.FormValue("username")
 		password := c.FormValue("password")
 
-		if username == "user" && password == "pass" {
+		if web.AuthenticateUser(username, password) {
 			token, err := web.GenerateJWT(username, []byte("super-secret-key"))
 			if err != nil {
 				return c.Render("login", fiber.Map{"Error": err})
