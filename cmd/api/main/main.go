@@ -11,8 +11,11 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-// Change this later
+// Change this later, read from file preferably
 var secret []byte = []byte("super-secret-key")
+
+var user *web.User
+var username string
 
 func main() {
 
@@ -37,7 +40,6 @@ func main() {
 		// get Username from cookie
 		// cookie contains JWT token, decrypt the token to get username
 		cookie := c.Cookies("token")
-		var username string
 
 		if cookie == "" {
 			return c.Render("login", fiber.Map{"Error": "Missing token cookie"})
@@ -60,7 +62,7 @@ func main() {
 			}
 		}
 
-		user, err := web.GetUserByUsername(username)
+		user, err = web.GetUserByUsername(username)
 		if err != nil {
 			return c.Render("login", fiber.Map{"Error": err})
 		}
@@ -68,13 +70,25 @@ func main() {
 			return c.Render("login", fiber.Map{"Error": err})
 		}
 
-		data_nasabah, err := v1.GetNasabahData()
+		data_nasabah, err := v1.GetNasabahData(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
 
-		return c.Render("home", fiber.Map{
+		return c.Render("template", fiber.Map{
+			"Name":         username,
+			"Wilayah":      user.Wilayah_ID,
+			"Cabang":       user.Cabang_ID,
+			"Privilege":    user.User_Privileges,
+			"data_nasabah": data_nasabah,
+			"content":      "home",
+		})
+	})
+
+	app.Get("/create", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return c.Render("template", fiber.Map{
 			"Name":      username,
 			"Wilayah":   user.Wilayah_ID,
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
+			"content":   "create",
 		})
 	})
 

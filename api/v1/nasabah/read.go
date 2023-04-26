@@ -1,37 +1,35 @@
 package v1
 
 import (
-	"database/sql"
-
 	"github.com/BNIGang/MapLegacy/web"
 )
 
 type Nasabah struct {
-	id                       string
-	nama_pengusaha           string
-	nomor_kontak             string
-	alamat_tempat_tinggal    string
-	bidang_usaha             string
-	produk_usaha             string
-	detail_bidang_usaha      string
-	kabupaten_kota           string
-	cabang                   string
+	Id                       string
+	Nama_pengusaha           string
+	Nomor_kontak             string
+	Alamat_tempat_tinggal    string
+	Bidang_usaha             string
+	Produk_usaha             string
+	Detail_bidang_usaha      string
+	Kabupaten_kota           string
+	Cabang                   string
 	KCU_KCP_KK               string
-	nasabah                  string
-	no_CIF                   string
+	Nasabah                  string
+	No_CIF                   string
 	AUM_di_BNI               string
-	debitur                  string
-	kredit_di_bni            string
-	produk_bni_yang_dimiliki string
-	mitra_bank_dominan       string
-	aum_di_bank_lain         string
-	kredit_di_bank_lain      string
-	afiliasi                 string
-	hubungan_afiliasi        string
-	added_by                 string
+	Debitur                  string
+	Kredit_di_bni            string
+	Produk_bni_yang_dimiliki string
+	Mitra_bank_dominan       string
+	Aum_di_bank_lain         string
+	Kredit_di_bank_lain      string
+	Afiliasi                 string
+	Hubungan_afiliasi        string
+	Added_by                 string
 }
 
-func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privilege string) (*Nasabah, error) {
+func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
 	db, err := web.Connect()
 	if err != nil {
 		return nil, err
@@ -42,43 +40,48 @@ func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privile
 	// 	SELECT * FROM data_nasabah WHERE ???????`,  // Handle this
 	// )
 
-	row := db.QueryRow(`
+	rows, err := db.Query(`
 		SELECT * FROM data_nasabah`, // Placeholder to test
 	)
 
-	var nasabah Nasabah
-	err = row.Scan(
-		&nasabah.id,
-		&nasabah.nama_pengusaha,
-		&nasabah.nomor_kontak,
-		&nasabah.alamat_tempat_tinggal,
-		&nasabah.bidang_usaha,
-		&nasabah.produk_usaha,
-		&nasabah.detail_bidang_usaha,
-		&nasabah.kabupaten_kota,
-		&nasabah.cabang,
-		&nasabah.KCU_KCP_KK,
-		&nasabah.nasabah,
-		&nasabah.no_CIF,
-		&nasabah.AUM_di_BNI,
-		&nasabah.debitur,
-		&nasabah.kredit_di_bni,
-		&nasabah.produk_bni_yang_dimiliki,
-		&nasabah.mitra_bank_dominan,
-		&nasabah.aum_di_bank_lain,
-		&nasabah.kredit_di_bank_lain,
-		&nasabah.afiliasi,
-		&nasabah.hubungan_afiliasi,
-		&nasabah.added_by,
-	)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil // nasabah not found
+	var nasabahs []Nasabah
+	for rows.Next() {
+		var nasabah Nasabah
+		err = rows.Scan(
+			&nasabah.Id,
+			&nasabah.Nama_pengusaha,
+			&nasabah.Nomor_kontak,
+			&nasabah.Alamat_tempat_tinggal,
+			&nasabah.Bidang_usaha,
+			&nasabah.Produk_usaha,
+			&nasabah.Detail_bidang_usaha,
+			&nasabah.Kabupaten_kota,
+			&nasabah.Cabang,
+			&nasabah.KCU_KCP_KK,
+			&nasabah.Nasabah,
+			&nasabah.No_CIF,
+			&nasabah.AUM_di_BNI,
+			&nasabah.Debitur,
+			&nasabah.Kredit_di_bni,
+			&nasabah.Produk_bni_yang_dimiliki,
+			&nasabah.Mitra_bank_dominan,
+			&nasabah.Aum_di_bank_lain,
+			&nasabah.Kredit_di_bank_lain,
+			&nasabah.Afiliasi,
+			&nasabah.Hubungan_afiliasi,
+			&nasabah.Added_by,
+		)
+		if err != nil {
+			return nil, err // database error
 		}
+		nasabahs = append(nasabahs, nasabah)
+	}
+
+	if err = rows.Err(); err != nil {
 		return nil, err // database error
 	}
 
-	return &nasabah, nil
+	return nasabahs, nil
 }
 
 func SearchNasabah(query string) {

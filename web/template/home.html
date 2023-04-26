@@ -1,97 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BNI Map Legacy</title>
-</head>
-<style>
-    .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    }
+<h1>Map Legacy</h1>
 
-    .navbar h1 {
-    margin: 0;
-    }
-
-    .navbar button {
-    background-color: white;
-    color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    }
-
-    .below-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    }
-</style>
-<body>
-    <!-- Top Navbar -->
-    <div class="navbar">
-        <h1>Welcome, {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h1>
-
-        <form action="/logout" method="get">
-            <button type="submit">Logout</button>
-        </form>
+<div class="below-header">
+    <div class="button-container">
+        <button class="add-button" type="button" onclick="window.location.href='/create'">Add Data</button>
     </div>
 
-    <!-- Side Navbar -->
-    <div style="display: flex">
-        <div style="width: 250px; background-color: gray">
-            <ul style="list-style-type:none; padding-left:0">
-                <li>
-                    <details>
-                        <!-- Wilayah -->
-                        <summary>Palembang</summary> 
-                        <ul style="list-style-type:none; padding-left:0">
-                            <!-- Cabang -->
-                            <li><a href="#">KCP UNSRI</a></li> 
-                            <li><a href="#">KCP A. Yani</a></li>
-                            <li><a href="#">KCU Palembang</a></li>
-                            <li><a href="#">KCU Lmao</a></li>
-                            <li><a href="#">KCP Xd</a></li>
-                        </ul>
-                    </details>
-                </li>
-                <li><a href="#">Ganti Password</a></li>
-                <li><a href="#">Tambah User</a></li>
-            </ul>
-        </div>
-        <div style="flex: 1">
-            <!-- Put main content here -->
-           <div class="main-content">
-            <h1>Map Legacy</h1>
 
-            <div class="below-header">
-                <div class="button-container">
-                    <button class="add-button" type="button">Add Data</button>
-                </div>
-
-                <div class="search-container">
-                    <input type="text" placeholder="Search...">
-                    <button type="button">Search</button>
-                </div>
-            </div>
-
-            <ul class="data-list">
-                <li><a href="#1">Data Nasabah 1</a></li>
-                <li><a href="#2">Data Nasabah 2</a></li>
-                <li><a href="#3">Data Nasabah 3</a></li>
-            </ul>
-            </div> 
-        </div>
-        </div>
+    <div class="search-container">
+        <input type="text" placeholder="Search...">
+        <button type="button">Search</button>
     </div>
-</body>
-</html>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nama Pengusaha</th>
+            <th>Nomor Kontak</th>
+            <th>Alamat Tempat Tinggal</th>
+            <th>Bidang Usaha</th>
+            <th>Produk Usaha</th>
+            <th>Detail Bidang Usaha</th>
+            <th>Kabupaten/Kota</th>
+            <th>Cabang</th>
+            <th>KCU/KCP/KK</th>
+            <th>Nasabah</th>
+            <th>No CIF</th>
+            <th>AUM di BNI</th>
+            <th>Debitur</th>
+            <th>Kredit di BNI</th>
+            <th>Produk BNI yang Dimiliki</th>
+            <th>Mitra Bank Dominan</th>
+            <th>AUM di Bank Lain</th>
+            <th>Kredit di Bank Lain</th>
+            <th>Afiliasi</th>
+            <th>Hubungan Afiliasi</th>
+            <th>Added By</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .data_nasabah}}
+        <tr>
+            <td>{{.Id}}</td>
+            <td>{{.Nama_pengusaha}}</td>
+            <td>{{.Nomor_kontak}}</td>
+            <td>{{.Alamat_tempat_tinggal}}</td>
+            <td>{{.Bidang_usaha}}</td>
+            <td>{{.Produk_usaha}}</td>
+            <td>{{.Detail_bidang_usaha}}</td>
+            <td>{{.Kabupaten_kota}}</td>
+            <td>{{.Cabang}}</td>
+            <td>{{.KCU_KCP_KK}}</td>
+            <td>{{.Nasabah}}</td>
+            <td>{{.No_CIF}}</td>
+            <td>{{.AUM_di_BNI}}</td>
+            <td>{{.Debitur}}</td>
+            <td>{{.Kredit_di_bni}}</td>
+            <td>{{.Produk_bni_yang_dimiliki}}</td>
+            <td>{{.Mitra_bank_dominan}}</td>
+            <td>{{.Aum_di_bank_lain}}</td>
+            <td>{{.Kredit_di_bank_lain}}</td>
+            <td>{{.Afiliasi}}</td>
+            <td>{{.Hubungan_afiliasi}}</td>
+            <td>{{.Added_by}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>

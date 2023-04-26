@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNI Map Legacy</title>
+</head>
+<style>
+    .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    }
+
+    .navbar h1 {
+    margin: 0;
+    }
+
+    .navbar button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    .below-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    }
+</style>
+<body>
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <h1>Welcome, {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h1>
+
+        <form action="/logout" method="get">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <!-- Side Navbar -->
+    <div style="display: flex">
+        <div style="width: 250px; background-color: gray">
+            <ul style="list-style-type:none; padding-left:0">
+                <li>
+                    <details>
+                        <!-- Wilayah -->
+                        <summary>Palembang</summary> 
+                        <ul style="list-style-type:none; padding-left:0">
+                            <!-- Cabang -->
+                            <li><a href="#">KCP UNSRI</a></li> 
+                            <li><a href="#">KCP A. Yani</a></li>
+                            <li><a href="#">KCU Palembang</a></li>
+                            <li><a href="#">KCU Lmao</a></li>
+                            <li><a href="#">KCP Xd</a></li>
+                        </ul>
+                    </details>
+                </li>
+                <li><a href="#">Ganti Password</a></li>
+                <li><a href="#">Tambah User</a></li>
+            </ul>
+        </div>
+        <div style="flex: 1">
+            <!-- Put main content here -->
+            <div class="main-content">
+            {{ if eq .content "home" }}
+                {{ template "home" . }}
+            {{ else }}
+                {{ template "create_nasabah" . }}
+            {{ end }}
+            </div>
+        </div>
+</body>
+</html>
