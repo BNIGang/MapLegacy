@@ -339,12 +339,12 @@ INSERT INTO produk_usaha (produk_id, bidang_usaha_id, usaha) VALUES
   (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'SoGoods Foods'),
   (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Lainnya'),
 
-  -- Jasa-Jasa Dunia Usaha
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Batubara'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Timah'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Pasir'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Batu'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Lainnya'),
+  -- Pertambangan
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Batubara'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Timah'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pasir'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Batu'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Lainnya'),
 
   -- Prinsipal/Distributor Bangunan
   (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Cat'),
@@ -354,12 +354,12 @@ INSERT INTO produk_usaha (produk_id, bidang_usaha_id, usaha) VALUES
   (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Pipa'),
   (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Besi'),
 
-  -- Pertambangan
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Rumah Sakit'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pengangkutan Tambang'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pengangkutan Darat'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pengangkutan Laut'),
-  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Ekspedisi'),
+  -- Jasa-Jasa Dunia Usaha
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Rumah Sakit'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Pengangkutan Tambang'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Pengangkutan Darat'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Pengangkutan Laut'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Ekspedisi'),
 
   -- Perdagangan Besar Lainnya
   (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Farmasi'),
