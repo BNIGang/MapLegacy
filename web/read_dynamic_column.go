@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetCabang(c *fiber.Ctx) error {
+func GetCabangHandler(c *fiber.Ctx) error {
 	// Connect to your database
 	db, err := Connect()
 	if err != nil {
@@ -100,7 +100,7 @@ func GetKotaKabupatenHandler(c *fiber.Ctx) error {
 	return c.JSON(kotaKabupaten)
 }
 
-func GetKCPKCUKK(c *fiber.Ctx) error {
+func GetKCPKCUKKHandler(c *fiber.Ctx) error {
 	// Extract the cabang_id parameter from the request URL
 	cabangID := c.Params("cabang_id")
 

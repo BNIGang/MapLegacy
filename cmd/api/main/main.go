@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-// Change this later, read from file preferably
+// TODO: Change this later, read from file preferably
 var secret []byte = []byte("super-secret-key")
 
 var user *web.User
@@ -100,9 +100,9 @@ func main() {
 	app.Get("/get_bidang_usaha", web.JWTMiddleware(secret, engine), web.GetBidangUsahaHandler)
 	app.Get("/get_produk_usaha/:bidang_id", web.JWTMiddleware(secret, engine), web.GetProdukUsahaHandler)
 
-	app.Get("/get_cabang", web.JWTMiddleware(secret, engine), web.GetCabang)
+	app.Get("/get_cabang", web.JWTMiddleware(secret, engine), web.GetCabangHandler)
 	app.Get("/get_kota_kabupaten/:cabang_id", web.JWTMiddleware(secret, engine), web.GetKotaKabupatenHandler)
-	app.Get("/get_kcu_kcp_kk/:cabang_id", web.JWTMiddleware(secret, engine), web.GetKCPKCUKK)
+	app.Get("/get_kcu_kcp_kk/:cabang_id", web.JWTMiddleware(secret, engine), web.GetKCPKCUKKHandler)
 	// Handling dynamic column over
 
 	app.Get("/logout", login.LogoutHandler)
