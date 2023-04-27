@@ -1,6 +1,6 @@
 <h1>Tambah Nasabah</h1>
 
-<form action="/create" method="POST">
+<form action="/add" method="POST">
   <label for="nama_pengusaha">Nama Pengusaha:</label><br>
   <input type="text" id="nama_pengusaha" name="nama_pengusaha"><br>
 
@@ -11,7 +11,19 @@
   <input type="text" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal"><br>
 
   <label for="bidang_usaha">Bidang Usaha:</label><br>
-  <input type="text" id="bidang_usaha" name="bidang_usaha"><br>
+  <select id="bidang_usaha" name="bidang_usaha">
+    <option value="Perkebunan & Pabrik">Perkebunan & Pabrik</option>
+    <option value="Perkebunan">Perkebunan</option>
+    <option value="Pabrik (Pengolahan)">Pabrik (Pengolahan)</option>
+    <option value="Prinsipal/Distributor Bangunan">Prinsipal/Distributor Bangunan</option>
+    <option value="Prinsipal/Distributor Consumer Goods">Prinsipal/Distributor Consumer Goods</option>
+    <option value="Perdagangan/Pengepul Hasil Bumi">Perdagangan/Pengepul Hasil Bumi</option>
+    <option value="Perdagangan Besar Lainnya">Perdagangan Besar Lainnya</option>
+    <option value="Perhotelan">Perhotelan</option>
+    <option value="Pertambangan">Pertambangan</option>
+    <option value="Jasa-Jasa Dunia Usaha">Jasa-Jasa Dunia Usaha</option>
+    <option value="Konstruksi">Konstruksi</option>
+  </select><br>
 
   <label for="produk_usaha">Produk Usaha:</label><br>
   <input type="text" id="produk_usaha" name="produk_usaha"><br>
@@ -19,26 +31,42 @@
   <label for="detail_bidang_usaha">Detail Bidang Usaha:</label><br>
   <input type="text" id="detail_bidang_usaha" name="detail_bidang_usaha"><br>
 
+  <label for="cabang">Cabang:</label><br>
+  <select id="cabang" name="cabang">
+    <option value="Palembang">Palembang</option>
+    <option value="Tanjungkarang">Tanjungkarang</option>
+    <option value="Musi Palembang">Musi Palembang</option>
+    <option value="Jambi">Jambi</option>
+    <option value="Pangkalpinang">Pangkalpinang</option>
+    <option value="Bengkulu">Bengkulu</option>
+    <option value="Prabumulih">Prabumulih</option>
+    <option value="Kayuagung">Kayuagung</option>
+    <option value="Baturaja">Baturaja</option>
+    <option value="Lubuklinggau">Lubuklinggau</option>
+    <option value="Bangko">Bangko</option>
+    <option value="Muarabungo">Muarabungo</option>
+    <option value="Kualatungkal">Kualatungkal</option>
+    <option value="Metro">Metro</option>
+    <option value="Kotabumi">Kotabumi</option>
+  </select><br>
+
   <label for="kabupaten_kota">Kabupaten/Kota:</label><br>
   <input type="text" id="kabupaten_kota" name="kabupaten_kota"><br>
-
-  <label for="cabang">Cabang:</label><br>
-  <input type="text" id="cabang" name="cabang"><br>
 
   <label for="kcu_kcp_kk">KCU/KCP/KK:</label><br>
   <input type="text" id="kcu_kcp_kk" name="kcu_kcp_kk"><br>
 
   <label for="nasabah">Nasabah:</label><br>
   <select id="nasabah" name="nasabah">
-    <option value="Perusahaan">Nasabah</option>
-    <option value="Individu">Non Nasabah</option>
+    <option value="Nasabah">Nasabah</option>
+    <option value="Non Nasabah">Non Nasabah</option>
   </select><br>
 
   <label for="no_CIF">No CIF:</label><br>
-  <input type="text" id="no_CIF" name="no_CIF"><br>
+  <input type="number" id="no_CIF" name="no_CIF"><br>
 
   <label for="aum_di_bni">AUM di BNI:</label><br>
-  <input type="text" id="aum_di_bni" name="aum_di_bni"><br>
+  <input type="number" id="aum_di_bni" name="aum_di_bni"><br>
 
   <label for="debitur">Debitur:</label><br>
   <select id="debitur" name="debitur">
@@ -47,24 +75,72 @@
   </select><br>
 
   <label for="kredit_di_bni">Kredit di BNI:</label><br>
-  <input type="text" id="kredit_di_bni" name="kredit_di_bni"><br>
+  <input type="number" id="kredit_di_bni" name="kredit_di_bni"><br>
 
   <label for="produk_bni_yang_dimiliki">Produk BNI yang Dimiliki:</label><br>
-  <input type="text" id="produk_bni_yang_dimiliki" name="produk_bni_yang_dimiliki"><br>
+  <select id="produk_bni_yang_dimiliki" name="produk_bni_yang_dimiliki">
+    <option value="Nasabah">Nasabah</option>
+    <option value="Giro">Giro</option>
+    <option value="Tabungan">Tabungan</option>
+    <option value="Tapenas">Tapenas</option>
+    <option value="Deposito">Deposito</option>
+    <option value="M-Banking">M-Banking</option>
+    <option value="CM">CM</option>
+    <option value="Payroll">Payroll</option>
+    <option value="Emerald Card">Emerald Card</option>
+    <option value="Credit Card">Credit Card</option>
+    <option value="Kredit BB">Kredit BB</option>
+    <option value="Griya">Griya</option>
+    <option value="Trade">Trade</option>
+    <option value="GB">GB</option>
+  </select><br>
 
   <label for="mitra_bank_dominan">Mitra Bank Dominan:</label><br>
-  <input type="text" id="mitra_bank_dominan" name="mitra_bank_dominan"><br>
+  <select id="mitra_bank_dominan" name="mitra_bank_dominan">
+    <option value="Mandiri">Mandiri</option>
+    <option value="BCA">BCA</option>
+    <option value="BRI">BRI</option>
+    <option value="BTN">BTN</option>
+    <option value="Danamon">Danamon</option>
+    <option value="BSI">BSI</option>
+    <option value="Mega">Mega</option>
+    <option value="Panin">Panin</option>
+    <option value="Maybank">Maybank</option>
+    <option value="HSBC">HSBC</option>
+    <option value="OCBC">OCBC</option>
+    <option value="Bank Asing">Bank Asing</option>
+  </select><br>
 
-  <label for="mitra_bank_dominan">AUM di Bank Lain:</label><br>
-  <input type="text" id="Aum_di_bank_lain" name="Aum_di_bank_lain"><br>
+  <label for="Aum_di_bank_lain">AUM di Bank Lain:</label><br>
+  <input type="number" id="Aum_di_bank_lain" name="Aum_di_bank_lain"><br>
 
-  <label for="mitra_bank_dominan">Kredit di bank lain:</label><br>
-  <input type="text" id="Kredit_di_bank_lain" name="Kredit_di_bank_lain"><br>
+  <label for="Kredit_di_bank_lain">Kredit di bank lain:</label><br>
+  <input type="number" id="Kredit_di_bank_lain" name="Kredit_di_bank_lain"><br>
 
-  <label for="mitra_bank_dominan">Afiliasi:</label><br>
+  <label for="afiliasi">Afiliasi:</label><br>
   <input type="text" id="afiliasi" name="afiliasi"><br>
 
-  <label for="mitra_bank_dominan">Hubungan Afiliasi:</label><br>
-  <input type="text" id="Hubungan_afiliasi" name="Hubungan_afiliasi"><br>
+  <label for="Hubungan_afiliasi">Hubungan Afiliasi:</label><br>
+  <select id="Hubungan_afiliasi" name="Hubungan_afiliasi">
+    <option value="Direktur">Direktur</option>
+    <option value="Komisaris">Komisaris</option>
+    <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
+    <option value="Suami/Istri">Suami/Istri</option>
+    <option value="Ayah/Ibu">Ayah/Ibu</option>
+    <option value="Mertua">Mertua</option>
+    <option value="Anak">Anak</option>
+    <option value="Kakak">Kakak</option>
+    <option value="Adik">Adik</option>
+    <option value="Keponakan">Keponakan</option>
+    <option value="Sepupu">Sepupu</option>
+    <option value="Paman">Paman</option>
+    <option value="Tante">Tante</option>
+    <option value="Kakek/Nenek">Kakek/Nenek</option>
+    <option value="Cucu">Cucu</option>
+    <option value="Saudara Ipar">Saudara Ipar</option>
+    <option value="Besan">Besan</option>
+  </select><br>
+
+  <input type="submit" value="Submit">
 
 </form>

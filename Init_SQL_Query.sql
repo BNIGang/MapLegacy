@@ -18,36 +18,6 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 /* 
-create the user_privileges table
-*/
-CREATE TABLE IF NOT EXISTS user_privileges (
-  user_id CHAR(36) NOT NULL,
-  wilayah_id INT NOT NULL,
-  cabang_id INT NOT NULL,
-  user_privilege VARCHAR(50) NOT NULL,
-  PRIMARY KEY(user_id, wilayah_id),
-  FOREIGN KEY(user_id) REFERENCES users(user_id)
-);
-
-/* 
-create the wilayah table
-*/
-CREATE TABLE IF NOT EXISTS wilayah (
-  wilayah_id INT PRIMARY KEY,
-  wilayah_name VARCHAR(50) NOT NULL
-);
-
-/* 
-create the cabang table
-*/
-CREATE TABLE IF NOT EXISTS cabang (
-  wilayah_id INT NOT NULL,
-  cabang_id INT NOT NULL,
-  cabang_name VARCHAR(50) NOT NULL,
-  PRIMARY KEY(wilayah_id, cabang_id)
-);
-
-/* 
 insert dummy data to users table
 ALL encrpyed pass here is simply "pass"
 */
@@ -59,6 +29,530 @@ VALUES
   (UUID(), 'user4', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
   (UUID(), 'user5', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
   (UUID(), 'user6', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy');
+
+/* 
+create the cabang table
+*/
+CREATE TABLE IF NOT EXISTS cabang (
+  cabang_id CHAR(36) PRIMARY KEY,
+  cabang_name VARCHAR(50) NOT NULL
+);
+
+/* 
+insert cabang data to wilayah table
+*/
+INSERT INTO cabang (cabang_id, cabang_name)
+VALUES 
+  (UUID(), 'Palembang'),
+  (UUID(), 'Tanjungkarang'),
+  (UUID(), 'Musi Palembang'),
+  (UUID(), 'Jambi'),
+  (UUID(), 'Pangkalpinang'),
+  (UUID(), 'Bengkulu'),
+  (UUID(), 'Prabumulih'),
+  (UUID(), 'Kayuagung'),
+  (UUID(), 'Baturaja'),
+  (UUID(), 'Lubuklinggau'),
+  (UUID(), 'Bangko'),
+  (UUID(), 'Muarabungo'),
+  (UUID(), 'Kualatungkal'),
+  (UUID(), 'Metro'),
+  (UUID(), 'Kotabumi');
+
+/* 
+create the user_privileges table
+*/
+CREATE TABLE IF NOT EXISTS user_privileges (
+  user_id CHAR(36) NOT NULL,
+  wilayah_id INT NOT NULL,
+  cabang_id CHAR(36) NOT NULL,
+  user_privilege VARCHAR(50) NOT NULL,
+  PRIMARY KEY(user_id, wilayah_id)
+);
+
+/* 
+insert dummy data to user_privileges table
+TODO: wilayah list not yet found
+*/
+INSERT INTO user_privileges (user_id, wilayah_id, cabang_id, user_privilege)
+VALUES 
+  ((SELECT user_id FROM users WHERE username='user1'), 1, (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'admin'),
+  ((SELECT user_id FROM users WHERE username='user2'), 2, (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'pemimpin_wilayah'),
+  ((SELECT user_id FROM users WHERE username='user3'), 3, (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'pemimpin_cabang'),
+  ((SELECT user_id FROM users WHERE username='user4'), 4, (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'pemimpin_cabang_pembantu'),
+  ((SELECT user_id FROM users WHERE username='user5'), 5, (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'individu'),
+  ((SELECT user_id FROM users WHERE username='user6'), 1, (SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), 'individu');
+
+/* 
+create the kota_kabupaten table
+*/
+CREATE TABLE IF NOT EXISTS kota_kabupaten (
+  cabang_id CHAR(36) NOT NULL,
+  kota_kabupaten_id CHAR(36) NOT NULL,
+  kota_kabupaten_name VARCHAR(50) NOT NULL,
+  PRIMARY KEY(cabang_id, kota_kabupaten_id)
+);
+
+/* 
+insert data to cabang table for Palembang
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES 
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), UUID(), 'Kota Palembang'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), UUID(), 'Kabupaten Banyuasin'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), UUID(), 'Kabupaten Ogan Ilir'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), UUID(), 'Kabupaten Ogan Komering Ilir'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), UUID(), 'Kabupaten Muara Enim');
+
+/* 
+insert data to cabang table for Tanjung Karang
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), UUID(), 'Kota Bandar Lampung'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), UUID(), 'Kabupaten Lampung Selatan'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), UUID(), 'Kabupaten Pesawaran'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), UUID(), 'Kabupaten Pringsewu'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), UUID(), 'Kabupaten Tanggamus'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), UUID(), 'Kabupaten Tulang Bawang Barat');
+
+/* 
+insert data to cabang table for Musi Palembang
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), UUID(), 'Kota Palembang'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), UUID(), 'Kabupaten Musi Banyuasin'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), UUID(), 'Kabupaten Banyuasin'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), UUID(), 'Kabupaten Ogan Ilir'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), UUID(), 'Kabupaten Ogan Komering Ilir'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), UUID(), 'Kabupaten Muara Enim');
+
+/* 
+insert data to cabang table for Jambi
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), UUID(), 'Kota Jambi'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), UUID(), 'Kabupaten Batanghari'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), UUID(), 'Kabupaten Muaro Jambi'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), UUID(), 'Kabupaten Banyuasin');
+
+/* 
+insert data to cabang table for Pangkal Pinang
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kota Pangkalpinang'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kabupaten Bangka'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kabupaten Bangka Barat'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kabupaten Bangka Selatan'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kabupaten Bangka Tengah'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kabupaten Belitung'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), UUID(), 'Kabupaten Belitung Timur');
+
+/* 
+insert data to cabang table for Bengkulu
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kota Bengkulu'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Bengkulu Selatan'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Bengkulu Tengah'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Bengkulu Utara'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Kaur'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Kepahiang'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Lebong'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Mukomuko'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Rejang Lebong'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), UUID(), 'Kabupaten Seluma');
+
+/* 
+insert data to cabang table for Prabumulih
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Prabumulih"), UUID(), 'Kabupaten Muara Enim'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Prabumulih"), UUID(), 'Kota Prabumulih'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Prabumulih"), UUID(), 'Kabupaten Penukal Abab Lematang Ilir');
+
+/* 
+insert data to cabang table for Kayuagung
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kayuagung"), UUID(), 'Kabupaten Ogan Ilir'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kayuagung"), UUID(), 'Kabupaten Ogan Komering Ilir'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kayuagung"), UUID(), 'Kabupaten Muara Enim');
+
+/* 
+insert data to cabang table for Baturaja
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), UUID(), 'Kabupaten Ogan Komering Ulu'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), UUID(), 'Kabupaten Ogan Komering Ulu Selatan'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), UUID(), 'Kabupaten Ogan Komering Ulu Timur'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), UUID(), 'Kabupaten Penukal Abab Lematang Ilir');
+
+/* 
+insert data to cabang table for Lubuklinggau
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), UUID(), 'Kota Lubuklinggau'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), UUID(), 'Kota Pagar Alam'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), UUID(), 'Kabupaten Empat Lawang'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), UUID(), 'Kabupaten Lahat'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), UUID(), 'Kabupaten Musi Rawas'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), UUID(), 'Kabupaten Musi Rawas Utara');
+
+/* 
+insert data to cabang table for Bangko
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), UUID(), 'Kabupaten Merangin'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), UUID(), 'Kabupaten Sarolangun'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), UUID(), 'Kota Sungai Penuh'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), UUID(), 'Kabupaten Kerinci');
+
+/* 
+insert data to cabang table for Muarabungo
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Muarabungo"), UUID(), 'Kabupaten Bungo'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Muarabungo"), UUID(), 'Kabupaten Tebo');
+
+/* 
+insert data to cabang table for Kualatungkal
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kualatungkal"), UUID(), 'Kabupaten Tanjung Jabung Barat'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kualatungkal"), UUID(), 'Kabupaten Tanjung Jabung Timur');
+
+/* 
+insert data to cabang table for Metro
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), UUID(), 'Kota Metro'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), UUID(), 'Kabupaten Lampung Tengah'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), UUID(), 'Kabupaten Lampung Timur'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), UUID(), 'Kabupaten Mesuji'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), UUID(), 'Kabupaten Tulang Bawang');
+
+/* 
+insert data to cabang table for Kotabumi
+*/
+INSERT INTO kota_kabupaten (cabang_id, kota_kabupaten_id, kota_kabupaten_name)
+VALUES
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), UUID(), 'Kabupaten Lampung Barat'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), UUID(), 'Kabupaten Lampung Utara'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), UUID(), 'Kabupaten Pesisir Barat'),
+  ((SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), UUID(), 'Kabupaten Way Kanan');
+
+/* 
+create bidang_usaha
+*/
+CREATE TABLE bidang_usaha (
+  bidang_id CHAR(36) PRIMARY KEY,
+  bidang VARCHAR(50)
+);
+
+/* 
+insert values into bidang_usaha
+*/
+INSERT INTO bidang_usaha (bidang_id, bidang) VALUES
+  (UUID(), 'Perkebunan & Pabrik'),
+  (UUID(), 'Perkebunan'),
+  (UUID(), 'Pabrik (Pengolahan)'),
+  (UUID(), 'Prinsipal/Distributor Bangunan'),
+  (UUID(), 'Prinsipal/Distributor Consumer Goods'),
+  (UUID(), 'Perdagangan/Pengepul Hasil Bumi'),
+  (UUID(), 'Perdagangan Besar Lainnya'),
+  (UUID(), 'Perhotelan'),
+  (UUID(), 'Pertambangan'),
+  (UUID(), 'Jasa-Jasa Dunia Usaha'),
+  (UUID(), 'Konstruksi');
+
+/* 
+Create table for produk usaha
+*/
+CREATE TABLE produk_usaha (
+  produk_id CHAR(36) PRIMARY KEY,
+  bidang_usaha_id CHAR(36),
+  usaha VARCHAR(50)
+);
+
+/* 
+Add produk usaha
+*/
+INSERT INTO produk_usaha (produk_id, bidang_usaha_id, usaha) VALUES
+  -- Perkebunan & Pabrik
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Sawit'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Karet'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Kopi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Pinang'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Jagung'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Singkong'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Padi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan & Pabrik"), 'Lada'),
+
+  -- Perdagangan/Pengepul Hasil Bumi
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Sawit'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Karet'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Kopi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Pinang'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Jagung'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Singkong'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Padi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan/Pengepul Hasil Bumi"), 'Lada'),
+
+  -- Perhotelan
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Novotel'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Swisbel'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Mercure'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Amaris'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Santika'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'The Zuri'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Aryaduta'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'The Alts'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Favehotel'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Radisson'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Batiqa'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Sheraton'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Sahid'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perhotelan"), 'Lainnya'),
+
+  -- Prinsipal/Distributor Consumer Goods
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Unilever'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Garudafoods'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Artaboga'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Indofoods'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Nestle'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Wingsfood'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Mayora'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Orang Tua'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'SoGoods Foods'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Consumer Goods"), 'Lainnya'),
+
+  -- Jasa-Jasa Dunia Usaha
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Batubara'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Timah'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Pasir'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Batu'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Jasa-Jasa Dunia Usaha"), 'Lainnya'),
+
+  -- Prinsipal/Distributor Bangunan
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Cat'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Keramik'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Seng'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Semen'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Pipa'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Prinsipal/Distributor Bangunan"), 'Besi'),
+
+  -- Pertambangan
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Rumah Sakit'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pengangkutan Tambang'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pengangkutan Darat'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Pengangkutan Laut'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pertambangan"), 'Ekspedisi'),
+
+  -- Perdagangan Besar Lainnya
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Farmasi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Sembako/Campuran'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Pecah Belah'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Elektronik'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Groceries/Swalayan/Minimarket'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Bahan Bangunan'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perdagangan Besar Lainnya"), 'Lainnya'),
+
+  -- Konstruksi
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Konstruksi"), 'Developer'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Konstruksi"), 'Konstruksi Jalan & Jembatan'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Konstruksi"), 'Konstruksi Gedung'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Konstruksi"), 'Konstruksi Kapal (Galangan)'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Konstruksi"), 'Konstruksi Elektrikal'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Konstruksi"), 'Lainnya'),
+
+  -- Perkebunan
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Sawit'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Karet'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Kopi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Pinang'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Jagung'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Singkong'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Padi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Perkebunan"), 'Lada'),
+
+  -- Pabrik (Pengolahan)
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Sawit'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Karet'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Kopi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Pinang'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Jagung'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Singkong'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Padi'),
+  (UUID(), (SELECT bidang_id FROM bidang_usaha WHERE bidang="Pabrik (Pengolahan)"), 'Lada');
+
+/* 
+Create table for KCU_KCP_KK
+*/
+CREATE TABLE KCU_KCP_KK (
+  kantor_id CHAR(36) PRIMARY KEY,
+  cabang_id CHAR(36),
+  kantor VARCHAR(50)
+);
+
+/* 
+Insert to KCU_KCP_KK table
+*/
+INSERT INTO KCU_KCP_KK (kantor_id, cabang_id, kantor) VALUES
+  -- Palembang
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCU PALEMBANG'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP UNSRI'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP A. Yani'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP Komperta'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP UNSRI Indralaya'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP Kenten'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP KM 12'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP Jembatan Ampera'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP Pasar 16 Ilir'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP Palembang Square'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK PIM Letkol Iskandar'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK Dempo'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK Lorong Basah'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK Kertapati'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK Plaju'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK PUSRI'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK Musi II'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KK Demang Lebar Daun'),
+
+  -- Tanjungkarang
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCU TANJUNGKARANG'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Teuku Umar'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Antasari'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Panjang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Kalianda'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Bandar Lampung'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Unila'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Pringsewu'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Natar'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP Talang Padang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP GEDONG TATAAN'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP SIDOMULYO'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KCP SUKARAME'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KK Majapahit'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KK Way Halim'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Tanjungkarang"), 'KK Universitas Malahayati'),
+
+  -- Musi Palembang
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCU MUSI PALEMBANG'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Pasar Betung'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Sungai Lilin'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Sekayu'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Bayung Lencir'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Boom Baru'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Pal Lima'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Kalidoni'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Lemabang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Rajawali'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KCP Sako'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KK KM9'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KK MP Mangkunegara'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KK OPI Mall'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KK Kenten Laut'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Musi Palembang"), 'KK Tanjung Api-Api'),
+
+  -- Jambi
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KCU JAMBI'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KCP Abadi'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KCP Simpang Sipin'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KCP The Hok'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KK Pattimura'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KK Selincah'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KK Talang Banjar'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KCP Sengeti'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Jambi"), 'KCP Muara Bulian'),
+
+  -- Pangkalpinang
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCU PANGKALPINANG'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCP Sungailiat'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCP Tanjung Pandan'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCP Koba'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCP Muntok'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCP Toboali'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KCP Manggar'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Pangkalpinang"), 'KK Bangka Trade Centre'),
+
+  -- Bengkulu
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCU BENGKULU'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Curup'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Arga Makmur'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Pasar Panorama'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Kepahiang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Ketahun'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KK Universitas Bengkulu'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KK Pagar Dewa'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Penarik'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Bintuhan'),
+
+  -- Prabumulih
+  -- Soon
+
+  -- Kayuagung
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kayuagung"), 'KC KAYU AGUNG'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kayuagung"), 'KCP Tugumulyo'),
+
+  -- Baturaja
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), 'KCU BATURAJA'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), 'KCP Muara dua'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), 'KCP Belitang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Baturaja"), 'KCP Martapura'),
+
+  -- Lubuklinggau
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KCU LUBUKLINGGAU'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KK Simpang Periuk'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KCP Lahat'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KCP Pagar Alam'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KCP MURATARA'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KCP MUSI RAWAS'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Lubuklinggau"), 'KCP Empat Lawang'),
+
+  -- Bangko
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), 'KCU BANGKO'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), 'KCP Hitam Ulu'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), 'KCP Sarolangun'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bangko"), 'KK Singkut'),
+
+  -- Muarabungo
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Muarabungo"), 'KCU MUARA BUNGO'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Muarabungo"), 'KCP Kuamang Kuning'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Muarabungo"), 'KCP Jujuhan'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Muarabungo"), 'KCP Rimbo Bujang'),
+
+  -- Kualatungkal
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kualatungkal"), 'KCU KUALA TUNGKAL'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kualatungkal"), 'KCP Muara Sabak'),
+
+  -- Metro
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), 'KCU METRO'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), 'KCP Bandar Jaya'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), 'KCP Tulang Bawang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), 'KCP Way Jepara'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Metro"), 'KCP Mesuji'),
+
+  -- Kotabumi
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KCU KOTABUMI'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KCP Bukit Kemuning'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KCP Liwa'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KCP Krui'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KK Bunga Mayang'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KK Daya Murni'),
+  (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kotabumi"), 'KCP Baradatu');
 
 /* 
 create the data_nasabah table
@@ -87,503 +581,6 @@ CREATE TABLE IF NOT EXISTS data_nasabah (
   hubungan_afiliasi VARCHAR(50) NOT NULL,
   added_by CHAR(36) NOT NULL
 );
-
-/* 
-insert dummy data to user_privileges table
-*/
-INSERT INTO user_privileges (user_id, wilayah_id, cabang_id, user_privilege)
-VALUES 
-  ((SELECT user_id FROM users WHERE username = 'user1'), 1, 1, 'admin'),
-  ((SELECT user_id FROM users WHERE username = 'user2'), 2, 2, 'pemimpin_wilayah'),
-  ((SELECT user_id FROM users WHERE username = 'user3'), 3, 3, 'pemimpin_cabang'),
-  ((SELECT user_id FROM users WHERE username = 'user4'), 4, 4, 'pemimpin_cabang_pembantu'),
-  ((SELECT user_id FROM users WHERE username = 'user5'), 5, 5, 'individu'),
-  ((SELECT user_id FROM users WHERE username = 'user6'), 1, 2, 'individu');
-
-/* 
-insert dummy data to wilayah table
-*/
-INSERT INTO wilayah (wilayah_id, wilayah_name)
-VALUES 
-  (1, 'Palembang'),
-  (2, 'Tanjungkarang'),
-  (3, 'Musi Palembang'),
-  (4, 'Jambi'),
-  (5, 'Pangkalpinang'),
-  (6, 'Bengkulu'),
-  (7, 'Prabumulih'),
-  (8, 'Kayuagung'),
-  (9, 'Baturaja'),
-  (10, 'Lubuklinggau'),
-  (11, 'Bangko'),
-  (12, 'Muarabungo'),
-  (13, 'Kualatungkal'),
-  (14, 'Metro'),
-  (15, 'Kotabumi');
-
-/* 
-insert data to cabang table for Palembang
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES 
-  (1, 1, 'Kota Palembang'),
-  (1, 2, 'Kabupaten Banyuasin'),
-  (1, 3, 'Kabupaten Ogan Ilir'),
-  (1, 4, 'Kabupaten Ogan Komering Ilir'),
-  (1, 5, 'Kabupaten Muara Enim');
-
-/* 
-insert data to cabang table for Tanjung Karang
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (2, 1, 'Kota Bandar Lampung'),
-  (2, 2, 'Kabupaten Lampung Selatan'),
-  (2, 3, 'Kabupaten Pesawaran'),
-  (2, 4, 'Kabupaten Pringsewu'),
-  (2, 5, 'Kabupaten Tanggamus'),
-  (2, 6, 'Kabupaten Tulang Bawang Barat');
-
-/* 
-insert data to cabang table for Musi Palembang
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (3, 1, 'Kota Palembang'),
-  (3, 2, 'Kabupaten Musi Banyuasin'),
-  (3, 3, 'Kabupaten Banyuasin'),
-  (3, 4, 'Kabupaten Ogan Ilir'),
-  (3, 5, 'Kabupaten Ogan Komering Ilir'),
-  (3, 6, 'Kabupaten Muara Enim');
-
-/* 
-insert data to cabang table for Jambi
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (4, 1, 'Kota Jambi'),
-  (4, 2, 'Kabupaten Batanghari'),
-  (4, 3, 'Kabupaten Muaro Jambi'),
-  (4, 4, 'Kabupaten Banyuasin');
-
-/* 
-insert data to cabang table for Pangkal Pinang
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (5, 1, 'Kota Pangkalpinang'),
-  (5, 2, 'Kabupaten Bangka'),
-  (5, 3, 'Kabupaten Bangka Barat'),
-  (5, 4, 'Kabupaten Bangka Selatan'),
-  (5, 5, 'Kabupaten Bangka Tengah'),
-  (5, 6, 'Kabupaten Belitung'),
-  (5, 7, 'Kabupaten Belitung Timur');
-
-/* 
-insert data to cabang table for Bengkulu
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (6, 1, 'Kota Bengkulu'),
-  (6, 2, 'Kabupaten Bengkulu Selatan'),
-  (6, 3, 'Kabupaten Bengkulu Tengah'),
-  (6, 4, 'Kabupaten Bengkulu Utara'),
-  (6, 5, 'Kabupaten Kaur'),
-  (6, 6, 'Kabupaten Kepahiang'),
-  (6, 7, 'Kabupaten Lebong'),
-  (6, 8, 'Kabupaten Mukomuko'),
-  (6, 9, 'Kabupaten Rejang Lebong'),
-  (6, 10, 'Kabupaten Seluma');
-
-/* 
-insert data to cabang table for Prabumulih
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (7, 1, 'Kabupaten Muara Enim'),
-  (7, 2, 'Kota Prabumulih'),
-  (7, 3, 'Kabupaten Penukal Abab Lematang Ilir');
-
-/* 
-insert data to cabang table for Kayuagung
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (8, 1, 'Kabupaten Ogan Ilir'),
-  (8, 1, 'Kabupaten Ogan Komering Ilir'),
-  (8, 1, 'Kabupaten Muara Enim');
-
-/* 
-insert data to cabang table for Baturaja
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (9, 1, 'Kabupaten Ogan Komering Ulu'),
-  (9, 2, 'Kabupaten Ogan Komering Ulu Selatan'),
-  (9, 3, 'Kabupaten Ogan Komering Ulu Timur'),
-  (9, 4, 'Kabupaten Penukal Abab Lematang Ilir');
-
-/* 
-insert data to cabang table for Lubuklinggau
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (10, 1, 'Kota Lubuklinggau'),
-  (10, 2, 'Kota Pagar Alam'),
-  (10, 3, 'Kabupaten Empat Lawang'),
-  (10, 4, 'Kabupaten Lahat'),
-  (10, 5, 'Kabupaten Musi Rawas'),
-  (10, 6, 'Kabupaten Musi Rawas Utara');
-
-/* 
-insert data to cabang table for Bangko
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (11, 1, 'Kabupaten Merangin'),
-  (11, 2, 'Kabupaten Sarolangun'),
-  (11, 3, 'Kota Sungai Penuh'),
-  (11, 4, 'Kabupaten Kerinci');
-
-/* 
-insert data to cabang table for Muarabungo
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (12, 1, 'Kabupaten Bungo'),
-  (12, 2, 'Kabupaten Tebo');
-
-/* 
-insert data to cabang table for Kualatungkal
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (13, 1, 'Kabupaten Tanjung Jabung Barat'),
-  (13, 2, 'Kabupaten Tanjung Jabung Timur');
-
-/* 
-insert data to cabang table for Metro
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (14, 1, 'Kota Metro'),
-  (14, 2, 'Kabupaten Lampung Tengah'),
-  (14, 3, 'Kabupaten Lampung Timur'),
-  (14, 4, 'Kabupaten Mesuji'),
-  (14, 5, 'Kabupaten Tulang Bawang');
-
-/* 
-insert data to cabang table for Kotabumi
-*/
-INSERT INTO cabang (wilayah_id, cabang_id, cabang_name)
-VALUES
-  (15, 1, 'Kabupaten Lampung Barat'),
-  (15, 2, 'Kabupaten Lampung Utara'),
-  (15, 3, 'Kabupaten Pesisir Barat'),
-  (15, 4, 'Kabupaten Way Kanan');
-
-/* 
-create bidang_usaha
-*/
-CREATE TABLE bidang_usaha (
-  bidang_id INT PRIMARY KEY,
-  bidang VARCHAR(50)
-);
-
-/* 
-insert values into bidang_usaha
-*/
-INSERT INTO bidang_usaha (bidang_id, bidang) VALUES
-  (1, 'Perkebunan & Pabrik'),
-  (2, 'Perkebunan'),
-  (3, 'Pabrik (Pengolahan)'),
-  (4, 'Prinsipal/Distributor Bangunan'),
-  (5, 'Prinsipal/Distributor Consumer Goods'),
-  (6, 'Perdagangan/Pengepul Hasil Bumi'),
-  (7, 'Perdagangan Besar Lainnya'),
-  (8, 'Perhotelan'),
-  (9, 'Pertambangan'),
-  (10, 'Jasa-Jasa Dunia Usaha'),
-  (11, 'Konstruksi');
-
-/* 
-Create table for produk usaha
-*/
-CREATE TABLE produk_usaha (
-  produk_id INT PRIMARY KEY,
-  bidang_usaha_id INT,
-  usaha VARCHAR(50),
-  FOREIGN KEY (bidang_usaha_id) REFERENCES bidang_usaha(bidang_id)
-);
-
-/* 
-Add produk usaha
-*/
-INSERT INTO produk_usaha (produk_id, bidang_usaha_id, usaha) VALUES
-  -- Perkebunan & Pabrik
-  (1, 1, 'Sawit'),
-  (2, 1, 'Karet'),
-  (3, 1, 'Kopi'),
-  (4, 1, 'Pinang'),
-  (5, 1, 'Jagung'),
-  (6, 1, 'Singkong'),
-  (7, 1, 'Padi'),
-  (8, 1, 'Lada'),
-
-  -- Perdagangan/Pengepul Hasil Bumi
-  (9, 6, 'Sawit'),
-  (10, 6, 'Karet'),
-  (11, 6, 'Kopi'),
-  (12, 6, 'Pinang'),
-  (13, 6, 'Jagung'),
-  (14, 6, 'Singkong'),
-  (15, 6, 'Padi'),
-  (16, 6, 'Lada'),
-
-  -- Perhotelan
-  (17, 8, 'Novotel'),
-  (18, 8, 'Swisbel'),
-  (19, 8, 'Mercure'),
-  (20, 8, 'Amaris'),
-  (21, 8, 'Santika'),
-  (22, 8, 'The Zuri'),
-  (23, 8, 'Aryaduta'),
-  (24, 8, 'The Alts'),
-  (25, 8, 'Favehotel'),
-  (26, 8, 'Radisson'),
-  (27, 8, 'Batiqa'),
-  (28, 8, 'Sheraton'),
-  (29, 8, 'Sahid'),
-  (30, 8, 'Lainnya'),
-
-  -- Prinsipal/Distributor Consumer Goods
-  (31, 5, 'Unilever'),
-  (32, 5, 'Garudafoods'),
-  (33, 5, 'Artaboga'),
-  (34, 5, 'Indofoods'),
-  (35, 5, 'Nestle'),
-  (36, 5, 'Wingsfood'),
-  (37, 5, 'Mayora'),
-  (38, 5, 'Orang Tua'),
-  (39, 5, 'SoGoods Foods'),
-  (40, 5, 'Lainnya'),
-
-  -- Jasa-Jasa Dunia Usaha
-  (41, 10, 'Batubara'),
-  (42, 10, 'Timah'),
-  (43, 10, 'Pasir'),
-  (44, 10, 'Batu'),
-  (45, 10, 'Lainnya'),
-
-  -- Prinsipal/Distributor Bangunan
-  (46, 4, 'Cat'),
-  (47, 4, 'Keramik'),
-  (48, 4, 'Seng'),
-  (49, 4, 'Semen'),
-  (50, 4, 'Pipa'),
-  (51, 4, 'Besi'),
-
-  -- Pertambangan
-  (52, 9, 'Rumah Sakit'),
-  (53, 9, 'Pengangkutan Tambang'),
-  (54, 9, 'Pengangkutan Darat'),
-  (55, 9, 'Pengangkutan Laut'),
-  (56, 9, 'Ekspedisi'),
-
-  -- Perdagangan Besar Lainnya
-  (57, 7, 'Farmasi'),
-  (58, 7, 'Sembako/Campuran'),
-  (59, 7, 'Pecah Belah'),
-  (60, 7, 'Elektronik'),
-  (61, 7, 'Groceries/Swalayan/Minimarket'),
-  (62, 7, 'Bahan Bangunan'),
-  (63, 7, 'Lainnya'),
-
-  -- Konstruksi
-  (64, 11, 'Developer'),
-  (65, 11, 'Konstruksi Jalan & Jembatan'),
-  (66, 11, 'Konstruksi Gedung'),
-  (67, 11, 'Konstruksi Kapal (Galangan)'),
-  (68, 11, 'Konstruksi Elektrikal'),
-  (69, 11, 'Lainnya'),
-
-  -- Perkebunan
-  (70, 2, 'Sawit'),
-  (71, 2, 'Karet'),
-  (72, 2, 'Kopi'),
-  (73, 2, 'Pinang'),
-  (74, 2, 'Jagung'),
-  (75, 2, 'Singkong'),
-  (76, 2, 'Padi'),
-  (77, 2, 'Lada'),
-
-  -- Pabrik (Pengolahan)
-  (78, 3, 'Sawit'),
-  (79, 3, 'Karet'),
-  (80, 3, 'Kopi'),
-  (81, 3, 'Pinang'),
-  (82, 3, 'Jagung'),
-  (83, 3, 'Singkong'),
-  (84, 3, 'Padi'),
-  (85, 3, 'Lada');
-
-/* 
-Create table for KCU_KCP_KK
-*/
-CREATE TABLE KCU_KCP_KK (
-  kantor_id INT PRIMARY KEY,
-  wilayah_id INT,
-  kantor VARCHAR(50),
-  FOREIGN KEY (wilayah_id) REFERENCES wilayah(wilayah_id)
-);
-
-/* 
-Insert to KCU_KCP_KK table
-*/
-
-INSERT INTO KCU_KCP_KK (kantor_id, wilayah_id, kantor) VALUES
-  -- Palembang
-  (1, 1, 'KCU PALEMBANG'),
-  (2, 1, 'KCP UNSRI'),
-  (3, 1, 'KCP A. Yani'),
-  (4, 1, 'KCP Komperta'),
-  (5, 1, 'KCP UNSRI Indralaya'),
-  (6, 1, 'KCP Kenten'),
-  (7, 1, 'KCP KM 12'),
-  (8, 1, 'KCP Jembatan Ampera'),
-  (9, 1, 'KCP Pasar 16 Ilir'),
-  (10, 1, 'KCP Palembang Square'),
-  (11, 1, 'KK PIM Letkol Iskandar'),
-  (12, 1, 'KK Dempo'),
-  (13, 1, 'KK Lorong Basah'),
-  (14, 1, 'KK Kertapati'),
-  (15, 1, 'KK Plaju'),
-  (16, 1, 'KK PUSRI'),
-  (17, 1, 'KK Musi II'),
-  (18, 1, 'KK Demang Lebar Daun'),
-
-  -- Tanjungkarang
-  (19, 2, 'KCU TANJUNGKARANG'),
-  (20, 2, 'KCP Teuku Umar'),
-  (21, 2, 'KCP Antasari'),
-  (22, 2, 'KCP Panjang'),
-  (23, 2, 'KCP Kalianda'),
-  (24, 2, 'KCP Bandar Lampung'),
-  (25, 2, 'KCP Unila'),
-  (26, 2, 'KCP Pringsewu'),
-  (27, 2, 'KCP Natar'),
-  (28, 2, 'KCP Talang Padang'),
-  (29, 2, 'KCP GEDONG TATAAN'),
-  (30, 2, 'KCP SIDOMULYO'),
-  (31, 2, 'KCP SUKARAME'),
-  (32, 2, 'KK Majapahit'),
-  (33, 2, 'KK Way Halim'),
-  (34, 2, 'KK Universitas Malahayati'),
-
-  -- Musi Palembang
-  (35, 3, 'KCU MUSI PALEMBANG'),
-  (36, 3, 'KCP Pasar Betung'),
-  (37, 3, 'KCP Sungai Lilin'),
-  (38, 3, 'KCP Sekayu'),
-  (39, 3, 'KCP Bayung Lencir'),
-  (40, 3, 'KCP Boom Baru'),
-  (41, 3, 'KCP Pal Lima'),
-  (42, 3, 'KCP Kalidoni'),
-  (43, 3, 'KCP Lemabang'),
-  (44, 3, 'KCP Rajawali'),
-  (45, 3, 'KCP Sako'),
-  (46, 3, 'KK KM9'),
-  (47, 3, 'KK MP Mangkunegara'),
-  (48, 3, 'KK OPI Mall'),
-  (49, 3, 'KK Kenten Laut'),
-  (50, 3, 'KK Tanjung Api-Api'),
-
-  -- Jambi
-  (51, 4, 'KCU JAMBI'),
-  (52, 4, 'KCP Abadi'),
-  (53, 4, 'KCP Simpang Sipin'),
-  (54, 4, 'KCP The Hok'),
-  (55, 4, 'KK Pattimura'),
-  (56, 4, 'KK Selincah'),
-  (57, 4, 'KK Talang Banjar'),
-  (58, 4, 'KCP Sengeti'),
-  (59, 4, 'KCP Muara Bulian'),
-
-  -- Pangkalpinang
-  (60, 5, 'KCU PANGKALPINANG'),
-  (61, 5, 'KCP Sungailiat'),
-  (62, 5, 'KCP Tanjung Pandan'),
-  (63, 5, 'KCP Koba'),
-  (64, 5, 'KCP Muntok'),
-  (65, 5, 'KCP Toboali'),
-  (66, 5, 'KCP Manggar'),
-  (67, 5, 'KK Bangka Trade Centre'),
-
-  -- Bengkulu
-  (68, 6, 'KCU BENGKULU'),
-  (69, 6, 'KCP Curup'),
-  (70, 6, 'KCP Arga Makmur'),
-  (71, 6, 'KCP Pasar Panorama'),
-  (72, 6, 'KCP Kepahiang'),
-  (73, 6, 'KCP Ketahun'),
-  (74, 6, 'KK Universitas Bengkulu'),
-  (75, 6, 'KK Pagar Dewa'),
-  (76, 6, 'KCP Penarik'),
-  (77, 6, 'KCP Bintuhan'),
-
-  -- Prabumulih
-  -- Soon
-
-  -- Kayuagung (id: 8)
-  (78, 8, 'KC KAYU AGUNG'),
-  (79, 8, 'KCP Tugumulyo'),
-
-  -- Baturaja
-  (80, 9, 'KCU BATURAJA'),
-  (81, 9, 'KCP Muara dua'),
-  (82, 9, 'KCP Belitang'),
-  (83, 9, 'KCP Martapura'),
-
-  -- Lubuklinggau
-  (84, 10, 'KCU LUBUKLINGGAU'),
-  (85, 10, 'KK Simpang Periuk'),
-  (86, 10, 'KCP Lahat'),
-  (87, 10, 'KCP Pagar Alam'),
-  (88, 10, 'KCP MURATARA'),
-  (89, 10, 'KCP MUSI RAWAS'),
-  (90, 10, 'KCP Empat Lawang'),
-
-  -- Bangko
-  (91, 11, 'KCU BANGKO'),
-  (92, 11, 'KCP Hitam Ulu'),
-  (93, 11, 'KCP Sarolangun'),
-  (94, 11, 'KK Singkut'),
-
-  -- Muarabungo
-  (95, 12, 'KCU MUARA BUNGO'),
-  (96, 12, 'KCP Kuamang Kuning'),
-  (97, 12, 'KCP Jujuhan'),
-  (98, 12, 'KCP Rimbo Bujang'),
-
-  -- Kualatungkal
-  (99, 13, 'KCU KUALA TUNGKAL'),
-  (100, 13, 'KCP Muara Sabak'),
-
-  -- Metro
-  (101, 14, 'KCU METRO'),
-  (102, 14, 'KCP Bandar Jaya'),
-  (103, 14, 'KCP Tulang Bawang'),
-  (104, 14, 'KCP Way Jepara'),
-  (105, 14, 'KCP Mesuji'),
-
-  -- Kotabumi
-  (106, 15, 'KCU KOTABUMI'),
-  (107, 15, 'KCP Bukit Kemuning'),
-  (108, 15, 'KCP Liwa'),
-  (109, 15, 'KCP Krui'),
-  (110, 15, 'KK Bunga Mayang'),
-  (111, 15, 'KK Daya Murni'),
-  (112, 15, 'KCP Baradatu');
 
 /* 
 Create dummy data 

@@ -37,7 +37,7 @@ func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privile
 	defer db.Close()
 
 	// row := db.QueryRow(`
-	// 	SELECT * FROM data_nasabah WHERE ???????`,  // Handle this
+	// 	SELECT * FROM data_nasabah WHERE ???????`,  // Handle this to show correct data_nasabah for each privilege
 	// )
 
 	rows, err := db.Query(`
