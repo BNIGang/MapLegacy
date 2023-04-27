@@ -30,7 +30,6 @@ func Handler(engine *html.Engine) fiber.Handler {
 
 			c.Cookie(cookie)
 
-			// return c.Render("home", fiber.Map{"Name": username})
 			return c.Redirect("/home")
 		}
 
