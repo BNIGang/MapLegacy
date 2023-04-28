@@ -105,9 +105,13 @@ func main() {
 	app.Get("/get_kcu_kcp_kk/:cabang_id", web.JWTMiddleware(secret, engine), web.GetKCPKCUKKHandler)
 	// Handling dynamic column over
 
+	// Add nasabah
 	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		return v1.AddNasabahHandler(user.User_ID)(c)
 	})
+
+	// Add nasabah
+	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
 
 	app.Get("/logout", login.LogoutHandler)
 

@@ -27,6 +27,7 @@ type Nasabah struct {
 	Afiliasi                 string
 	Hubungan_afiliasi        string
 	Added_by                 string
+	Username                 string
 }
 
 func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
@@ -40,9 +41,15 @@ func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privile
 	// 	SELECT * FROM data_nasabah WHERE ???????`,  // Handle this to show correct data_nasabah for each privilege
 	// )
 
+	// rows, err := db.Query(`
+	// 	SELECT * FROM data_nasabah
+	// `)
+
 	rows, err := db.Query(`
-		SELECT * FROM data_nasabah`, // Placeholder to test
-	)
+		SELECT dn.*, u.username
+		FROM data_nasabah dn
+		INNER JOIN users u ON dn.added_by = u.user_id
+	`)
 
 	var nasabahs []Nasabah
 	for rows.Next() {
@@ -70,6 +77,7 @@ func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privile
 			&nasabah.Afiliasi,
 			&nasabah.Hubungan_afiliasi,
 			&nasabah.Added_by,
+			&nasabah.Username,
 		)
 		if err != nil {
 			return nil, err // database error

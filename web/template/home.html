@@ -15,7 +15,6 @@
 <table>
     <thead>
         <tr>
-            <!-- <th>ID</th> -->
             <th>Nama Pengusaha</th>
             <th>Nomor Kontak</th>
             <th>Alamat Tempat Tinggal</th>
@@ -37,12 +36,12 @@
             <th>Afiliasi</th>
             <th>Hubungan Afiliasi</th>
             <th>Added By</th>
+            <th>Aksi</th>
         </tr>
     </thead>
     <tbody>
         {{range .data_nasabah}}
         <tr>
-            <!-- <td>{{.Id}}</td> -->
             <td>{{.Nama_pengusaha}}</td>
             <td>{{.Nomor_kontak}}</td>
             <td>{{.Alamat_tempat_tinggal}}</td>
@@ -63,7 +62,9 @@
             <td>{{.Kredit_di_bank_lain}}</td>
             <td>{{.Afiliasi}}</td>
             <td>{{.Hubungan_afiliasi}}</td>
-            <td>{{.Added_by}}</td>
+            <!-- <td>{{.Added_by}}</td> -->
+            <td>{{.Username}}</td>
+            <td><form action="/delete/{{.Id}}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></td>
         </tr>
         {{end}}
     </tbody>
