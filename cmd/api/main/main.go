@@ -70,7 +70,7 @@ func main() {
 			return c.Render("login", fiber.Map{"Error": err})
 		}
 
-		data_nasabah, err := v1.GetNasabahData(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
+		data_nasabah, err := v1.GetNasabahDataByUser(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
 
 		return c.Render("template", fiber.Map{
 			"Name":         username,
@@ -92,6 +92,24 @@ func main() {
 		})
 	})
 
+	app.Get("/edit/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		nasabah_id := c.Params("nasabah_id")
+
+		data_nasabah, err := v1.GetNasabahByID(nasabah_id)
+		if err != nil {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":         username,
+			"Wilayah":      user.Wilayah_ID,
+			"Cabang":       user.Cabang_ID,
+			"Privilege":    user.User_Privileges,
+			"data_nasabah": data_nasabah,
+			"content":      "edit",
+		})
+	})
+
 	app.Get("/home/", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		return c.Redirect("/home")
 	})
@@ -110,8 +128,11 @@ func main() {
 		return v1.AddNasabahHandler(user.User_ID)(c)
 	})
 
-	// Add nasabah
+	// Delete nasabah
 	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
+
+	// Update nasabah
+	app.Post("/update/:nasabah_id", web.JWTMiddleware(secret, engine), v1.UpdateNasabahData)
 
 	app.Get("/logout", login.LogoutHandler)
 

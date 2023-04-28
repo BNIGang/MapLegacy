@@ -62,9 +62,13 @@
             <td>{{.Kredit_di_bank_lain}}</td>
             <td>{{.Afiliasi}}</td>
             <td>{{.Hubungan_afiliasi}}</td>
-            <!-- <td>{{.Added_by}}</td> -->
             <td>{{.Username}}</td>
-            <td><form action="/delete/{{.Id}}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></td>
+            <td>
+                <ul>
+                    <li><form action="/delete/{{.Id}}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></li>
+                    <li><form action="/edit/{{.Id}}" method="GET"><button type="submit" class="btn btn-danger">Edit</button></form></li>
+                </ul>
+            </td>
         </tr>
         {{end}}
     </tbody>

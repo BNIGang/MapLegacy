@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"fmt"
+
 	"github.com/BNIGang/MapLegacy/web"
 )
 
@@ -30,7 +32,11 @@ type Nasabah struct {
 	Username                 string
 }
 
-func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
+var nasabahMap map[string]Nasabah
+
+func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
+	nasabahMap = make(map[string]Nasabah)
+
 	db, err := web.Connect()
 	if err != nil {
 		return nil, err
@@ -82,6 +88,7 @@ func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privile
 		if err != nil {
 			return nil, err // database error
 		}
+		nasabahMap[nasabah.Id] = nasabah
 		nasabahs = append(nasabahs, nasabah)
 	}
 
@@ -90,6 +97,14 @@ func GetNasabahData(user_id string, wilayah_id string, cabang_id string, privile
 	}
 
 	return nasabahs, nil
+}
+
+func GetNasabahByID(nasabah_id string) (Nasabah, error) {
+	nasabah, ok := nasabahMap[nasabah_id]
+	if !ok {
+		return Nasabah{}, fmt.Errorf("nasabah with id %s not found", nasabah_id)
+	}
+	return nasabah, nil
 }
 
 func SearchNasabah(query string) {

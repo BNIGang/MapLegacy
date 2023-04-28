@@ -73,8 +73,10 @@
             <div class="main-content">
             {{ if eq .content "home" }}
                 {{ template "home" . }}
-            {{ else }}
+            {{ else if eq .content "create" }}
                 {{ template "create_nasabah" . }}
+            {{ else}}
+                {{ template "edit_nasabah" . }}
             {{ end }}
             </div>
         </div>
