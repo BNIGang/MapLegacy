@@ -96,7 +96,7 @@ func main() {
 		return c.Redirect("/home")
 	})
 
-	// Handle every query for dynamic columns
+	// Handle every endpoint to allow dynamic form
 	app.Get("/get_bidang_usaha", web.JWTMiddleware(secret, engine), web.GetBidangUsahaHandler)
 	app.Get("/get_produk_usaha/:bidang_id", web.JWTMiddleware(secret, engine), web.GetProdukUsahaHandler)
 
@@ -104,6 +104,10 @@ func main() {
 	app.Get("/get_kota_kabupaten/:cabang_id", web.JWTMiddleware(secret, engine), web.GetKotaKabupatenHandler)
 	app.Get("/get_kcu_kcp_kk/:cabang_id", web.JWTMiddleware(secret, engine), web.GetKCPKCUKKHandler)
 	// Handling dynamic column over
+
+	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return v1.AddNasabahHandler(user.User_ID)(c)
+	})
 
 	app.Get("/logout", login.LogoutHandler)
 

@@ -111,7 +111,7 @@ func GetKCPKCUKKHandler(c *fiber.Ctx) error {
 	defer db.Close()
 
 	stmt, err := db.Prepare(`
-		SELECT kantor_id, kantor FROM KCU_KCP_KK WHERE cabang_id = ? ORDER BY kantor ASC
+		SELECT kantor_id, kantor FROM kantor WHERE cabang_id = ? ORDER BY kantor ASC
 	`)
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)

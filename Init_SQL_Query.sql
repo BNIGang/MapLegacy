@@ -401,7 +401,7 @@ INSERT INTO produk_usaha (produk_id, bidang_usaha_id, usaha) VALUES
 /* 
 Create table for KCU_KCP_KK
 */
-CREATE TABLE KCU_KCP_KK (
+CREATE TABLE kantor (
   kantor_id CHAR(36) PRIMARY KEY,
   cabang_id CHAR(36),
   kantor VARCHAR(50)
@@ -410,7 +410,7 @@ CREATE TABLE KCU_KCP_KK (
 /* 
 Insert to KCU_KCP_KK table
 */
-INSERT INTO KCU_KCP_KK (kantor_id, cabang_id, kantor) VALUES
+INSERT INTO kantor (kantor_id, cabang_id, kantor) VALUES
   -- Palembang
   (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCU PALEMBANG'),
   (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Palembang"), 'KCP UNSRI'),
@@ -501,7 +501,7 @@ INSERT INTO KCU_KCP_KK (kantor_id, cabang_id, kantor) VALUES
   (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Bengkulu"), 'KCP Bintuhan'),
 
   -- Prabumulih
-  -- Soon
+  -- TODO: Soon
 
   -- Kayuagung
   (UUID(), (SELECT cabang_id FROM cabang WHERE cabang_name="Kayuagung"), 'KC KAYU AGUNG'),
@@ -567,10 +567,10 @@ CREATE TABLE IF NOT EXISTS data_nasabah (
   detail_bidang_usaha VARCHAR(100),
   kabupaten_kota VARCHAR(50) NOT NULL,
   cabang VARCHAR(50) NOT NULL,
-  KCU_KCP_KK VARCHAR(50) NOT NULL,
+  kcu_kcp_kk VARCHAR(50) NOT NULL,
   nasabah VARCHAR(50) NOT NULL,
   no_CIF INT NOT NULL,
-  AUM_di_BNI DECIMAL(18,2) NOT NULL,
+  aum_di_bni DECIMAL(18,2) NOT NULL,
   debitur VARCHAR(50) NOT NULL,
   kredit_di_bni DECIMAL(18,2) NOT NULL,
   produk_bni_yang_dimiliki VARCHAR(50) NOT NULL,
@@ -585,7 +585,7 @@ CREATE TABLE IF NOT EXISTS data_nasabah (
 /* 
 Create dummy data 
 */
-INSERT INTO data_nasabah (id, nama_pengusaha, nomor_kontak, alamat_tempat_tinggal, bidang_usaha, produk_usaha, detail_bidang_usaha, kabupaten_kota, cabang, KCU_KCP_KK, nasabah, no_CIF, AUM_di_BNI, debitur, kredit_di_bni, produk_bni_yang_dimiliki, mitra_bank_dominan, aum_di_bank_lain, kredit_di_bank_lain, afiliasi, hubungan_afiliasi, added_by)
+INSERT INTO data_nasabah (id, nama_pengusaha, nomor_kontak, alamat_tempat_tinggal, bidang_usaha, produk_usaha, detail_bidang_usaha, kabupaten_kota, cabang, kcu_kcp_kk, nasabah, no_CIF, aum_di_bni, debitur, kredit_di_bni, produk_bni_yang_dimiliki, mitra_bank_dominan, aum_di_bank_lain, kredit_di_bank_lain, afiliasi, hubungan_afiliasi, added_by)
 VALUES 
   (UUID(), 'Khidr Karawita', '081234567890', 'Jl. Contoh No. 1', 'Perkebunan & Pabrik', 'Sawit', 'Menanam Sawit :D', 'Palembang', 'Kota Palembang', 'KCU Palembang', 'Nasabah', 12345, 100000000, 'Debitur', 0, 'M-Banking', 'Mandiri', 50000000, 10000000, 'Muhammad Sumbul', 'Anak', (SELECT user_id FROM users WHERE username='user1')),
   (UUID(), 'Yaqub Qomarudin Dibizah', '081234567891', 'Jl. Contoh No. 2', 'Perhotelan', 'Novotel', 'Pemilik Novotel', 'Musi Palembang', 'Kabupaten Ogan Ilir', 'KCU Musi Palembang', 'Nasabah', 12346, 200000000, 'Debitur', 0, 'Giro', 'BCA', 10000000, 5000000, '', '', (SELECT user_id FROM users WHERE username='user5')),
