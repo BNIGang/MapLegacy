@@ -1,21 +1,16 @@
 package main
 
 import (
-	"fmt"
-
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
-	"github.com/golang-jwt/jwt"
 )
-
-// TODO: Change this later, read from file preferably
-var secret []byte = []byte("super-secret-key")
 
 var user *web.User
 var username string
+var secret []byte = login.Secret
 
 func main() {
 
@@ -37,30 +32,10 @@ func main() {
 	app.Post("/login", login.Handler(engine))
 
 	app.Get("/home", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		// get Username from cookie
-		// cookie contains JWT token, decrypt the token to get username
-		cookie := c.Cookies("token")
 
-		if cookie == "" {
-			return c.Render("login", fiber.Map{"Error": "Missing token cookie"})
-		}
+		username = c.Locals("username").(string)
 
-		token, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, c.Render("login", fiber.Map{"Error": "Unexpected Signing Method"})
-			}
-			return secret, nil
-		})
-
-		if err != nil {
-			return c.Render("login", fiber.Map{"Error": fmt.Sprintf("Invalid or expired token: %v", err)})
-		}
-
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			if val, ok := claims["username"].(string); ok {
-				username = val
-			}
-		}
+		var err error
 
 		user, err = web.GetUserByUsername(username)
 		if err != nil {
@@ -83,6 +58,10 @@ func main() {
 	})
 
 	app.Get("/create", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
 		return c.Render("template", fiber.Map{
 			"Name":      username,
 			"Wilayah":   user.Wilayah_ID,
