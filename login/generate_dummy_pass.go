@@ -15,6 +15,6 @@ func generateHash(password string) (string, error) {
 }
 
 func main() {
-	res, _ := generateHash("pass")
+	res, _ := generateHash("pass") // change this as needed
 	fmt.Print(res)
 }

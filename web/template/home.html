@@ -1,21 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {{ if .Name }}
-        <h1>Welcome, {{ .Name }}!</h1>
-    {{ else }}
-        <h1>Welcome, dpn!</h1>
-    {{ end }}
+<h1>Map Legacy</h1>
 
-    <form action="/logout" method="get">
-        <button type="submit">Logout</button>
-    </form>
+<div class="below-header">
+    <div class="button-container">
+        <button class="add-button" type="button" onclick="window.location.href='/create'">Add Data</button>
+    </div>
 
-</body>
-</html>
+
+    <div class="search-container">
+        <input type="text" placeholder="Search...">
+        <button type="button">Search</button>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nama Pengusaha</th>
+            <th>Nomor Kontak</th>
+            <th>Alamat Tempat Tinggal</th>
+            <th>Bidang Usaha</th>
+            <th>Produk Usaha</th>
+            <th>Detail Bidang Usaha</th>
+            <th>Kabupaten/Kota</th>
+            <th>Cabang</th>
+            <th>KCU/KCP/KK</th>
+            <th>Nasabah</th>
+            <th>No CIF</th>
+            <th>AUM di BNI</th>
+            <th>Debitur</th>
+            <th>Kredit di BNI</th>
+            <th>Produk BNI yang Dimiliki</th>
+            <th>Mitra Bank Dominan</th>
+            <th>AUM di Bank Lain</th>
+            <th>Kredit di Bank Lain</th>
+            <th>Afiliasi</th>
+            <th>Hubungan Afiliasi</th>
+            <th>Ditambahkan Oleh</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .data_nasabah}}
+        <tr>
+            <td>{{.Nama_pengusaha}}</td>
+            <td>{{.Nomor_kontak}}</td>
+            <td>{{.Alamat_tempat_tinggal}}</td>
+            <td>{{.Bidang_usaha}}</td>
+            <td>{{.Produk_usaha}}</td>
+            <td>{{.Detail_bidang_usaha}}</td>
+            <td>{{.Kabupaten_kota}}</td>
+            <td>{{.Cabang}}</td>
+            <td>{{.KCU_KCP_KK}}</td>
+            <td>{{.Nasabah}}</td>
+            <td>{{.No_CIF}}</td>
+            <td>{{.AUM_di_BNI}}</td>
+            <td>{{.Debitur}}</td>
+            <td>{{.Kredit_di_bni}}</td>
+            <td>{{.Produk_bni_yang_dimiliki}}</td>
+            <td>{{.Mitra_bank_dominan}}</td>
+            <td>{{.Aum_di_bank_lain}}</td>
+            <td>{{.Kredit_di_bank_lain}}</td>
+            <td>{{.Afiliasi}}</td>
+            <td>{{.Hubungan_afiliasi}}</td>
+            <td>{{.Username}}</td>
+            <td>
+                <ul>
+                    <li><form action="/delete/{{.Id}}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></li>
+                    <li><form action="/edit/{{.Id}}" method="GET"><button type="submit" class="btn btn-danger">Edit</button></form></li>
+                </ul>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>

@@ -11,7 +11,12 @@ func Handler(engine *html.Engine) fiber.Handler {
 		username := c.FormValue("username")
 		password := c.FormValue("password")
 
-		if web.AuthenticateUser(username, password) {
+		validated, err := web.AuthenticateUser(username, password)
+		if err != nil {
+			return c.Render("login", fiber.Map{"Error": err})
+		}
+
+		if validated {
 			token, err := web.GenerateJWT(username, []byte("super-secret-key"))
 			if err != nil {
 				return c.Render("login", fiber.Map{"Error": err})
@@ -25,7 +30,6 @@ func Handler(engine *html.Engine) fiber.Handler {
 
 			c.Cookie(cookie)
 
-			// return c.Render("home", fiber.Map{"Name": username})
 			return c.Redirect("/home")
 		}
 
