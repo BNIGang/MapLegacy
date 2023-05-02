@@ -75,6 +75,8 @@
                 {{ template "home" . }}
             {{ else if eq .content "create" }}
                 {{ template "create_nasabah" . }}
+            {{ else if eq .content "map_legacy" }}
+                {{ template "map_legacy" . }}
             {{ else}}
                 {{ template "edit_nasabah" . }}
             {{ end }}

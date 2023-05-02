@@ -107,6 +107,22 @@ func main() {
 		return v1.AddNasabahHandler(user.User_ID)(c)
 	})
 
+	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		// nasabah_id := c.Params("nasabah_id")
+		// map_legacy_data := v1.MapLegacyHandler(nasabah_id)
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"content":   "map_legacy",
+		})
+	})
+
 	// Delete nasabah
 	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
 

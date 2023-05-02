@@ -1,3 +1,24 @@
+<style>
+    /* Style each row of the table */
+    table tr {
+    cursor: pointer;
+    }
+
+    /* Alternate row colors */
+    table tr:nth-child(even) {
+    background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(odd) {
+    background-color: #ffffff;
+    }
+
+    /* Hover effect */
+    table tr:hover {
+    background-color: #ddd;
+    }
+</style>
+
 <h1>Map Legacy</h1>
 
 <div class="below-header">
@@ -41,7 +62,7 @@
     </thead>
     <tbody>
         {{range .data_nasabah}}
-        <tr>
+        <tr onclick="window.location.href='/create_map_legacy/{{ .Id }}';">
             <td>{{.Nama_pengusaha}}</td>
             <td>{{.Nomor_kontak}}</td>
             <td>{{.Alamat_tempat_tinggal}}</td>
@@ -65,8 +86,8 @@
             <td>{{.Username}}</td>
             <td>
                 <ul>
-                    <li><form action="/delete/{{.Id}}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></li>
-                    <li><form action="/edit/{{.Id}}" method="GET"><button type="submit" class="btn btn-danger">Edit</button></form></li>
+                    <li><form action="/delete/{{ .Id }}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></li>
+                    <li><form action="/edit/{{ .Id }}" method="GET"><button type="submit" class="btn btn-danger">Edit</button></form></li>
                 </ul>
             </td>
         </tr>

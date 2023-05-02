@@ -59,6 +59,7 @@ func JWTMiddleware(secret []byte, engine *html.Engine) fiber.Handler {
 	}
 }
 
+// TODO: test if refresh actually works (idk lmao)
 func RefreshJWT(c *fiber.Ctx, secret []byte, engine *html.Engine) (string, error) {
 	cookie := c.Cookies("token")
 	if cookie == "" {

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/BNIGang/MapLegacy/web"
@@ -26,40 +27,54 @@ type Nasabah struct {
 	Mitra_bank_dominan       string
 	Aum_di_bank_lain         string
 	Kredit_di_bank_lain      string
-	Afiliasi                 string
-	Hubungan_afiliasi        string
 	Added_by                 string
 	Username                 string
+	AfiliasiList             []Afiliasi
 }
 
-var nasabahMap map[string]Nasabah
+type Afiliasi struct {
+	NamaAfiliasi     string
+	HubunganAfiliasi string
+}
 
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
-	nasabahMap = make(map[string]Nasabah)
-
 	db, err := web.Connect()
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	// row := db.QueryRow(`
-	// 	SELECT * FROM data_nasabah WHERE ???????`,  // Handle this to show correct data_nasabah for each privilege
-	// )
-
-	// rows, err := db.Query(`
-	// 	SELECT * FROM data_nasabah
-	// `)
-
 	rows, err := db.Query(`
-		SELECT dn.*, u.username
-		FROM data_nasabah dn
-		INNER JOIN users u ON dn.added_by = u.user_id
+		SELECT 
+			dn.*, 
+			GROUP_CONCAT(a.nama_afiliasi) AS nama_afiliasi, 
+			GROUP_CONCAT(a.hubungan_afiliasi) AS hubungan_afiliasi, 
+			u.name 
+		FROM 
+			data_nasabah dn  
+		LEFT JOIN 
+			afiliasi a
+		ON 
+			dn.id = a.id_pengusaha  
+		LEFT JOIN 
+			users u 
+		ON 
+			dn.added_by = u.user_id 
+		GROUP BY 
+			dn.id 
+		ORDER BY 
+			dn.nama_pengusaha;
 	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	nasabahMap := make(map[string]*Nasabah)
 
-	var nasabahs []Nasabah
 	for rows.Next() {
 		var nasabah Nasabah
+		var afiliasi, hubunganAfiliasi sql.NullString
+
 		err = rows.Scan(
 			&nasabah.Id,
 			&nasabah.Nama_pengusaha,
@@ -80,20 +95,39 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 			&nasabah.Mitra_bank_dominan,
 			&nasabah.Aum_di_bank_lain,
 			&nasabah.Kredit_di_bank_lain,
-			&nasabah.Afiliasi,
-			&nasabah.Hubungan_afiliasi,
 			&nasabah.Added_by,
+			&afiliasi,
+			&hubunganAfiliasi,
 			&nasabah.Username,
 		)
 		if err != nil {
 			return nil, err // database error
 		}
-		nasabahMap[nasabah.Id] = nasabah
-		nasabahs = append(nasabahs, nasabah)
+
+		// Check if the nasabah is already in the map
+		if _, ok := nasabahMap[nasabah.Id]; !ok {
+			// If not, add it to the map with an empty list of afiliasi
+			nasabah.AfiliasiList = make([]Afiliasi, 0)
+			nasabahMap[nasabah.Id] = &nasabah
+		}
+
+		// If the afiliasi is not null, add it to the nasabah's list of afiliasi
+		if afiliasi.Valid {
+			nasabahMap[nasabah.Id].AfiliasiList = append(nasabahMap[nasabah.Id].AfiliasiList, Afiliasi{
+				NamaAfiliasi:     afiliasi.String,
+				HubunganAfiliasi: hubunganAfiliasi.String,
+			})
+		}
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err // database error
+		return nil, err
+	}
+
+	// Create a slice of Nasabah from the values in the map
+	nasabahs := make([]Nasabah, 0, len(nasabahMap))
+	for _, nasabah := range nasabahMap {
+		nasabahs = append(nasabahs, *nasabah)
 	}
 
 	return nasabahs, nil
