@@ -596,13 +596,13 @@ VALUES
   (UUID(), 'Giorno Giovanna', '081234567899', 'Jl. Contoh No. 6', 'Perdagangan Besar Lainnya', 'Farmasi', 'Pemilik PT Farmasi Sriwijaya', 'Palembang', 'Kota Palembang', 'KCU PALEMBANG', 'Debitur', 12350, 700000000, 'Tidak', 0, 'Tapenas', 'Panin', 20000000, 15000000, (SELECT user_id FROM users WHERE username='user4'));
 
 CREATE TABLE IF NOT EXISTS afiliasi(
-  id_afiliasi CHAR(36) PRIMARY KEY,
-  id_pengusaha CHAR(36) NOT NULL,
-  nama_afiliasi VARCHAR(50) NOT NULL,
-  hubungan_afiliasi VARCHAR(50) NOT NULL
+  id_child CHAR(36) PRIMARY KEY,
+  id_parent CHAR(36) NOT NULL,
+  nama_child VARCHAR(50) NOT NULL,
+  hubungan VARCHAR(50) NOT NULL
 );
 
-INSERT INTO afiliasi (id_afiliasi, id_pengusaha, nama_afiliasi, hubungan_afiliasi) VALUES
+INSERT INTO afiliasi (id_child, id_parent, nama_child, hubungan) VALUES
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Muhammad Sumbul', 'Anak'),
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Covidin Demamio', 'Ayah/Ibu'),
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Joseph Joestar', 'Adik');
