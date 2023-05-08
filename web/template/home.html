@@ -86,8 +86,9 @@
             <td>{{.Username}}</td>
             <td>
                 <ul>
-                    <li><form action="/delete/{{ .Id }}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></li>
-                    <li><form action="/edit/{{ .Id }}" method="GET"><button type="submit" class="btn btn-danger">Edit</button></form></li>
+                    <li><form action="/create_map_legacy/{{ .Id }}" method="GET"><button type="submit">Info</button></form></li>
+                    <li><form action="/delete/{{ .Id }}" method="POST"><button type="submit">Delete</button></form></li>
+                    <li><form action="/edit/{{ .Id }}" method="GET"><button type="submit">Edit</button></form></li>
                 </ul>
             </td>
         </tr>

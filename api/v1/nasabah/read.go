@@ -37,6 +37,8 @@ type Afiliasi struct {
 	HubunganAfiliasi string
 }
 
+var nasabahMap = make(map[string]*Nasabah)
+
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
 	db, err := web.Connect()
 	if err != nil {
@@ -69,7 +71,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 		return nil, err
 	}
 	defer rows.Close()
-	nasabahMap := make(map[string]*Nasabah)
+	// nasabahMap := make(map[string]*Nasabah)
 
 	for rows.Next() {
 		var nasabah Nasabah
@@ -133,10 +135,10 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 	return nasabahs, nil
 }
 
-func GetNasabahByID(nasabah_id string) (Nasabah, error) {
+func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	nasabah, ok := nasabahMap[nasabah_id]
 	if !ok {
-		return Nasabah{}, fmt.Errorf("nasabah with id %s not found", nasabah_id)
+		return nil, fmt.Errorf("nasabah with id %s not found", nasabah_id)
 	}
 	return nasabah, nil
 }

@@ -124,6 +124,7 @@ func main() {
 	})
 
 	// Delete nasabah
+	// TODO: add confirmation before deleting
 	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
 
 	// Update nasabah
