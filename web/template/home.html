@@ -55,7 +55,6 @@
             <th>AUM di Bank Lain</th>
             <th>Kredit di Bank Lain</th>
             <th>Afiliasi</th>
-            <th>Hubungan Afiliasi</th>
             <th>Ditambahkan Oleh</th>
             <th>Aksi</th>
         </tr>
@@ -81,8 +80,20 @@
             <td>{{.Mitra_bank_dominan}}</td>
             <td>{{.Aum_di_bank_lain}}</td>
             <td>{{.Kredit_di_bank_lain}}</td>
-            <td>{{.Afiliasi}}</td>
-            <td>{{.Hubungan_afiliasi}}</td>
+
+            <td>
+                <table>
+                    <th>Nama Afiliasi</th>
+                    <th>Hubungan Afiliasi</th>
+                    {{range .AfiliasiList}}
+                        <tr>
+                            <td>{{.NamaAfiliasi}}</td>
+                            <td>{{.HubunganAfiliasi}}</td>
+                        </tr>
+                    {{end}}
+                </table>
+            </td>
+
             <td>{{.Username}}</td>
             <td>
                 <ul>

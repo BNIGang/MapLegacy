@@ -3,6 +3,7 @@ package v1
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/BNIGang/MapLegacy/web"
 )
@@ -49,15 +50,15 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 	rows, err := db.Query(`
 		SELECT 
 			dn.*, 
-			GROUP_CONCAT(a.nama_afiliasi) AS nama_afiliasi, 
-			GROUP_CONCAT(a.hubungan_afiliasi) AS hubungan_afiliasi, 
+			GROUP_CONCAT(a.nama_child) AS nama_child, 
+			GROUP_CONCAT(a.hubungan) AS hubungan, 
 			u.name 
 		FROM 
-			data_nasabah dn  
+			data_nasabah dn 
 		LEFT JOIN 
-			afiliasi a
-		ON 
-			dn.id = a.id_pengusaha  
+			afiliasi a 
+		ON  
+			dn.id = a.id_parent 
 		LEFT JOIN 
 			users u 
 		ON 
@@ -65,8 +66,9 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 		GROUP BY 
 			dn.id 
 		ORDER BY 
-			dn.nama_pengusaha;
+			dn.nama_pengusaha
 	`)
+
 	if err != nil {
 		return nil, err
 	}
@@ -115,10 +117,25 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 
 		// If the afiliasi is not null, add it to the nasabah's list of afiliasi
 		if afiliasi.Valid {
-			nasabahMap[nasabah.Id].AfiliasiList = append(nasabahMap[nasabah.Id].AfiliasiList, Afiliasi{
-				NamaAfiliasi:     afiliasi.String,
-				HubunganAfiliasi: hubunganAfiliasi.String,
-			})
+			afiliasiSlice := strings.Split(afiliasi.String, ",")
+			hubunganAfiliasiSlice := strings.Split(hubunganAfiliasi.String, ",")
+			for i := range afiliasiSlice {
+				// Check if the afiliasi is already in the nasabah's list
+				alreadyExists := false
+				for j := range nasabahMap[nasabah.Id].AfiliasiList {
+					if nasabahMap[nasabah.Id].AfiliasiList[j].NamaAfiliasi == afiliasiSlice[i] {
+						alreadyExists = true
+						break
+					}
+				}
+				// If the afiliasi is not already in the nasabah's list, add it
+				if !alreadyExists {
+					nasabahMap[nasabah.Id].AfiliasiList = append(nasabahMap[nasabah.Id].AfiliasiList, Afiliasi{
+						NamaAfiliasi:     afiliasiSlice[i],
+						HubunganAfiliasi: hubunganAfiliasiSlice[i],
+					})
+				}
+			}
 		}
 	}
 
