@@ -3,6 +3,7 @@ package v1
 import (
 	"database/sql"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/BNIGang/MapLegacy/web"
@@ -66,14 +67,13 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 		GROUP BY 
 			dn.id 
 		ORDER BY 
-			dn.nama_pengusaha
+			dn.nama_pengusaha ASC
 	`)
 
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	// nasabahMap := make(map[string]*Nasabah)
 
 	for rows.Next() {
 		var nasabah Nasabah
@@ -148,6 +148,10 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 	for _, nasabah := range nasabahMap {
 		nasabahs = append(nasabahs, *nasabah)
 	}
+
+	sort.Slice(nasabahs, func(i, j int) bool {
+		return nasabahs[i].Nama_pengusaha < nasabahs[j].Nama_pengusaha
+	})
 
 	return nasabahs, nil
 }
