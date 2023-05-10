@@ -42,6 +42,8 @@ type Afiliasi struct {
 var nasabahMap = make(map[string]*Nasabah)
 
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
+	nasabahMap = make(map[string]*Nasabah)
+
 	db, err := web.Connect()
 	if err != nil {
 		return nil, err
