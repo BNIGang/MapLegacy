@@ -83,6 +83,7 @@
 
             <td>
                 <table>
+                    {{ if .AfiliasiList }}
                     <th>Nama Afiliasi</th>
                     <th>Hubungan Afiliasi</th>
                     {{range .AfiliasiList}}
@@ -90,6 +91,7 @@
                             <td>{{.NamaAfiliasi}}</td>
                             <td>{{.HubunganAfiliasi}}</td>
                         </tr>
+                    {{end}}
                     {{end}}
                 </table>
             </td>

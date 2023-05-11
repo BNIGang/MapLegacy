@@ -1,2 +1,236 @@
-<h1>Map Legacy :D</h1>
+<style>
+    #viewport {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background-color: blue;
+    }
 
+    #container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: grab;
+        background-color: green; /* Add your desired background color here */
+    }
+
+    .frame {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        margin-right: 20px;
+        display: inline-block;
+        text-align: center;
+    }
+
+    #connector {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: top center;
+        z-index: -1;
+    }
+
+    #line {
+        stroke: #ccc;
+        stroke-width: 2px;
+    }
+
+</style>
+
+<h1>Map Legacy :3</h1>
+
+<div id="viewport">
+    <div id="container">
+        <div id="frame1" class="frame">
+            <!-- Individual Data Goes Here -->
+            <h2>Name: Lmao!</h2>
+            <p>Age: 30</p>
+            <p>Occupation: Engineer</p>
+        </div>
+        <div id="frame2" class="frame">
+            <!-- Individual Data Goes Here -->
+            <h2>Name: Lmao Jr. !</h2>
+            <p>Age: 25</p>
+            <p>Occupation: Designer</p>
+        </div>
+        <svg id="connector">
+            <line id="line" x1="0" y1="0" x2="0" y2="0"></line>
+        </svg>
+    </div>
+</div>
+
+<script>
+    function connectFrames(frameA, frameB, container) {
+        const containerRect = container.getBoundingClientRect();
+        const frameARect = frameA.getBoundingClientRect();
+        const frameBRect = frameB.getBoundingClientRect();
+
+        const aCenterX = frameARect.left + frameARect.width / 2;
+        const aCenterY = frameARect.top + frameARect.height / 2;
+        const bCenterX = frameBRect.left + frameBRect.width / 2;
+        const bCenterY = frameBRect.top + frameBRect.height / 2;
+
+        const dx = bCenterX - aCenterX;
+        const dy = bCenterY - aCenterY;
+
+        const frameAPoints = [
+            { x: aCenterX, y: frameARect.top },
+            { x: aCenterX, y: frameARect.bottom },
+            { x: frameARect.left, y: aCenterY },
+            { x: frameARect.right, y: aCenterY }
+        ];
+
+        const frameBPoints = [
+            { x: bCenterX, y: frameBRect.top },
+            { x: bCenterX, y: frameBRect.bottom },
+            { x: frameBRect.left, y: bCenterY },
+            { x: frameBRect.right, y: bCenterY }
+        ];
+
+        let minDistance = Infinity;
+        let start = null;
+        let end = null;
+
+        // Find the closest points between frameA and frameB
+        for (const pointA of frameAPoints) {
+            for (const pointB of frameBPoints) {
+                const distance = Math.sqrt((pointB.x - pointA.x) ** 2 + (pointB.y - pointA.y) ** 2);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    start = pointA;
+                    end = pointB;
+                }
+            }
+        }
+
+        // Update connector position and rotation
+        connector.style.transform = `translate(${start.x}px, ${start.y}px)`;
+        connector.style.width = `${minDistance}px`;
+
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        line.setAttribute("x1", "0");
+        line.setAttribute("y1", "0");
+        line.setAttribute("x2", `${minDistance}`);
+        line.setAttribute("y2", "0");
+        line.setAttribute("transform", `rotate(${angle} 0 0)`);
+    }
+
+    // Get references to frame elements
+    const frame1 = document.getElementById("frame1");
+    const frame2 = document.getElementById("frame2");
+    const container = document.getElementById("container");
+
+    // Call connectFrames with frame1 and frame2
+    connectFrames(frame1, frame2, container);
+
+    // Variables to track zoom level and container position
+    let zoomLevel = 1;
+    let containerX = 0;
+    let containerY = 0;
+    let isDragging = false;
+    let prevX = 0;
+    let prevY = 0;
+
+    const viewport = document.getElementById("viewport");
+
+    // Zoom in function
+    function zoomIn() {
+        zoomLevel += 0.1;
+        container.style.transform = `scale(${zoomLevel})`;
+        container.classList.add("zoom-out");
+    }
+
+    // Zoom out function
+    function zoomOut() {
+        zoomLevel -= 0.1;
+        container.style.transform = `scale(${zoomLevel})`;
+        container.classList.add("zoom-in");
+    }
+
+    // Reset zoom function
+    function resetZoom() {
+        zoomLevel = 1;
+        container.style.transform = "scale(1)";
+        container.classList.remove("zoom-in", "zoom-out");
+    }
+
+    // Mouse event handlers
+    viewport.addEventListener("mousedown", startDrag);
+    viewport.addEventListener("mousemove", dragContainer);
+    viewport.addEventListener("mouseup", endDrag);
+    viewport.addEventListener("mouseleave", endDrag);
+
+    // Touch event handlers
+    viewport.addEventListener("touchstart", startDrag, { passive: false });
+    viewport.addEventListener("touchmove", dragContainer, { passive: false });
+    viewport.addEventListener("touchend", endDrag);
+    viewport.addEventListener("touchcancel", endDrag);
+
+    // Start dragging
+    function startDrag(event) {
+        event.preventDefault();
+        isDragging = true;
+
+        if (event.type === "mousedown") {
+            prevX = event.clientX;
+            prevY = event.clientY;
+        } else if (event.type === "touchstart") {
+            prevX = event.touches[0].clientX;
+            prevY = event.touches[0].clientY;
+        }
+
+        container.style.cursor = "grabbing";
+    }
+
+    // Drag container
+    function dragContainer(event) {
+        if (!isDragging) return;
+        event.preventDefault();
+
+        let newX, newY;
+
+        if (event.type === "mousemove") {
+            newX = event.clientX;
+            newY = event.clientY;
+        } else if (event.type === "touchmove") {
+            newX = event.touches[0].clientX;
+            newY = event.touches[0].clientY;
+        }
+
+        const deltaX = newX - prevX;
+        const deltaY = newY - prevY;
+
+        containerX += deltaX;
+        containerY += deltaY;
+
+        container.style.transform = `scale(${zoomLevel}) translate(${containerX}px, ${containerY}px)`;
+
+        prevX = newX;
+        prevY = newY;
+    }
+
+    // End dragging
+    function endDrag() {
+        isDragging = false;
+        container.style.cursor = "grab";
+    }
+
+    // Double-click to reset zoom
+    viewport.addEventListener("dblclick", function (event) {
+        resetZoom();
+    });
+
+    // Add event listener for wheel event (zoom in/out)
+    viewport.addEventListener("wheel", function (event) {
+        event.preventDefault();
+
+        if (event.deltaY < 0) {
+            zoomIn();
+        } else {
+            zoomOut();
+        }
+    });
+</script>

@@ -97,37 +97,74 @@ func UpdateNasabahData(c *fiber.Ctx) error {
 		return err
 	}
 
-	// This part to add data afiliasi to afiliasi table
-	stmt2, err2 := db.Prepare(`
-			UPDATE 
-				afiliasi 
-			SET
-				nama_child = ?,
-				hubungan = ?
-			WHERE 
-				nama_child = ?
-		`)
-	if err2 != nil {
-		return err
-	}
-	defer stmt2.Close()
-
 	// Retrieve the array values
 	afiliasiValues := form.Value["afiliasi[]"]
 	hubunganAfiliasiValues := form.Value["hubungan_afiliasi[]"]
 	originalAfiliasiValues := form.Value["original_afiliasi[]"]
 
-	// Iterate over the array values and process them accordingly
-	for i := 0; i < len(afiliasiValues); i++ {
-		afiliasi := afiliasiValues[i]
-		hubunganAfiliasi := hubunganAfiliasiValues[i]
-		originalAfiliasi := originalAfiliasiValues[i]
-
-		// Execute the SQL statement with the current values
-		_, err := stmt2.Exec(afiliasi, hubunganAfiliasi, originalAfiliasi)
-		if err != nil {
+	// if afiliasi is empty from the start
+	if len(originalAfiliasiValues) > 0 {
+		// This part to add data afiliasi to afiliasi table
+		stmt2, err2 := db.Prepare(`
+				UPDATE 
+					afiliasi 
+				SET
+					nama_child = ?,
+					hubungan = ?
+				WHERE 
+					nama_child = ?
+			`)
+		if err2 != nil {
 			return err
 		}
+		defer stmt2.Close()
+
+		// Iterate over the array values and process them accordingly
+		for i := 0; i < len(afiliasiValues); i++ {
+			afiliasi := afiliasiValues[i]
+			hubunganAfiliasi := hubunganAfiliasiValues[i]
+			originalAfiliasi := originalAfiliasiValues[i]
+
+			// Execute the SQL statement with the current values
+			_, err := stmt2.Exec(afiliasi, hubunganAfiliasi, originalAfiliasi)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		// This part to add data afiliasi to afiliasi table
+		stmt2, err2 := db.Prepare(`
+				INSERT INTO afiliasi 
+				(
+					id_child,
+					id_parent,
+					nama_child,
+					hubungan
+				) VALUES 
+				(
+					UUID(),
+					(SELECT id FROM data_nasabah WHERE nama_pengusaha = ?),
+					?,
+					?
+				)
+				`)
+		if err2 != nil {
+			return err
+		}
+		defer stmt2.Close()
+
+		// Iterate over the array values and process them accordingly
+		for i := 0; i < len(afiliasiValues); i++ {
+			afiliasi := afiliasiValues[i]
+			hubunganAfiliasi := hubunganAfiliasiValues[i]
+
+			// Execute the SQL statement with the current values
+			_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return c.Redirect("/home")
