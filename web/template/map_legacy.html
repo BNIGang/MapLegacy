@@ -17,10 +17,10 @@
     }
 
     .frame {
-        border: 1px solid #ccc;
+        border: 3px solid white;
         padding: 10px;
         margin: 10px;
-        margin-right: 20px;
+        /* margin-right: 20px; */
         display: inline-block;
         text-align: center;
     }
@@ -68,54 +68,26 @@
         const frameARect = frameA.getBoundingClientRect();
         const frameBRect = frameB.getBoundingClientRect();
 
-        const aCenterX = frameARect.left + frameARect.width / 2;
-        const aCenterY = frameARect.top + frameARect.height / 2;
-        const bCenterX = frameBRect.left + frameBRect.width / 2;
-        const bCenterY = frameBRect.top + frameBRect.height / 2;
+        const aCenterX = frameARect.left + frameARect.width / 2 - containerRect.left;
+        const aCenterY = frameARect.top + frameARect.height / 2 - containerRect.top;
+        const bCenterX = frameBRect.left + frameBRect.width / 2 - containerRect.left;
+        const bCenterY = frameBRect.top + frameBRect.height / 2 - containerRect.top;
 
         const dx = bCenterX - aCenterX;
         const dy = bCenterY - aCenterY;
 
-        const frameAPoints = [
-            { x: aCenterX, y: frameARect.top },
-            { x: aCenterX, y: frameARect.bottom },
-            { x: frameARect.left, y: aCenterY },
-            { x: frameARect.right, y: aCenterY }
-        ];
-
-        const frameBPoints = [
-            { x: bCenterX, y: frameBRect.top },
-            { x: bCenterX, y: frameBRect.bottom },
-            { x: frameBRect.left, y: bCenterY },
-            { x: frameBRect.right, y: bCenterY }
-        ];
-
-        let minDistance = Infinity;
-        let start = null;
-        let end = null;
-
-        // Find the closest points between frameA and frameB
-        for (const pointA of frameAPoints) {
-            for (const pointB of frameBPoints) {
-                const distance = Math.sqrt((pointB.x - pointA.x) ** 2 + (pointB.y - pointA.y) ** 2);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    start = pointA;
-                    end = pointB;
-                }
-            }
-        }
-
-        // Update connector position and rotation
-        connector.style.transform = `translate(${start.x}px, ${start.y}px)`;
-        connector.style.width = `${minDistance}px`;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
         const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-        line.setAttribute("x1", "0");
-        line.setAttribute("y1", "0");
-        line.setAttribute("x2", `${minDistance}`);
-        line.setAttribute("y2", "0");
+        connector.style.transform = `translate(${aCenterX}px, ${aCenterY}px)`;
+        connector.style.width = `${distance}px`;
+        line.setAttribute("x2", `${distance}`);
         line.setAttribute("transform", `rotate(${angle} 0 0)`);
+
+        // Adjust the height of the line based on the container's height
+        const containerHeight = containerRect.height;
+        const connectorHeight = Math.abs(aCenterY - bCenterY) - Math.max(frameARect.height, frameBRect.height) / 2 - containerHeight / 2;
+        line.style.strokeWidth = `${connectorHeight}px`;
     }
 
     // Get references to frame elements
