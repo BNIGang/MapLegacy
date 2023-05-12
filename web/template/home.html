@@ -1,3 +1,4 @@
+
 <style>
     /* Style each row of the table */
     table tr {
@@ -17,23 +18,32 @@
     table tr:hover {
     background-color: #ddd;
     }
+    button {
+        background-color: #035259;
+    }
 </style>
 
 <h1>Map Legacy</h1>
 
 <div class="below-header">
     <div class="button-container">
-        <button class="add-button" type="button" onclick="window.location.href='/create'">Add Data</button>
+        <button class="btn btm-sm btn-primary mb-3" type="button" onclick="window.location.href='/create'"><i class="fas fa-plus fa-sm"></i> Tambah Data</button>
     </div>
 
 
-    <div class="search-container">
-        <input type="text" placeholder="Search...">
-        <button type="button">Search</button>
-    </div>
+    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-15 my-2 my-md-0 mw-100 navbar-search" style="margin-left: 1500px;">
+        <div class="input-group">
+          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button">
+              <i class="fas fa-search fa-sm"></i>
+            </button>
+          </div>
+        </div>
+      </form>
 </div>
 
-<table>
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Nama Pengusaha</th>

@@ -8,7 +8,7 @@ import (
 )
 
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "derpen:@tcp(127.0.0.1:3306)/bni_map_legacy")
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/bni_map_legacy")
 
 	if err != nil {
 		return nil, err

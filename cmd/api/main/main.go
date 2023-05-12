@@ -20,6 +20,8 @@ func main() {
 		Views: engine,
 	})
 
+	app.Static("/web/", "./web/")
+
 	// Login page
 	app.Get("/", func(c *fiber.Ctx) error {
 		cookie := c.Cookies("token")
