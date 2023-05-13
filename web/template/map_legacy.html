@@ -4,99 +4,114 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        background-color: blue;
     }
 
     #container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        cursor: grab;
-        background-color: green; /* Add your desired background color here */
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: scale(1) translate(-22px, -50px);
     }
 
     .frame {
-        border: 3px solid white;
+        position: absolute;
+        border: 3px solid black;
         padding: 10px;
-        margin: 10px;
-        /* margin-right: 20px; */
-        display: inline-block;
         text-align: center;
     }
 
-    #connector {
-        position: absolute;
+    .frame:nth-child(1) {
         top: 50%;
-        left: 50%;
-        transform-origin: top center;
-        z-index: -1;
+        left: 20%;
+        transform: translate(-20%, -50%);
+    }
+
+    .frame:nth-child(2) {
+        top: 50%;
+        left: 80%;
+        transform: translate(-80%, -50%);
     }
 
     #line {
-        stroke: #ccc;
-        stroke-width: 2px;
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 2px;
+        background-color: #ccc;
     }
-
 </style>
 
-<h1>Map Legacy :3</h1>
+<h1>Map Legacy</h1>
 
 <div id="viewport">
     <div id="container">
         <div id="frame1" class="frame">
             <!-- Individual Data Goes Here -->
-            <h2>Name: Lmao!</h2>
+            <h2>Name: L. Mao</h2>
             <p>Age: 30</p>
             <p>Occupation: Engineer</p>
         </div>
         <div id="frame2" class="frame">
             <!-- Individual Data Goes Here -->
-            <h2>Name: Lmao Jr. !</h2>
+            <h2>Name: Mr. Dr. Prof. L. Mao Jr. !</h2>
             <p>Age: 25</p>
             <p>Occupation: Designer</p>
         </div>
-        <svg id="connector">
-            <line id="line" x1="0" y1="0" x2="0" y2="0"></line>
-        </svg>
+        <div id="line"></div>
     </div>
 </div>
 
 <script>
-    function connectFrames(frameA, frameB, container) {
+    function connectFrames() {
+        const frame1 = document.getElementById("frame1");
+        const frame2 = document.getElementById("frame2");
+        const line = document.getElementById("line");
+        const container = document.getElementById("container");
+
+        const frame1Rect = frame1.getBoundingClientRect();
+        const frame2Rect = frame2.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        const frameARect = frameA.getBoundingClientRect();
-        const frameBRect = frameB.getBoundingClientRect();
 
-        const aCenterX = frameARect.left + frameARect.width / 2 - containerRect.left;
-        const aCenterY = frameARect.top + frameARect.height / 2 - containerRect.top;
-        const bCenterX = frameBRect.left + frameBRect.width / 2 - containerRect.left;
-        const bCenterY = frameBRect.top + frameBRect.height / 2 - containerRect.top;
+        const frame1Points = [
+            { x: frame1Rect.left - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
+            { x: frame1Rect.right - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
+            { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.top - containerRect.top },
+            { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.bottom - containerRect.top }
+        ];
 
-        const dx = bCenterX - aCenterX;
-        const dy = bCenterY - aCenterY;
+        const frame2Points = [
+            { x: frame2Rect.left - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
+            { x: frame2Rect.right - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
+            { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.top - containerRect.top },
+            { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.bottom - containerRect.top }
+        ];
 
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        let shortestDistance = Infinity;
+        let closestPoints = { frame1: null, frame2: null };
 
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-        connector.style.transform = `translate(${aCenterX}px, ${aCenterY}px)`;
-        connector.style.width = `${distance}px`;
-        line.setAttribute("x2", `${distance}`);
-        line.setAttribute("transform", `rotate(${angle} 0 0)`);
+        for (let i = 0; i < frame1Points.length; i++) {
+            for (let j = 0; j < frame2Points.length; j++) {
+                const distance = calculateDistance(frame1Points[i].x, frame1Points[i].y, frame2Points[j].x, frame2Points[j].y);
+                if (distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closestPoints.frame1 = frame1Points[i];
+                    closestPoints.frame2 = frame2Points[j];
+                }
+            }
+        }
 
-        // Adjust the height of the line based on the container's height
-        const containerHeight = containerRect.height;
-        const connectorHeight = Math.abs(aCenterY - bCenterY) - Math.max(frameARect.height, frameBRect.height) / 2 - containerHeight / 2;
-        line.style.strokeWidth = `${connectorHeight}px`;
+        const angle = Math.atan2(closestPoints.frame2.y - closestPoints.frame1.y, closestPoints.frame2.x - closestPoints.frame1.x);
+        const distance = calculateDistance(closestPoints.frame2.x, closestPoints.frame2.y, closestPoints.frame1.x, closestPoints.frame1.y);
+
+        line.style.transform = `translate(${closestPoints.frame1.x}px, ${closestPoints.frame1.y}px) rotate(${angle}rad)`;
+        line.style.width = `${distance}px`;
     }
 
-    // Get references to frame elements
-    const frame1 = document.getElementById("frame1");
-    const frame2 = document.getElementById("frame2");
-    const container = document.getElementById("container");
+    function calculateDistance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
 
-    // Call connectFrames with frame1 and frame2
-    connectFrames(frame1, frame2, container);
+    connectFrames();
 
     // Variables to track zoom level and container position
     let zoomLevel = 1;

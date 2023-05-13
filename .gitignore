@@ -1,0 +1,7 @@
+# Generated Build Files
+MapLegacy
+MapLegacy.exe
+*.exe
+
+# Database Connector
+web/database.go

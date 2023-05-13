@@ -15,7 +15,9 @@ var secret []byte = login.Secret
 
 func main() {
 
-	fastergoding.Run("-o", "./MapLegacy", "./cmd/api/main")
+	//TODO
+	//Probably Remove this Later
+	fastergoding.Run("./cmd/api/main")
 
 	engine := html.New("./web/template", ".html")
 
