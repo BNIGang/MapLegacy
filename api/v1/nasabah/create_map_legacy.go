@@ -1,22 +1,41 @@
 package v1
 
-import "fmt"
+type Node struct {
+	Name         string  `json:"nama"`
+	Afiliasi     string  `json:"afiliasi"`
+	AfiliasiList []*Node `json:"afiliasi_list,omitempty"`
+}
 
-func MapLegacyHandler(nasabah_id string) {
+func GenerateHierarchy(data *Nasabah) *Node {
+	root := &Node{
+		Name:     data.Nama_pengusaha,
+		Afiliasi: "", // Assuming the root node has no afiliasi
+	}
 
+	// Recursive function to build the hierarchy
+	var buildHierarchy func(parentNode *Node, afiliasiList []Afiliasi)
+	buildHierarchy = func(parentNode *Node, afiliasiList []Afiliasi) {
+		for _, afiliasi := range afiliasiList {
+			node := &Node{
+				Name:     afiliasi.NamaAfiliasi,
+				Afiliasi: afiliasi.HubunganAfiliasi,
+			}
+			parentNode.AfiliasiList = append(parentNode.AfiliasiList, node)
+			buildHierarchy(node, afiliasi.AfiliasiList)
+		}
+	}
+
+	buildHierarchy(root, data.AfiliasiList)
+	return root
+}
+
+func MapLegacyHandler(nasabah_id string) ([]Afiliasi, error) {
 	data_nasabah, err := GetNasabahByID(nasabah_id)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	for _, afiliasi := range data_nasabah.AfiliasiList {
-		namaAfiliasi := afiliasi.NamaAfiliasi
-		hubunganAfiliasi := afiliasi.HubunganAfiliasi
-
-		// do something i dont know Lmao!
-		fmt.Println(namaAfiliasi)
-		fmt.Println(hubunganAfiliasi)
-	}
+	return data_nasabah.AfiliasiList, nil
 }
 
 // {

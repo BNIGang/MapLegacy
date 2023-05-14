@@ -37,6 +37,7 @@ type Nasabah struct {
 type Afiliasi struct {
 	NamaAfiliasi     string
 	HubunganAfiliasi string
+	AfiliasiList     []Afiliasi
 }
 
 var nasabahMap = make(map[string]*Nasabah)

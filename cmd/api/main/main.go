@@ -115,17 +115,27 @@ func main() {
 	})
 
 	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		// nasabah_id := c.Params("nasabah_id")
-		// map_legacy_data := v1.MapLegacyHandler(nasabah_id)
+		nasabah_id := c.Params("nasabah_id")
+		afiliasiList, err := v1.MapLegacyHandler(nasabah_id)
+
+		if err != nil {
+			// Handle the error appropriately
+			return err
+		}
+
 		if user == nil || username == "" {
 			return c.Redirect("/home")
 		}
+
+		// Generate the hierarchy based on the afiliasiList
+		root := v1.GenerateHierarchy(&v1.Nasabah{AfiliasiList: afiliasiList})
 
 		return c.Render("template", fiber.Map{
 			"Name":      username,
 			"Wilayah":   user.Wilayah_ID,
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
+			"data":      root,
 			"content":   "map_legacy",
 		})
 	})
