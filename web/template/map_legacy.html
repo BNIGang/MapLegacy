@@ -1,12 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+<style>
+    #viewport {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: scale(1) translate(-22px, -50px);
+    }
+
+    .frame {
+        position: absolute;
+        border: 3px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .frame:nth-child(1) {
+        top: 50%;
+        left: 20%;
+        transform: translate(-20%, -50%);
+    }
+
+    .frame:nth-child(2) {
+        top: 50%;
+        left: 80%;
+        transform: translate(-80%, -50%);
+    }
+
+    #line {
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 2px;
+        background-color: #ccc;
+    }
+</style>
+
+<h1>Map Legacy</h1>
+
+<div id="viewport">
+    <div id="container">
+        {{ range .data}}
+        <div class="frame">
+            <h2>Name: {{ .Name }}</h2>
+            <p>Afiliasi: {{ .Afiliasi }}</p>
+            {{ if .AfiliasiList }}
+            <ul>
+                {{ range .AfiliasiList }}
+                <li>
+                    <h3>{{ .Name }}</h3>
+                    <p>Afiliasi: {{ .Afiliasi }}</p>
+                    {{ if .AfiliasiList }}
+                    <ul>
+                        {{ range .AfiliasiList }}
+                        <li>
+                            <h4>{{ .Name }}</h4>
+                            <p>Afiliasi: {{ .Afiliasi }}</p>
+                            <!-- Render further nested levels here if needed -->
+                        </li>
+                        {{ end }}
+                    </ul>
+                    {{ end }}
+                </li>
+                {{ end }}
+            </ul>
+            {{ end }}
+        </div>
+        {{end}}
+        <div id="line"></div>
+    </div>
+</div>
+
+<script>
+    // function connectFrames() {
+    //     const frame1 = document.getElementById("frame1");
+    //     const frame2 = document.getElementById("frame2");
+    //     const line = document.getElementById("line");
+    //     const container = document.getElementById("container");
+
+    //     const frame1Rect = frame1.getBoundingClientRect();
+    //     const frame2Rect = frame2.getBoundingClientRect();
+    //     const containerRect = container.getBoundingClientRect();
+
+    //     const frame1Points = [
+    //         { x: frame1Rect.left - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
+    //         { x: frame1Rect.right - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
+    //         { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.top - containerRect.top },
+    //         { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.bottom - containerRect.top }
+    //     ];
+
+    //     const frame2Points = [
+    //         { x: frame2Rect.left - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
+    //         { x: frame2Rect.right - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
+    //         { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.top - containerRect.top },
+    //         { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.bottom - containerRect.top }
+    //     ];
+
+    //     let shortestDistance = Infinity;
+    //     let closestPoints = { frame1: null, frame2: null };
+
+    //     for (let i = 0; i < frame1Points.length; i++) {
+    //         for (let j = 0; j < frame2Points.length; j++) {
+    //             const distance = calculateDistance(frame1Points[i].x, frame1Points[i].y, frame2Points[j].x, frame2Points[j].y);
+    //             if (distance < shortestDistance) {
+    //                 shortestDistance = distance;
+    //                 closestPoints.frame1 = frame1Points[i];
+    //                 closestPoints.frame2 = frame2Points[j];
+    //             }
+    //         }
+    //     }
+
+    //     const angle = Math.atan2(closestPoints.frame2.y - closestPoints.frame1.y, closestPoints.frame2.x - closestPoints.frame1.x);
+    //     const distance = calculateDistance(closestPoints.frame2.x, closestPoints.frame2.y, closestPoints.frame1.x, closestPoints.frame1.y);
+
+    //     line.style.transform = `translate(${closestPoints.frame1.x}px, ${closestPoints.frame1.y}px) rotate(${angle}rad)`;
+    //     line.style.width = `${distance}px`;
+    // }
+
+    // function calculateDistance(x1, y1, x2, y2) {
+    //     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    // }
+
+    // connectFrames();
+
+    // Variables to track zoom level and container position
+    let zoomLevel = 1;
+    let containerX = 0;
+    let containerY = 0;
+    let isDragging = false;
+    let prevX = 0;
+    let prevY = 0;
+
+    const viewport = document.getElementById("viewport");
+
+    // Zoom in function
+    function zoomIn() {
+        zoomLevel += 0.1;
+        container.style.transform = `scale(${zoomLevel})`;
+        container.classList.add("zoom-out");
+    }
+
+    // Zoom out function
+    function zoomOut() {
+        zoomLevel -= 0.1;
+        container.style.transform = `scale(${zoomLevel})`;
+        container.classList.add("zoom-in");
+    }
+
+    // Reset zoom function
+    function resetZoom() {
+        zoomLevel = 1;
+        container.style.transform = "scale(1)";
+        container.classList.remove("zoom-in", "zoom-out");
+    }
+
+    // Mouse event handlers
+    viewport.addEventListener("mousedown", startDrag);
+    viewport.addEventListener("mousemove", dragContainer);
+    viewport.addEventListener("mouseup", endDrag);
+    viewport.addEventListener("mouseleave", endDrag);
+
+    // Touch event handlers
+    viewport.addEventListener("touchstart", startDrag, { passive: false });
+    viewport.addEventListener("touchmove", dragContainer, { passive: false });
+    viewport.addEventListener("touchend", endDrag);
+    viewport.addEventListener("touchcancel", endDrag);
+
+    // Start dragging
+    function startDrag(event) {
+        event.preventDefault();
+        isDragging = true;
+
+        if (event.type === "mousedown") {
+            prevX = event.clientX;
+            prevY = event.clientY;
+        } else if (event.type === "touchstart") {
+            prevX = event.touches[0].clientX;
+            prevY = event.touches[0].clientY;
+        }
+
+        container.style.cursor = "grabbing";
+    }
+
+    // Drag container
+    function dragContainer(event) {
+        if (!isDragging) return;
+        event.preventDefault();
+
+        let newX, newY;
+
+        if (event.type === "mousemove") {
+            newX = event.clientX;
+            newY = event.clientY;
+        } else if (event.type === "touchmove") {
+            newX = event.touches[0].clientX;
+            newY = event.touches[0].clientY;
+        }
+
+        const deltaX = newX - prevX;
+        const deltaY = newY - prevY;
+
+        containerX += deltaX;
+        containerY += deltaY;
+
+        container.style.transform = `scale(${zoomLevel}) translate(${containerX}px, ${containerY}px)`;
+
+        prevX = newX;
+        prevY = newY;
+    }
+
+    // End dragging
+    function endDrag() {
+        isDragging = false;
+        container.style.cursor = "grab";
+    }
+
+    // Double-click to reset zoom
+    viewport.addEventListener("dblclick", function (event) {
+        resetZoom();
+    });
+
+    // Add event listener for wheel event (zoom in/out)
+    viewport.addEventListener("wheel", function (event) {
+        event.preventDefault();
+
+        if (event.deltaY < 0) {
+            zoomIn();
+        } else {
+            zoomOut();
+        }
+    });
+</script>

@@ -6,6 +6,9 @@ import (
 	"github.com/gofiber/template/html"
 )
 
+// TODO, read from file preferably
+var Secret []byte = []byte("super-secret-key")
+
 func Handler(engine *html.Engine) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		username := c.FormValue("username")
@@ -17,7 +20,7 @@ func Handler(engine *html.Engine) fiber.Handler {
 		}
 
 		if validated {
-			token, err := web.GenerateJWT(username, []byte("super-secret-key"))
+			token, err := web.GenerateJWT(username, Secret)
 			if err != nil {
 				return c.Render("login", fiber.Map{"Error": err})
 			}

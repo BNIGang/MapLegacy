@@ -13,6 +13,7 @@ create the users table
 */
 CREATE TABLE IF NOT EXISTS users (
   user_id CHAR(36) PRIMARY KEY,
+  name CHAR(36) NOT NULL,
   username VARCHAR(50) NOT NULL,
   password VARCHAR(255) NOT NULL
 );
@@ -21,14 +22,14 @@ CREATE TABLE IF NOT EXISTS users (
 insert dummy data to users table
 ALL encrpyed pass here is simply "pass"
 */
-INSERT INTO users (user_id, username, password)
+INSERT INTO users (user_id, name, username, password)
 VALUES 
-  (UUID(), 'user1', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
-  (UUID(), 'user2', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
-  (UUID(), 'user3', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
-  (UUID(), 'user4', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
-  (UUID(), 'user5', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
-  (UUID(), 'user6', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy');
+  (UUID(), "Muhammad Abdul", 'user1', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
+  (UUID(), "Soleha", 'user2', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
+  (UUID(), "Solehuddin", 'user3', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
+  (UUID(), "Miss. Mas", 'user4', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
+  (UUID(), "Keri Seflen", 'user5', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy'),
+  (UUID(), "Kik A", 'user6', '$2a$10$.vnkTrMayTCzju1JXniwFe6vPkaKD/yQxatrwpW/DZqJRPY4/srPy');
 
 /* 
 create the cabang table
@@ -577,21 +578,35 @@ CREATE TABLE IF NOT EXISTS data_nasabah (
   mitra_bank_dominan VARCHAR(50) NOT NULL,
   aum_di_bank_lain DECIMAL(18,2) NOT NULL,
   kredit_di_bank_lain DECIMAL(18,2) NOT NULL,
-  afiliasi VARCHAR(50) NOT NULL,
-  hubungan_afiliasi VARCHAR(50) NOT NULL,
   added_by CHAR(36) NOT NULL
 );
 
 /* 
 Create dummy data 
 */
-INSERT INTO data_nasabah (id, nama_pengusaha, nomor_kontak, alamat_tempat_tinggal, bidang_usaha, produk_usaha, detail_bidang_usaha, cabang, kabupaten_kota, kcu_kcp_kk, nasabah, no_CIF, aum_di_bni, debitur, kredit_di_bni, produk_bni_yang_dimiliki, mitra_bank_dominan, aum_di_bank_lain, kredit_di_bank_lain, afiliasi, hubungan_afiliasi, added_by)
+INSERT INTO data_nasabah (id, nama_pengusaha, nomor_kontak, alamat_tempat_tinggal, bidang_usaha, produk_usaha, detail_bidang_usaha, cabang, kabupaten_kota, kcu_kcp_kk, nasabah, no_CIF, aum_di_bni, debitur, kredit_di_bni, produk_bni_yang_dimiliki, mitra_bank_dominan, aum_di_bank_lain, kredit_di_bank_lain, added_by)
 VALUES 
-  (UUID(), 'Khidr Karawita', '081234567890', 'Jl. Contoh No. 1', 'Perkebunan & Pabrik', 'Sawit', 'Menanam Sawit :D', 'Palembang', 'Kota Palembang', 'KCU PALEMBANG', 'Nasabah', 12345, 100000000, 'Debitur', 0, 'M-Banking', 'Mandiri', 50000000, 10000000, 'Muhammad Sumbul', 'Anak', (SELECT user_id FROM users WHERE username='user1')),
-  (UUID(), 'Yaqub Qomarudin Dibizah', '081234567891', 'Jl. Contoh No. 2', 'Perhotelan', 'Novotel', 'Pemilik Novotel', 'Musi Palembang', 'Kabupaten Ogan Ilir', 'KCU MUSI PALEMBANG', 'Nasabah', 12346, 200000000, 'Debitur', 0, 'Giro', 'BCA', 10000000, 5000000, '', '', (SELECT user_id FROM users WHERE username='user5')),
-  (UUID(), 'Khalid Kashmiri', '081234567892', 'Jl. Contoh No. 3', 'Pertambangan', 'Batubara', 'Saya menambang batubara', 'Jambi', 'Kota Jambi', 'KCU JAMBI', 'Non Nasabah', 12347, 300000000, 'Non Debitur', 0, 'Deposito', 'BTN', 20000000, 10000000, '', '', (SELECT user_id FROM users WHERE username='user5')),
-  (UUID(), 'Ismail Ahmad Khan Kabawi', '081234567893', 'Jl. Contoh No. 4', 'Prinsipal/Distributor Bangunan', 'Keramik', 'Penjual Keramik Nomor 1', 'Baturaja', 'Kabupaten Ogan Komering Ulu Selatan', 'KCU BATURAJA', 'Non Nasabah', 12348, 400000000, 'Debitur', 0, 'Kredit BB', 'Danamon', 30000000, 20000000, 'Joseph Joestar', 'Adik', (SELECT user_id FROM users WHERE username='user3')),
-  (UUID(), 'Utsman Abdul Jalil Shisha', '081234567894', 'Jl. Contoh No. 5', 'Perkebunan', 'Kopi', 'Pemilik Pt Kopi Indonesia', 'Bengkulu', 'Kota Bengkulu', 'KCU BENGKULU', 'Nasabah', 12349, 500000000, 'Non Debitur', 0, 'Tabungan', 'BSI', 40000000, 30000000, '', '', (SELECT user_id FROM users WHERE username='user3')),
-  (UUID(), 'Dio Brando', '081234567890', 'Jl. Contoh No. 3', 'Jasa-Jasa Dunia Usaha', 'Rumah Sakit', 'Pemilik Rumah Sakit Nusantara', 'Tanjungkarang', 'Kota Bandar Lampung', 'KCU TANJUNGKARANG', 'Nasabah', 12347, 500000000, 'Non Debitur', 0, 'Giro', 'Maybank', 40000000, 30000000, '', '', (SELECT user_id FROM users WHERE username='user2')),
-  (UUID(), 'Jotaro Kujo', '081234567896', 'Jl. Contoh No. 5', 'Konstruksi', 'Developer', 'Pengdevelop handal', 'Lubuklinggau', 'Kota Pagar Alam', 'KCU LUBUKLINGGAU', 'Non Debitur', 12349, 600000000, 'Tidak', 0, 'Kredit BB', 'Mega', 40000000, 10000000, '', '', (SELECT user_id FROM users WHERE username='user2')),
-  (UUID(), 'Giorno Giovanna', '081234567899', 'Jl. Contoh No. 6', 'Perdagangan Besar Lainnya', 'Farmasi', 'Pemilik PT Farmasi Sriwijaya', 'Palembang', 'Kota Palembang', 'KCU PALEMBANG', 'Debitur', 12350, 700000000, 'Tidak', 0, 'Tapenas', 'Panin', 20000000, 15000000, '', '', (SELECT user_id FROM users WHERE username='user4'));
+  (UUID(), 'Khidr Karawita', '081234567890', 'Jl. Contoh No. 1', 'Perkebunan & Pabrik', 'Sawit', 'Menanam Sawit :D', 'Palembang', 'Kota Palembang', 'KCU PALEMBANG', 'Nasabah', 12345, 100000000, 'Debitur', 0, 'M-Banking', 'Mandiri', 50000000, 10000000, (SELECT user_id FROM users WHERE username='user1')),
+  (UUID(), 'Yaqub Qomarudin Dibizah', '081234567891', 'Jl. Contoh No. 2', 'Perhotelan', 'Novotel', 'Pemilik Novotel', 'Musi Palembang', 'Kabupaten Ogan Ilir', 'KCU MUSI PALEMBANG', 'Nasabah', 12346, 200000000, 'Debitur', 0, 'Giro', 'BCA', 10000000, 5000000, (SELECT user_id FROM users WHERE username='user5')),
+  (UUID(), 'Khalid Kashmiri', '081234567892', 'Jl. Contoh No. 3', 'Pertambangan', 'Batubara', 'Saya menambang batubara', 'Jambi', 'Kota Jambi', 'KCU JAMBI', 'Non Nasabah', 12347, 300000000, 'Non Debitur', 0, 'Deposito', 'BTN', 20000000, 10000000, (SELECT user_id FROM users WHERE username='user5')),
+  (UUID(), 'Ismail Ahmad Khan Kabawi', '081234567893', 'Jl. Contoh No. 4', 'Prinsipal/Distributor Bangunan', 'Keramik', 'Penjual Keramik Nomor 1', 'Baturaja', 'Kabupaten Ogan Komering Ulu Selatan', 'KCU BATURAJA', 'Non Nasabah', 12348, 400000000, 'Debitur', 0, 'Kredit BB', 'Danamon', 30000000, 20000000, (SELECT user_id FROM users WHERE username='user3')),
+  (UUID(), 'Utsman Abdul Jalil Shisha', '081234567894', 'Jl. Contoh No. 5', 'Perkebunan', 'Kopi', 'Pemilik Pt Kopi Indonesia', 'Bengkulu', 'Kota Bengkulu', 'KCU BENGKULU', 'Nasabah', 12349, 500000000, 'Non Debitur', 0, 'Tabungan', 'BSI', 40000000, 30000000, (SELECT user_id FROM users WHERE username='user3')),
+  (UUID(), 'Dio Brando', '081234567890', 'Jl. Contoh No. 3', 'Jasa-Jasa Dunia Usaha', 'Rumah Sakit', 'Pemilik Rumah Sakit Nusantara', 'Tanjungkarang', 'Kota Bandar Lampung', 'KCU TANJUNGKARANG', 'Nasabah', 12347, 500000000, 'Non Debitur', 0, 'Giro', 'Maybank', 40000000, 30000000, (SELECT user_id FROM users WHERE username='user2')),
+  (UUID(), 'Jotaro Kujo', '081234567896', 'Jl. Contoh No. 5', 'Konstruksi', 'Developer', 'Pengdevelop handal', 'Lubuklinggau', 'Kota Pagar Alam', 'KCU LUBUKLINGGAU', 'Non Nasabah', 12349, 600000000, 'Debitur', 0, 'Kredit BB', 'Mega', 40000000, 10000000, (SELECT user_id FROM users WHERE username='user2')),
+  (UUID(), 'Giorno Giovanna', '081234567899', 'Jl. Contoh No. 6', 'Perdagangan Besar Lainnya', 'Farmasi', 'Pemilik PT Farmasi Sriwijaya', 'Palembang', 'Kota Palembang', 'KCU PALEMBANG', 'Non Nasabah', 12350, 700000000, 'Non Debitur', 0, 'Tapenas', 'Panin', 20000000, 15000000, (SELECT user_id FROM users WHERE username='user4'));
+
+CREATE TABLE IF NOT EXISTS afiliasi(
+  id_child CHAR(36) PRIMARY KEY,
+  id_parent CHAR(36) NOT NULL,
+  nama_child VARCHAR(50) NOT NULL,
+  hubungan VARCHAR(50) NOT NULL
+);
+
+INSERT INTO afiliasi (id_child, id_parent, nama_child, hubungan) VALUES
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Muhammad Sumbul', 'Anak'),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Covidin Demamio', 'Ayah/Ibu'),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Joseph Joestar', 'Adik'),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lanaya', 'Mertua'),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lyralei', 'Tante'),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Dio Brando'), 'Utsman Abdul Jalil Shisha', 'Owner/Pemegang'),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Cucu');

@@ -33,12 +33,10 @@ func JWTMiddleware(secret []byte, engine *html.Engine) fiber.Handler {
 
 		if cookie == "" {
 			return c.Render("login", fiber.Map{"Error": "Mising token"})
-			// return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Missing token cookie"})
 		}
 
 		tokenString, err := RefreshJWT(c, secret, engine)
 		if err != nil {
-			// return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Invalid or expired token"})
 			return c.Render("login", fiber.Map{"Error": "Invalid or expired token"})
 		}
 
@@ -50,7 +48,6 @@ func JWTMiddleware(secret []byte, engine *html.Engine) fiber.Handler {
 		})
 		if err != nil {
 			return c.Render("login", fiber.Map{"Error": "Invalid or expired token"})
-			// return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Invalid or expired token"})
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -62,6 +59,7 @@ func JWTMiddleware(secret []byte, engine *html.Engine) fiber.Handler {
 	}
 }
 
+// TODO: test if refresh actually works (idk lmao)
 func RefreshJWT(c *fiber.Ctx, secret []byte, engine *html.Engine) (string, error) {
 	cookie := c.Cookies("token")
 	if cookie == "" {

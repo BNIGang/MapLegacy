@@ -1,7 +1,10 @@
 package v1
 
 import (
+	"database/sql"
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/BNIGang/MapLegacy/web"
 )
@@ -26,16 +29,21 @@ type Nasabah struct {
 	Mitra_bank_dominan       string
 	Aum_di_bank_lain         string
 	Kredit_di_bank_lain      string
-	Afiliasi                 string
-	Hubungan_afiliasi        string
 	Added_by                 string
 	Username                 string
+	AfiliasiList             []Afiliasi
 }
 
-var nasabahMap map[string]Nasabah
+type Afiliasi struct {
+	NamaAfiliasi     string
+	HubunganAfiliasi string
+	AfiliasiList     []Afiliasi
+}
+
+var nasabahMap = make(map[string]*Nasabah)
 
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
-	nasabahMap = make(map[string]Nasabah)
+	nasabahMap = make(map[string]*Nasabah)
 
 	db, err := web.Connect()
 	if err != nil {
@@ -43,23 +51,37 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 	}
 	defer db.Close()
 
-	// row := db.QueryRow(`
-	// 	SELECT * FROM data_nasabah WHERE ???????`,  // Handle this to show correct data_nasabah for each privilege
-	// )
-
-	// rows, err := db.Query(`
-	// 	SELECT * FROM data_nasabah
-	// `)
-
 	rows, err := db.Query(`
-		SELECT dn.*, u.username
-		FROM data_nasabah dn
-		INNER JOIN users u ON dn.added_by = u.user_id
+		SELECT 
+			dn.*, 
+			GROUP_CONCAT(a.nama_child) AS nama_child, 
+			GROUP_CONCAT(a.hubungan) AS hubungan, 
+			u.name 
+		FROM 
+			data_nasabah dn 
+		LEFT JOIN 
+			afiliasi a 
+		ON  
+			dn.id = a.id_parent 
+		LEFT JOIN 
+			users u 
+		ON 
+			dn.added_by = u.user_id 
+		GROUP BY 
+			dn.id 
+		ORDER BY 
+			dn.nama_pengusaha ASC
 	`)
 
-	var nasabahs []Nasabah
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
 	for rows.Next() {
 		var nasabah Nasabah
+		var afiliasi, hubunganAfiliasi sql.NullString
+
 		err = rows.Scan(
 			&nasabah.Id,
 			&nasabah.Nama_pengusaha,
@@ -80,29 +102,67 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 			&nasabah.Mitra_bank_dominan,
 			&nasabah.Aum_di_bank_lain,
 			&nasabah.Kredit_di_bank_lain,
-			&nasabah.Afiliasi,
-			&nasabah.Hubungan_afiliasi,
 			&nasabah.Added_by,
+			&afiliasi,
+			&hubunganAfiliasi,
 			&nasabah.Username,
 		)
 		if err != nil {
 			return nil, err // database error
 		}
-		nasabahMap[nasabah.Id] = nasabah
-		nasabahs = append(nasabahs, nasabah)
+
+		// Check if the nasabah is already in the map
+		if _, ok := nasabahMap[nasabah.Id]; !ok {
+			// If not, add it to the map with an empty list of afiliasi
+			nasabah.AfiliasiList = make([]Afiliasi, 0)
+			nasabahMap[nasabah.Id] = &nasabah
+		}
+
+		// If the afiliasi is not null, add it to the nasabah's list of afiliasi
+		if afiliasi.Valid {
+			afiliasiSlice := strings.Split(afiliasi.String, ",")
+			hubunganAfiliasiSlice := strings.Split(hubunganAfiliasi.String, ",")
+			for i := range afiliasiSlice {
+				// Check if the afiliasi is already in the nasabah's list
+				alreadyExists := false
+				for j := range nasabahMap[nasabah.Id].AfiliasiList {
+					if nasabahMap[nasabah.Id].AfiliasiList[j].NamaAfiliasi == afiliasiSlice[i] {
+						alreadyExists = true
+						break
+					}
+				}
+				// If the afiliasi is not already in the nasabah's list, add it
+				if !alreadyExists {
+					nasabahMap[nasabah.Id].AfiliasiList = append(nasabahMap[nasabah.Id].AfiliasiList, Afiliasi{
+						NamaAfiliasi:     afiliasiSlice[i],
+						HubunganAfiliasi: hubunganAfiliasiSlice[i],
+					})
+				}
+			}
+		}
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err // database error
+		return nil, err
 	}
+
+	// Create a slice of Nasabah from the values in the map
+	nasabahs := make([]Nasabah, 0, len(nasabahMap))
+	for _, nasabah := range nasabahMap {
+		nasabahs = append(nasabahs, *nasabah)
+	}
+
+	sort.Slice(nasabahs, func(i, j int) bool {
+		return nasabahs[i].Nama_pengusaha < nasabahs[j].Nama_pengusaha
+	})
 
 	return nasabahs, nil
 }
 
-func GetNasabahByID(nasabah_id string) (Nasabah, error) {
+func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	nasabah, ok := nasabahMap[nasabah_id]
 	if !ok {
-		return Nasabah{}, fmt.Errorf("nasabah with id %s not found", nasabah_id)
+		return nil, fmt.Errorf("nasabah with id %s not found", nasabah_id)
 	}
 	return nasabah, nil
 }

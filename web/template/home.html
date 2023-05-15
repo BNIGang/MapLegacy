@@ -1,18 +1,49 @@
-<h1>Map Legacy</h1>
+
+<style>
+    /* Style each row of the table */
+    table tr {
+    cursor: pointer;
+    }
+
+    /* Alternate row colors */
+    table tr:nth-child(even) {
+    background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(odd) {
+    background-color: #ffffff;
+    }
+
+    /* Hover effect */
+    table tr:hover {
+    background-color: #ddd;
+    }
+    button {
+        background-color: #035259;
+    }
+</style>
+
+<h1 style="margin-left: 20px;">Map Legacy</h1>
 
 <div class="below-header">
     <div class="button-container">
-        <button class="add-button" type="button" onclick="window.location.href='/create'">Add Data</button>
+        <button class="btn btm-sm btn-primary mb-3" type="button" onclick="window.location.href='/create'"><i class="fas fa-plus fa-sm"></i> Tambah Data</button>
     </div>
 
 
-    <div class="search-container">
-        <input type="text" placeholder="Search...">
-        <button type="button">Search</button>
-    </div>
+    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-15 my-2 my-md-0 mw-100 navbar-search" style="margin-left: 1500px;">
+        <div class="input-group">
+          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button">
+              <i class="fas fa-search fa-sm"></i>
+            </button>
+          </div>
+        </div>
+      </form>
 </div>
 
-<table>
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Nama Pengusaha</th>
@@ -34,14 +65,13 @@
             <th>AUM di Bank Lain</th>
             <th>Kredit di Bank Lain</th>
             <th>Afiliasi</th>
-            <th>Hubungan Afiliasi</th>
             <th>Ditambahkan Oleh</th>
-            <th>Aksi</th>
+            <th colspan="3">Aksi</th>
         </tr>
     </thead>
     <tbody>
         {{range .data_nasabah}}
-        <tr>
+        <tr onclick="window.location.href='/create_map_legacy/{{ .Id }}';">
             <td>{{.Nama_pengusaha}}</td>
             <td>{{.Nomor_kontak}}</td>
             <td>{{.Alamat_tempat_tinggal}}</td>
@@ -60,15 +90,26 @@
             <td>{{.Mitra_bank_dominan}}</td>
             <td>{{.Aum_di_bank_lain}}</td>
             <td>{{.Kredit_di_bank_lain}}</td>
-            <td>{{.Afiliasi}}</td>
-            <td>{{.Hubungan_afiliasi}}</td>
-            <td>{{.Username}}</td>
+
             <td>
-                <ul>
-                    <li><form action="/delete/{{.Id}}" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></li>
-                    <li><form action="/edit/{{.Id}}" method="GET"><button type="submit" class="btn btn-danger">Edit</button></form></li>
-                </ul>
+                <table>
+                    {{ if .AfiliasiList }}
+                    <th>Nama Afiliasi</th>
+                    <th>Hubungan Afiliasi</th>
+                    {{range .AfiliasiList}}
+                        <tr>
+                            <td>{{.NamaAfiliasi}}</td>
+                            <td>{{.HubunganAfiliasi}}</td>
+                        </tr>
+                    {{end}}
+                    {{end}}
+                </table>
             </td>
+
+            <td>{{.Username}}</td>
+            <td><form action="/create_map_legacy/{{ .Id }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+            <td><form action="/edit/{{ .Id }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
+            <td><form action="/delete/{{ .Id }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
         </tr>
         {{end}}
     </tbody>

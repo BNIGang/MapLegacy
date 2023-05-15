@@ -1,29 +1,31 @@
 package main
 
 import (
-	"fmt"
-
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
+	"github.com/derpen/fastergoding
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
-	"github.com/golang-jwt/jwt"
 )
-
-// TODO: Change this later, read from file preferably
-var secret []byte = []byte("super-secret-key")
 
 var user *web.User
 var username string
+var secret []byte = login.Secret
 
 func main() {
+
+	//TODO
+	//Probably Remove this Later
+	fastergoding.Run("./cmd/api/main")
 
 	engine := html.New("./web/template", ".html")
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
+
+	app.Static("/web/", "./web/")
 
 	// Login page
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -37,30 +39,10 @@ func main() {
 	app.Post("/login", login.Handler(engine))
 
 	app.Get("/home", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		// get Username from cookie
-		// cookie contains JWT token, decrypt the token to get username
-		cookie := c.Cookies("token")
 
-		if cookie == "" {
-			return c.Render("login", fiber.Map{"Error": "Missing token cookie"})
-		}
+		username = c.Locals("username").(string)
 
-		token, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, c.Render("login", fiber.Map{"Error": "Unexpected Signing Method"})
-			}
-			return secret, nil
-		})
-
-		if err != nil {
-			return c.Render("login", fiber.Map{"Error": fmt.Sprintf("Invalid or expired token: %v", err)})
-		}
-
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			if val, ok := claims["username"].(string); ok {
-				username = val
-			}
-		}
+		var err error
 
 		user, err = web.GetUserByUsername(username)
 		if err != nil {
@@ -83,6 +65,10 @@ func main() {
 	})
 
 	app.Get("/create", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
 		return c.Render("template", fiber.Map{
 			"Name":      username,
 			"Wilayah":   user.Wilayah_ID,
@@ -128,7 +114,34 @@ func main() {
 		return v1.AddNasabahHandler(user.User_ID)(c)
 	})
 
+	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		nasabah_id := c.Params("nasabah_id")
+		afiliasiList, err := v1.MapLegacyHandler(nasabah_id)
+
+		if err != nil {
+			// Handle the error appropriately
+			return err
+		}
+
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		// Generate the hierarchy based on the afiliasiList
+		root := v1.GenerateHierarchy(&v1.Nasabah{AfiliasiList: afiliasiList})
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"data":      root,
+			"content":   "map_legacy",
+		})
+	})
+
 	// Delete nasabah
+	// TODO: add confirmation before deleting
 	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
 
 	// Update nasabah
