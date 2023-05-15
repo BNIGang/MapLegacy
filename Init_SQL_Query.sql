@@ -599,14 +599,15 @@ CREATE TABLE IF NOT EXISTS afiliasi(
   id_child CHAR(36) PRIMARY KEY,
   id_parent CHAR(36) NOT NULL,
   nama_child VARCHAR(50) NOT NULL,
-  hubungan VARCHAR(50) NOT NULL
+  hubungan VARCHAR(50) NOT NULL,
+  added_by CHAR(36) NOT NULL
 );
 
-INSERT INTO afiliasi (id_child, id_parent, nama_child, hubungan) VALUES
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Muhammad Sumbul', 'Anak'),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Covidin Demamio', 'Ayah/Ibu'),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Joseph Joestar', 'Adik'),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lanaya', 'Mertua'),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lyralei', 'Tante'),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Dio Brando'), 'Utsman Abdul Jalil Shisha', 'Owner/Pemegang'),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Cucu');
+INSERT INTO afiliasi (id_child, id_parent, nama_child, hubungan, added_by) VALUES
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Muhammad Sumbul', 'Anak', (SELECT user_id FROM users WHERE username='user1')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Covidin Demamio', 'Ayah/Ibu', (SELECT user_id FROM users WHERE username='user6')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Joseph Joestar', 'Adik', (SELECT user_id FROM users WHERE username='user1')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lanaya', 'Mertua', (SELECT user_id FROM users WHERE username='user5')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lyralei', 'Tante', (SELECT user_id FROM users WHERE username='user4')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Dio Brando'), 'Utsman Abdul Jalil Shisha', 'Owner/Pemegang', (SELECT user_id FROM users WHERE username='user1')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Cucu', (SELECT user_id FROM users WHERE username='user3'));

@@ -1,1 +1,68 @@
-<h1>Daftar Afiliasi</h1>
+<style>
+    /* Style each row of the table */
+    table tr {
+    cursor: pointer;
+    }
+
+    /* Alternate row colors */
+    table tr:nth-child(even) {
+    background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(odd) {
+    background-color: #ffffff;
+    }
+
+    /* Hover effect */
+    table tr:hover {
+    background-color: #ddd;
+    }
+    button {
+        background-color: #035259;
+    }
+</style>
+
+<h1 style="margin-left: 20px;">Afiliasi</h1>
+
+<div class="below-header">
+    <div class="button-container">
+        <button class="btn btm-sm btn-primary mb-3" type="button" onclick="window.location.href='/create_afiliasi'"><i class="fas fa-plus fa-sm"></i>Tambah Afiliasi Baru</button>
+    </div>
+
+
+    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-15 my-2 my-md-0 mw-100 navbar-search" style="margin-left: 1500px;">
+        <div class="input-group">
+          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button">
+              <i class="fas fa-search fa-sm"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nama Pengusaha</th>
+            <th>Nama Afiliasi</th>
+            <th>Hubungan Afiliasi</th>
+            <th>Ditambahkan Oleh</th>
+            <th colspan="3">Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .data_afiliasi}}
+        <tr onclick="window.location.href='/add_afiliasi/{{ .Id_child }}';">
+            <td>{{.NamaPengusaha}}</td>
+            <td>{{.NamaAfiliasi}}</td>
+            <td>{{.HubunganAfiliasi}}</td>
+            <td>{{.Username}}</td>
+            <td><form action="/add_afiliasi/{{ .Id_child }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+            <td><form action="/edit_afiliasi/{{ .Id_child }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
+            <td><form action="/delete_afiliasi/{{ .Id_child }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>

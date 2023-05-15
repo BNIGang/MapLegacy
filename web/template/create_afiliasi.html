@@ -1,0 +1,133 @@
+<!-- <div class="modal fade" id="tambah_barang" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header"> -->
+        <h5 style="margin-left: 20px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Input Afiliasi Baru</h5>
+      </div>
+      <div class="modal-body">
+
+        <form action="/add_afiliasi" method="POST" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label for="nama_pengusaha">Nama Pengusaha:</label>
+            <input type="text" id="nama_pengusaha" name="nama_pengusaha" class="form-control">
+            <div id="suggestions"></div>
+        </div>
+
+        <input type="hidden" id="id_pengusaha" name="id_pengusaha">
+
+          <div class="form-group">
+            <div id="afiliasi-container">
+              <div class="afiliasi-group">
+                <label for="afiliasi">Afiliasi:</label>
+                <input type="text" id="afiliasi" class="afiliasi form-control" name="afiliasi[]">
+
+                <label for="hubungan_afiliasi">Hubungan Afiliasi:</label>
+                <select id="hubungan_afiliasi" class="hubungan_afiliasi form-control" name="hubungan_afiliasi[]">
+                  <option value="Direktur">Direktur</option>
+                  <option value="Komisaris">Komisaris</option>
+                  <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
+                  <option value="Suami">Suami</option>
+                  <option value="Istri">Istri</option>
+                  <option value="Ayah">Ayah</option>
+                  <option value="Ibu">Ibu</option>
+                  <option value="Mertua">Mertua</option>
+                  <option value="Anak">Anak</option>
+                  <option value="Kakak">Kakak</option>
+                  <option value="Adik">Adik</option>
+                  <option value="Keponakan">Keponakan</option>
+                  <option value="Sepupu">Sepupu</option>
+                  <option value="Paman">Paman</option>
+                  <option value="Tante">Tante</option>
+                  <option value="Kakek">Kakek</option>
+                  <option value="Nenek">Nenek</option>
+                  <option value="Cucu">Cucu</option>
+                  <option value="Saudara Ipar">Saudara Ipar</option>
+                  <option value="Besan">Besan</option>
+                </select><br>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-success btn-sm" id="add-afiliasi-btn" type="button">Tambah Afiliasi</button>
+          <button class="btn btn-danger btn-sm" id="remove-afiliasi-btn" type="button">Buang Afiliasi</button>
+
+
+          <div class="modal-footer">
+            <a href="/afiliasi" type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+/*
+
+HANDLE AUTOSUGGESTION FOR NAME
+
+*/
+
+const inputField = document.getElementById('nama_pengusaha');
+const suggestionsContainer = document.getElementById('suggestions');
+const hiddenInput = document.getElementById('id_pengusaha'); // Hidden input field
+
+inputField.addEventListener('input', function() {
+  const input = inputField.value;
+
+  // Clear previous suggestions
+  suggestionsContainer.innerHTML = '';
+
+  // Make AJAX request
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', '/get_suggestions/' + input, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      const suggestions = response.suggestions;
+
+      // Populate suggestions
+      suggestions.forEach(function(suggestion) {
+        const suggestionItem = document.createElement('div');
+        suggestionItem.textContent = suggestion.name; // Display suggestion name
+        suggestionItem.classList.add('suggestion');
+        suggestionsContainer.appendChild(suggestionItem);
+
+        // Add event listener to suggestion item
+        suggestionItem.addEventListener('click', function() {
+          inputField.value = suggestion.name;
+          hiddenInput.value = suggestion.id; // Set hidden input value with the selected ID
+          suggestionsContainer.innerHTML = '';
+        });
+      });
+    }
+  };
+  xhr.send();
+});
+
+/* 
+
+THIS PART TO CREATE MULTIPLE AFILIASI BUTTON
+
+*/
+$(document).ready(function() {
+    // Add Afiliasi fields when the button is clicked
+    $("#add-afiliasi-btn").click(function() {
+    var afiliasiGroup = $(".afiliasi-group").first().clone(); // Clone the first group
+    afiliasiGroup.find("input, select").val(""); // Clear the input values
+    $("#afiliasi-container").append(afiliasiGroup); // Append the cloned group to the container
+    });
+
+    // Remove the last added Afiliasi group when the button is clicked
+    $("#remove-afiliasi-btn").click(function() {
+    var afiliasiGroups = $(".afiliasi-group");
+    if (afiliasiGroups.length > 1) {
+        afiliasiGroups.last().remove(); // Remove the last group
+    }
+    });
+});
+</script>

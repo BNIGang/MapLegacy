@@ -69,6 +69,12 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
         </li>
+
+        <li class="nav-item active">
+            <a class="nav-link" href="/afiliasi">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Afiliasi</span></a>
+        </li>
     
         <!-- Nav Item - Tables -->
         <li class="nav-item">
@@ -169,6 +175,10 @@
                 {{ template "create_nasabah" . }}
                 {{ else if eq .content "map_legacy" }}
                 {{ template "map_legacy" . }}
+                {{ else if eq .content "afiliasi"}}
+                {{ template "afiliasi" . }}
+                {{ else if eq .content "create_afiliasi"}}
+                {{ template "create_afiliasi" . }}
                 {{ else}}
                 {{ template "edit_nasabah" . }}
                 {{ end }}

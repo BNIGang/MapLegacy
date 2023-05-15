@@ -35,12 +35,17 @@ type Nasabah struct {
 }
 
 type Afiliasi struct {
+	Id_child         string
+	Id_parent        string
 	NamaAfiliasi     string
 	HubunganAfiliasi string
-	AfiliasiList     []Afiliasi
+	Added_by         string
+	NamaPengusaha    string
+	Username         string
 }
 
 var nasabahMap = make(map[string]*Nasabah)
+var afiliasiMap = make(map[string]*Afiliasi)
 
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
 	nasabahMap = make(map[string]*Nasabah)
@@ -50,6 +55,8 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 		return nil, err
 	}
 	defer db.Close()
+
+	// TODO, query only based on wilayah/cabang/privilege/etc
 
 	rows, err := db.Query(`
 		SELECT 
@@ -167,6 +174,80 @@ func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	return nasabah, nil
 }
 
-func SearchNasabah(query string) {
-	//TODO
+func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Afiliasi, error) {
+	afiliasiMap = make(map[string]*Afiliasi)
+
+	//TODO , another one of those wilayah only thing
+
+	db, err := web.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT 
+			a.*, dn.nama_pengusaha, u.name
+		FROM
+			afiliasi a
+		LEFT JOIN
+			data_nasabah dn
+		ON
+			a.id_parent = dn.id
+		LEFT JOIN
+			users u
+		ON
+			a.added_by = u.user_id
+	`)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var afiliasi Afiliasi
+
+		err = rows.Scan(
+			&afiliasi.Id_child,
+			&afiliasi.Id_parent,
+			&afiliasi.NamaAfiliasi,
+			&afiliasi.HubunganAfiliasi,
+			&afiliasi.Added_by,
+			&afiliasi.NamaPengusaha,
+			&afiliasi.Username,
+		)
+		if err != nil {
+			return nil, err // database error
+		}
+
+		// Check if the nasabah is already in the map
+		if _, ok := afiliasiMap[afiliasi.Id_child]; !ok {
+			afiliasiMap[afiliasi.Id_child] = &afiliasi
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Create a slice of Nasabah from the values in the map
+	afiliasis := make([]Afiliasi, 0, len(afiliasiMap))
+	for _, afiliasi := range afiliasiMap {
+		afiliasis = append(afiliasis, *afiliasi)
+	}
+
+	sort.Slice(afiliasis, func(i, j int) bool {
+		return afiliasis[i].NamaAfiliasi < afiliasis[j].NamaAfiliasi
+	})
+
+	return afiliasis, nil
 }
+
+// func GetAfiliasiById(id_afiliasi string){
+
+// }
+
+// func SearchNasabah(query string) {
+// 	//TODO
+// }
