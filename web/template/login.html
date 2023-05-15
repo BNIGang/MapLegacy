@@ -1,21 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Login Page</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/web/template/bni46.png" type="image/icon type">
+    <link href="/web/template/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/web/template/bootstrap/css/bootstrap.min.css">
+    <title>BNI Map Legacy | Login</title>
+
+	<style>
+		/* internal css */
+		  body
+			{
+			  position: relative;
+			  width: 1340px;
+			  height: 1024px;
+			  /* background-color: #023059; */
+			  background-image:url("/web/template/images/LoginPage.svg");
+			  background-position-y: -70px;
+			}
+			h1
+			{
+			  top: 39px;
+			  font-family: Playfair Display;
+			  font-style: normal;
+			  font-weight: bold;
+			  font-size: 64px;
+			  line-height: 85px;
+			  text-align: center;
+			  color:#ffffff;
+			}
+			.kotak-form
+			{
+			  display:flex;
+			  position: absolute;
+			  width: 568px;
+			  height: 795px;
+			  left: 680px;
+			  top: 70px;
+	
+			  background: #FFFFFF;
+			  border: 1px solid #000000;
+			  border-radius: 30px;
+			  align-items: center;
+			}
+			.lg-df
+			{
+			  font-family:'Open Sans', sans-serif;
+			  font-style: normal;
+			  width:460px;
+			  margin-top:-100px;
+			  margin-left:45px;
+			  display:flex;
+			  justify-content:space-between;
+			  color: #04B2D9;
+			}
+			.lg-df h2
+			{
+			  font-family:'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: bold;
+			  font-size: 36px;
+			  line-height: 49px;
+			  margin-left:-5px;
+			  margin-top:-20px;
+			  color: #000000;
+			}
+			.username-lbl
+			{
+			  font-family: 'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: 600;
+			  font-size: 20px;
+			  line-height: 27px;
+  
+			  color: #000000;
+			  margin-top:70px;
+			  margin-left:40px;
+			}
+			.username-ipt input
+			{
+			  font-family: 'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: 300;
+			  font-size: 20px;
+			  border:1px solid #04B2D9;
+			  color:#000000;
+			  width:468px;
+			  height:62px;
+			  border-radius:15px;
+			  margin-top:10px;
+			  margin-left:40px;
+			}
+			p
+			{
+			  font-family: 'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: normal;
+			  font-size: 20px;
+			  line-height: 27px;
+			  margin-top:1px;
+			  color: rgba(0, 0, 0, 0.5);
+			}
+			.p2
+			{
+			  margin-left: 325px;
+			  font-family: 'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: 300;
+			  font-size: 20px;
+			  line-height: 27px;
+			  margin-top:45px;
+			  color: #04B2D9;
+			}
+			.p3
+			{
+			  position:absolute;
+			  width: 238px;
+			  height: 24px;
+			  left: 660px;
+			  top: 866px;
+  
+			  font-family: 'Playfair Display', serif;
+			  font-style: normal;
+			  font-weight: bold;
+			  font-size: 18px;
+			  text-align: center;
+			  line-height: 100px;
+			  color: #ffffff;
+			}
+			.password-lbl
+			{
+			   font-family: 'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: 600;
+			  font-size: 20px;
+			  line-height: 27px;
+  
+			  color: #000000;
+			  margin-top:70px;
+			  margin-left:40px;
+			}
+			.password-ipt input
+			{
+			  font-size : 20px;
+			  border:1px solid #04B2D9;
+			  color:#000000;
+			  width:468px;
+			  height:62px;
+			  border-radius:15px;
+			  margin-top:10px;
+			  margin-left:40px;
+			}
+			.btn button
+			{
+			  position: absolute;
+			  width: 206px;
+			  height: 58px;
+			  margin-top:45px;
+			  left:300px;
+			  background: #023059;
+			  border-radius: 20px;
+			  font-family: 'Open Sans', sans-serif;
+			  font-style: normal;
+			  font-weight: bold;
+			  font-size: 20px;
+			  line-height: 27px;
+			  text-align: center;
+			  color:#ffffff;
+			}
+	</style>
 </head>
 <body>
-    <h1>Login</h1>
 
-    {{ if .Error }}
-        <p style="color: red;">{{ .Error }}</p>
-    {{ end }}
 
-	<form method="POST" action="/login">
-		<label for="username">Username:</label>
-		<input type="text" id="username" name="username"><br><br>
-		<label for="password">Password:</label>
-		<input type="password" id="password" name="password"><br><br>
-		<input type="submit" value="Login">
-	</form>
+   <div class="kotak-form">
+        <form method="POST" action="/login">
+            <div class="lg-df">
+                <h2>Login</h2>
+            </div>
+			{{ if .Error }}
+			<p style="color: red; margin-left: 40px;">{{ .Error }}</p>
+			{{ end }}
+            <div class="username-lbl">
+              <label for="username">Username</label>
+            </div>
+            <div class="username-ipt">
+              <input type="text" id="username" name="username" placeholder="" />
+            </div>
+            <div class="password-lbl">
+              <label for="password">Password</label>
+            </div>
+            <div class="password-ipt">
+              <input type="password" id="password" name="password" placeholder="" />
+            </div>
+            <div class="btn">
+               <button type="submit" id ="bt_login" name="bt_login">Login</button>
+            </div>
+        </form>
+    </div>
+    <div class="p3">
+      <a>© 2022 , BNI Wilayah 03</a>
+    </div>
 </body>
 </html>

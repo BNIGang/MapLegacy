@@ -4,6 +4,7 @@ import (
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
+	// "github.com/derpen/fastergoding"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 )
@@ -13,6 +14,8 @@ var username string
 var secret []byte = login.Secret
 
 func main() {
+
+	// fastergoding.Run("-o", "./MapLegacy", "./cmd/api/main")
 
 	engine := html.New("./web/template", ".html")
 

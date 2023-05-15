@@ -10,6 +10,10 @@
     <title>BNI Map Legacy</title>
 </head>
 <style>
+
+  body{
+    background-image:url("/web/template/images/LoginPage.svg");
+  }
     .navbar {
     display: flex;
     justify-content: space-between;
@@ -115,7 +119,7 @@
           
                   <!-- Topbar -->
                   <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <h3>Welcome, {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h3>
+                    <h3 style="margin-left: 20px;">Welcome {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h3>
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                       <i class="fa fa-bars"></i>
