@@ -99,8 +99,8 @@ github.com/cpuguy83/go-md2man/v2 v2.0.1/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46t
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/derpen/fastergoding v0.0.0-20230512042352-22a5961155a9 h1:RCUPoxY47owhXi1bbZ/A/998Q2oJsd4/tfFFxb6b3KA=
-github.com/derpen/fastergoding v0.0.0-20230512042352-22a5961155a9/go.mod h1:4kqGqogAFXtRPXeObhelYa0zAj5PPcQSZAn53fYYiGM=
+github.com/derpen/fastergoding v0.0.0-20230512035002-83c27ce9357d h1:J67Tq51/COYzoBdAVl8a1HeEI0kGsZQJlq8aA+5ZkOw=
+github.com/derpen/fastergoding v0.0.0-20230512035002-83c27ce9357d/go.mod h1:4kqGqogAFXtRPXeObhelYa0zAj5PPcQSZAn53fYYiGM=
 github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385/go.mod h1:0vRUJqYpeSZifjYj7uP3BG/gKcuzL9xWVV/Y+cK33KM=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=

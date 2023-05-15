@@ -3,7 +3,7 @@ module github.com/BNIGang/MapLegacy
 go 1.20
 
 require (
-	github.com/derpen/fastergoding v0.0.0-20230512042352-22a5961155a9
+	github.com/derpen/fastergoding v0.0.0-20230512035002-83c27ce9357d
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/gofiber/template v1.8.0
