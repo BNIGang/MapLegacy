@@ -4,20 +4,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/web/template/bni46.png" type="image/icon type">
+    <link href="/web/template/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/web/template/bootstrap/css/bootstrap.min.css">
     <title>BNI Map Legacy</title>
 </head>
 <style>
+
+  body{
+    background-image:url("/web/template/images/LoginPage.svg");
+  }
     .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
-    color: white;
+    background-color: #fff;
+    color: grey;
     padding: 10px;
     }
 
     .navbar h1 {
-    margin: 0;
+    margin-left: 80px;
     }
 
     .navbar button {
@@ -35,28 +42,59 @@
     align-items: center;
     padding: 10px;
     }
+    .sidebar {
+        background-image: linear-gradient(180deg,#f24503 10%,#f24503 100%);
+    }
 </style>
-<body>
-    <!-- Top Navbar -->
-    <div class="navbar">
-        <h1>Welcome, {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h1>
 
-        <form action="/logout" method="get">
-            <button type="submit">Logout</button>
-        </form>
-    </div>
+<body id="page-top">
 
-    <!-- Side Navbar -->
-    <div style="display: flex">
-        <div style="width: 250px; background-color: gray">
-            <ul style="list-style-type:none; padding-left:0">
-                <li>
-                    <details>
-                        <!-- Wilayah -->
-                        <summary>Palembang</summary> 
-                        <ul style="list-style-type:none; padding-left:0">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+  
+      <!-- Sidebar -->
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+  
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <div class="sidebar-brand-icon rotate-n-15">
+           <i href="/web/template/bni46.png"></i>
+          </div>
+          <div class="sidebar-brand-text mx-3">BNI Wilayah 03</div>
+        </a>
+        <!-- Side Navbar -->
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item active">
+            <a class="nav-link" href="/home">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+        </li>
+    
+        <!-- Nav Item - Tables -->
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+            <i class="fas fa-file-invoice"></i>
+            <span>Tambah User</span></a>
+        </li>
+        
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <!-- <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div> -->
+
+        </ul>
+        <!-- End of Sidebar -->
+        <!-- <div class="sidebar" style="display: flex">
+            <div style="width: 250px; background-color: gray">
+                <ul style="list-style-type:none; padding-left:0">
+                    <li>
+                        <details> -->
+                            <!-- Wilayah -->
+                            <!-- <summary>Palembang</summary> 
+                            <ul style="list-style-type:none; padding-left:0">
                             <!-- Cabang -->
-                            <li><a href="#">KCP UNSRI</a></li> 
+                            <!-- <li><a href="#">KCP UNSRI</a></li> 
                             <li><a href="#">KCP A. Yani</a></li>
                             <li><a href="#">KCU Palembang</a></li>
                             <ul>
@@ -71,20 +109,70 @@
                 <li><a href="#">Ganti Password</a></li>
                 <li><a href="#">Tambah User</a></li>
             </ul>
+        </div> --> 
+        <!-- Top Navbar -->
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+          
+                  <!-- Topbar -->
+                  <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h3 style="margin-left: 20px;">Welcome {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h3>
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                      <i class="fa fa-bars"></i>
+                    </button>
+
+          
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+          
+                      <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                      <li class="nav-item dropdown no-arrow d-sm-none">
+                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <!-- Dropdown - Messages -->
+                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                          <form class="form-inline mr-auto w-100 navbar-search">
+                            <div class="input-group">
+                              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                              <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                  <i class="fas fa-search fa-sm"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </li> 
+          
+                      <div class="topbar-divider d-none d-sm-block"></div>
+          
+                      <ul class="na navbar-nav navbar-right">
+                      <form action="/logout" method="get">
+                              <button type="submit">Logout</button>
+                        </form>
+                      </ul>
+                    </ul>
+          
+                  </nav>
         </div>
         <div style="flex: 1">
             <!-- Put main content here -->
             <div class="main-content">
-            {{ if eq .content "home" }}
+                {{ if eq .content "home" }}
                 {{ template "home" . }}
-            {{ else if eq .content "create" }}
+                {{ else if eq .content "create" }}
                 {{ template "create_nasabah" . }}
-            {{ else if eq .content "map_legacy" }}
+                {{ else if eq .content "map_legacy" }}
                 {{ template "map_legacy" . }}
-            {{ else}}
+                {{ else}}
                 {{ template "edit_nasabah" . }}
-            {{ end }}
+                {{ end }}
             </div>
         </div>
-</body>
-</html>
+    </body>
+    </html>

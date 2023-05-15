@@ -1,267 +1,318 @@
-<h1>Tambah Nasabah</h1>
+<!-- <div class="modal fade" id="tambah_barang" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header"> -->
+        <h5 style="margin-left: 20px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Input Daftar Nasabah</h5>
+      </div>
+      <div class="modal-body">
 
-<form action="/add" method="POST" enctype="multipart/form-data">
-  <label for="nama_pengusaha">Nama Pengusaha:</label><br>
-  <input type="text" id="nama_pengusaha" name="nama_pengusaha"><br>
+        <form action="/add" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="nama_pengusaha">Nama Pengusaha:</label>
+            <input type="text" id="nama_pengusaha" name="nama_pengusaha" class="form-control">
+          </div>
 
-  <label for="nomor_kontak">Nomor Kontak:</label><br>
-  <input type="text" id="nomor_kontak" name="nomor_kontak"><br>
+          <div class="form-group">
+            <label for="nomor_kontak">Nomor Kontak:</label>
+            <input type="text" id="nomor_kontak" name="nomor_kontak" class="form-control">
+          </div>
 
-  <label for="alamat_tempat_tinggal">Alamat Tempat Tinggal:</label><br>
-  <input type="text" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal"><br>
+          <div class="form-group">
+            <label for="alamat_tempat_tinggal">Alamat Tempat Tinggal:</label>
+            <input type="text" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal" class="form-control">
+          </div>
 
-  <label for="bidang_usaha">Bidang Usaha:</label><br>
-  <select id="bidang_usaha" name="bidang_usaha">
-    <option value="">Pilih Bidang Usaha</option>
-  </select><br>
+          <div class="form-group">
+          <label for="bidang_usaha">Bidang Usaha:</label>
+          <select id="bidang_usaha" name="bidang_usaha" class="form-control">
+            <option value="">Pilih Bidang Usaha</option>
+          </select><br>
+          </div>
 
-  <label for="produk_usaha">Produk Usaha:</label><br>
-  <select id="produk_usaha" name="produk_usaha">
-    <option value="">Pilih Bidang Usaha Dulu</option>
-  </select><br>
+          <div class="form-group">
+          <label for="produk_usaha">Produk Usaha:</label>
+          <select id="produk_usaha" name="produk_usaha" class="form-control">
+            <option value="">Pilih Bidang Usaha Dulu</option>
+          </select><br>
+          </div>
 
-  <label for="detail_bidang_usaha">Detail Bidang Usaha:</label><br>
-  <input type="text" id="detail_bidang_usaha" name="detail_bidang_usaha"><br>
+          <div class="form-group">
+          <label for="detail_bidang_usaha">Detail Bidang Usaha:</label>
+          <input type="text" id="detail_bidang_usaha" name="detail_bidang_usaha" class="form-control">
+          </div>
 
-  <label for="cabang">Cabang:</label><br>
-  <select id="cabang" name="cabang">
-    <option value="">Pilih Cabang</option>
-  </select><br>
+          <div class="form-group">
+          <label for="cabang">Cabang:</label>
+          <select id="cabang" name="cabang" class="form-control">
+            <option value="">Pilih Cabang</option>
+          </select><br>
+          </div>
 
-  <label for="kabupaten_kota">Kabupaten/Kota:</label><br>
-  <select id="kabupaten_kota" name="kabupaten_kota">
-    <option value="">Pilih Cabang Dulu</option>
-  </select><br>
+          <div class="form-group">
+          <label for="kabupaten_kota">Kabupaten/Kota:</label>
+          <select id="kabupaten_kota" name="kabupaten_kota" class="form-control">
+            <option value="">Pilih Cabang Dulu</option>
+          </select><br>
+          </div>
 
-  <label for="kcu_kcp_kk">KCU/KCP/KK:</label><br>
-  <select id="kcu_kcp_kk" name="kcu_kcp_kk">
-    <option value="">Pilih Cabang Dulu</option>
-  </select><br>
+          <div class="form-group">
+          <label for="kcu_kcp_kk">KCU/KCP/KK:</label>
+          <select id="kcu_kcp_kk" name="kcu_kcp_kk" class="form-control">
+            <option value="">Pilih Cabang Dulu</option>
+          </select><br>
+          </div>
 
-  <label for="nasabah">Nasabah:</label><br>
-  <select id="nasabah" name="nasabah">
-    <option value="Nasabah">Nasabah</option>
-    <option value="Non Nasabah">Non Nasabah</option>
-  </select><br>
+          <div class="form-group">
+          <label for="nasabah">Nasabah:</label>
+          <select id="nasabah" name="nasabah" class="form-control">
+            <option value="Nasabah">Nasabah</option>
+            <option value="Non Nasabah">Non Nasabah</option>
+          </select><br>
+          </div>
 
-  <label for="no_CIF">No CIF:</label><br>
-  <input type="number" id="no_CIF" name="no_CIF"><br>
+          <div class="form-group">
+          <label for="no_CIF">No CIF:</label>
+          <input type="number" id="no_CIF" name="no_CIF" class="form-control">
+          </div>
 
-  <label for="aum_di_bni">AUM di BNI:</label><br>
-  <input type="number" id="aum_di_bni" name="aum_di_bni"><br>
+          <div class="form-group">
+          <label for="aum_di_bni">AUM di BNI:</label>
+          <input type="number" id="aum_di_bni" name="aum_di_bni" class="form-control">
+          </div>
 
-  <label for="debitur">Debitur:</label><br>
-  <select id="debitur" name="debitur">
-    <option value="Debitur">Debitur</option>
-    <option value="Non Debitur">Non Debitur</option>
-  </select><br>
+          <div class="form-group">
+          <label for="debitur">Debitur:</label>
+          <select id="debitur" name="debitur" class="form-control">
+            <option value="Debitur">Debitur</option>
+            <option value="Non Debitur">Non Debitur</option>
+          </select><br>
+          </div>
 
-  <label for="kredit_di_bni">Kredit di BNI:</label><br>
-  <input type="number" id="kredit_di_bni" name="kredit_di_bni"><br>
+          <div class="form-group">
+          <label for="kredit_di_bni">Kredit di BNI:</label>
+          <input type="number" id="kredit_di_bni" name="kredit_di_bni" class="form-control">
+          </div>
 
-  <label for="produk_bni_yang_dimiliki">Produk BNI yang Dimiliki:</label><br>
-  <select id="produk_bni_yang_dimiliki" name="produk_bni_yang_dimiliki">
-    <option value="Giro">Giro</option>
-    <option value="Tabungan">Tabungan</option>
-    <option value="Tapenas">Tapenas</option>
-    <option value="Deposito">Deposito</option>
-    <option value="M-Banking">M-Banking</option>
-    <option value="CM">CM</option>
-    <option value="Payroll">Payroll</option>
-    <option value="Emerald Card">Emerald Card</option>
-    <option value="Credit Card">Credit Card</option>
-    <option value="Kredit BB">Kredit BB</option>
-    <option value="Griya">Griya</option>
-    <option value="Trade">Trade</option>
-    <option value="GB">GB</option>
-  </select><br>
+          <div class="form-group">
+          <label for="produk_bni_yang_dimiliki">Produk BNI yang Dimiliki:</label>
+          <select id="produk_bni_yang_dimiliki" name="produk_bni_yang_dimiliki" class="form-control">
+            <option value="Giro">Giro</option>
+            <option value="Tabungan">Tabungan</option>
+            <option value="Tapenas">Tapenas</option>
+            <option value="Deposito">Deposito</option>
+            <option value="M-Banking">M-Banking</option>
+            <option value="CM">CM</option>
+            <option value="Payroll">Payroll</option>
+            <option value="Emerald Card">Emerald Card</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Kredit BB">Kredit BB</option>
+            <option value="Griya">Griya</option>
+            <option value="Trade">Trade</option>
+            <option value="GB">GB</option>
+          </select><br>
+          </div>
 
-  <label for="mitra_bank_dominan">Mitra Bank Dominan:</label><br>
-  <select id="mitra_bank_dominan" name="mitra_bank_dominan">
-    <option value="Mandiri">Mandiri</option>
-    <option value="BCA">BCA</option>
-    <option value="BRI">BRI</option>
-    <option value="BTN">BTN</option>
-    <option value="Danamon">Danamon</option>
-    <option value="BSI">BSI</option>
-    <option value="Mega">Mega</option>
-    <option value="Panin">Panin</option>
-    <option value="Maybank">Maybank</option>
-    <option value="HSBC">HSBC</option>
-    <option value="OCBC">OCBC</option>
-    <option value="Bank Asing">Bank Asing</option>
-  </select><br>
+          <div class="form-group">
+          <label for="mitra_bank_dominan">Mitra Bank Dominan:</label>
+          <select id="mitra_bank_dominan" name="mitra_bank_dominan" class="form-control">
+            <option value="Mandiri">Mandiri</option>
+            <option value="BCA">BCA</option>
+            <option value="BRI">BRI</option>
+            <option value="BTN">BTN</option>
+            <option value="Danamon">Danamon</option>
+            <option value="BSI">BSI</option>
+            <option value="Mega">Mega</option>
+            <option value="Panin">Panin</option>
+            <option value="Maybank">Maybank</option>
+            <option value="HSBC">HSBC</option>
+            <option value="OCBC">OCBC</option>
+            <option value="Bank Asing">Bank Asing</option>
+          </select><br>
+          </div>
 
-  <label for="aum_di_bank_lain">AUM di Bank Lain:</label><br>
-  <input type="number" id="aum_di_bank_lain" name="aum_di_bank_lain"><br>
+          <div class="form-group">
+          <label for="aum_di_bank_lain">AUM di Bank Lain:</label>
+          <input type="number" id="aum_di_bank_lain" name="aum_di_bank_lain" class="form-control">
+          </div>
 
-  <label for="kredit_di_bank_lain">Kredit di bank lain:</label><br>
-  <input type="number" id="kredit_di_bank_lain" name="kredit_di_bank_lain"><br>
+          <div class="form-group">
+          <label for="kredit_di_bank_lain">Kredit di bank lain:</label>
+          <input type="number" id="kredit_di_bank_lain" name="kredit_di_bank_lain" class="form-control">
+          </div>
 
-  <div id="afiliasi-container">
-    <div class="afiliasi-group">
-      <label for="afiliasi">Afiliasi:</label><br>
-      <input type="text" id="afiliasi" class="afiliasi" name="afiliasi[]"><br>
+          <div class="form-group">
+            <div id="afiliasi-container">
+              <div class="afiliasi-group">
+                <label for="afiliasi">Afiliasi:</label>
+                <input type="text" id="afiliasi" class="afiliasi form-control" name="afiliasi[]">
 
-      <label for="hubungan_afiliasi">Hubungan Afiliasi:</label><br>
-      <select id="hubungan_afiliasi" class="hubungan_afiliasi" name="hubungan_afiliasi[]">
-        <option value="Direktur">Direktur</option>
-        <option value="Komisaris">Komisaris</option>
-        <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
-        <option value="Suami">Suami</option>
-        <option value="Istri">Istri</option>
-        <option value="Ayah">Ayah</option>
-        <option value="Ibu">Ibu</option>
-        <option value="Mertua">Mertua</option>
-        <option value="Anak">Anak</option>
-        <option value="Kakak">Kakak</option>
-        <option value="Adik">Adik</option>
-        <option value="Keponakan">Keponakan</option>
-        <option value="Sepupu">Sepupu</option>
-        <option value="Paman">Paman</option>
-        <option value="Tante">Tante</option>
-        <option value="Kakek">Kakek</option>
-        <option value="Nenek">Nenek</option>
-        <option value="Cucu">Cucu</option>
-        <option value="Saudara Ipar">Saudara Ipar</option>
-        <option value="Besan">Besan</option>
-      </select><br>
+                <label for="hubungan_afiliasi">Hubungan Afiliasi:</label>
+                <select id="hubungan_afiliasi" class="hubungan_afiliasi form-control" name="hubungan_afiliasi[]">
+                  <option value="Direktur">Direktur</option>
+                  <option value="Komisaris">Komisaris</option>
+                  <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
+                  <option value="Suami">Suami</option>
+                  <option value="Istri">Istri</option>
+                  <option value="Ayah">Ayah</option>
+                  <option value="Ibu">Ibu</option>
+                  <option value="Mertua">Mertua</option>
+                  <option value="Anak">Anak</option>
+                  <option value="Kakak">Kakak</option>
+                  <option value="Adik">Adik</option>
+                  <option value="Keponakan">Keponakan</option>
+                  <option value="Sepupu">Sepupu</option>
+                  <option value="Paman">Paman</option>
+                  <option value="Tante">Tante</option>
+                  <option value="Kakek">Kakek</option>
+                  <option value="Nenek">Nenek</option>
+                  <option value="Cucu">Cucu</option>
+                  <option value="Saudara Ipar">Saudara Ipar</option>
+                  <option value="Besan">Besan</option>
+                </select><br>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-success btn-sm" id="add-afiliasi-btn" type="button">Tambah Afiliasi</button>
+          <button class="btn btn-danger btn-sm" id="remove-afiliasi-btn" type="button">Buang Afiliasi</button>
+
+
+          <div class="modal-footer">
+            <a href="/home" type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
-  <button id="add-afiliasi-btn" type="button">Tambah Afiliasi</button>
-  <button id="remove-afiliasi-btn" type="button">Buang Afiliasi</button>
 
-  <br>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+        /* 
 
-  <input type="submit" value="Submit">
-</form>
+        THIS PART TO CREATE DYNAMIC FORM
+        
+        */
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  /* 
+        // Get a reference to the parent and child dropdowns
+        var bidangUsaha = document.getElementById("bidang_usaha");
+        var produkUsaha = document.getElementById("produk_usaha");
+        var cabang = document.getElementById("cabang");
+        var kabupatenKota = document.getElementById("kabupaten_kota");
+        var kcuKcpKk = document.getElementById("kcu_kcp_kk");
 
-  THIS PART TO CREATE DYNAMIC FORM
-  
-  */
+        // Make an AJAX call to the server endpoint to retrieve the appropriate data for the parent dropdown
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/get_bidang_usaha");
+        xhr.onload = function() {
+          // When the data is retrieved, update the options for the parent dropdown
+          var response = JSON.parse(xhr.responseText);
+          bidangUsaha.innerHTML = "";
+          for (var i = 0; i < response.length; i++) {
+            var option = document.createElement("option");
+            option.value = response[i].bidang_id;
+            option.text = response[i].bidang;
+            bidangUsaha.appendChild(option);
+          }
+        };
+        xhr.send();
 
-  // Get a reference to the parent and child dropdowns
-  var bidangUsaha = document.getElementById("bidang_usaha");
-  var produkUsaha = document.getElementById("produk_usaha");
-  var cabang = document.getElementById("cabang");
-  var kabupatenKota = document.getElementById("kabupaten_kota");
-  var kcuKcpKk = document.getElementById("kcu_kcp_kk");
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("GET", "/get_cabang");
+        xhr2.onload = function() {
+          // When the data is retrieved, update the options for the parent dropdown
+          var response = JSON.parse(xhr2.responseText);
+          cabang.innerHTML = "";
+          for (var i = 0; i < response.length; i++) {
+            var option = document.createElement("option");
+            option.value = response[i].cabang_id;
+            option.text = response[i].cabang_name;
+            cabang.appendChild(option);
+          }
+        };
+        xhr2.send();
 
-  // Make an AJAX call to the server endpoint to retrieve the appropriate data for the parent dropdown
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/get_bidang_usaha");
-  xhr.onload = function() {
-    // When the data is retrieved, update the options for the parent dropdown
-    var response = JSON.parse(xhr.responseText);
-    bidangUsaha.innerHTML = "";
-    for (var i = 0; i < response.length; i++) {
-      var option = document.createElement("option");
-      option.value = response[i].bidang_id;
-      option.text = response[i].bidang;
-      bidangUsaha.appendChild(option);
-    }
-  };
-  xhr.send();
+        // Attach an event listener to the parent dropdown to trigger an AJAX call when it changes
+        bidangUsaha.addEventListener("change", function() {
+          // Make an AJAX call to the server endpoint to retrieve the appropriate data for the child dropdown
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "/get_produk_usaha/" + encodeURIComponent(bidangUsaha.value));
+          xhr.onload = function() {
+            // When the data is retrieved, update the options for the child dropdown
+            var response = JSON.parse(xhr.responseText);
+            produkUsaha.innerHTML = "";
+            for (var i = 0; i < response.length; i++) {
+              var option = document.createElement("option");
+              option.value = response[i].produk_id;
+              option.text = response[i].usaha;
+              produkUsaha.appendChild(option);
+            }
+          };
+          xhr.send();
+        });
 
-  var xhr2 = new XMLHttpRequest();
-  xhr2.open("GET", "/get_cabang");
-  xhr2.onload = function() {
-    // When the data is retrieved, update the options for the parent dropdown
-    var response = JSON.parse(xhr2.responseText);
-    cabang.innerHTML = "";
-    for (var i = 0; i < response.length; i++) {
-      var option = document.createElement("option");
-      option.value = response[i].cabang_id;
-      option.text = response[i].cabang_name;
-      cabang.appendChild(option);
-    }
-  };
-  xhr2.send();
+        // Attach an event listener to the parent dropdown to trigger an AJAX call when it changes
+        cabang.addEventListener("change", function() {
+          // Make an AJAX call to the server endpoint to retrieve the appropriate data for the child dropdown
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "/get_kota_kabupaten/" + encodeURIComponent(cabang.value));
+          xhr.onload = function() {
+            // When the data is retrieved, update the options for the child dropdown
+            var response = JSON.parse(xhr.responseText);
+            kabupatenKota.innerHTML = "";
+            for (var i = 0; i < response.length; i++) {
+              var option = document.createElement("option");
+              option.value = response[i].kota_kabupaten_id;
+              option.text = response[i].kota_kabupaten_name;
+              kabupatenKota.appendChild(option);
+            }
+          };
+          xhr.send();
 
-  // Attach an event listener to the parent dropdown to trigger an AJAX call when it changes
-  bidangUsaha.addEventListener("change", function() {
-    // Make an AJAX call to the server endpoint to retrieve the appropriate data for the child dropdown
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/get_produk_usaha/" + encodeURIComponent(bidangUsaha.value));
-    xhr.onload = function() {
-      // When the data is retrieved, update the options for the child dropdown
-      var response = JSON.parse(xhr.responseText);
-      produkUsaha.innerHTML = "";
-      for (var i = 0; i < response.length; i++) {
-        var option = document.createElement("option");
-        option.value = response[i].produk_id;
-        option.text = response[i].usaha;
-        produkUsaha.appendChild(option);
-      }
-    };
-    xhr.send();
-  });
+          var xhr2 = new XMLHttpRequest();
+          xhr2.open("GET", "/get_kcu_kcp_kk/" + encodeURIComponent(cabang.value));
+          xhr2.onload = function() {
+            // When the data is retrieved, update the options for the child dropdown
+            var response = JSON.parse(xhr2.responseText);
+            kcuKcpKk.innerHTML = "";
+            for (var i = 0; i < response.length; i++) {
+              var option = document.createElement("option");
+              option.value = response[i].kantor_id;
+              option.text = response[i].kantor;
+              kcuKcpKk.appendChild(option);
+            }
+          };
+          xhr2.send();
+        });
 
-  // Attach an event listener to the parent dropdown to trigger an AJAX call when it changes
-  cabang.addEventListener("change", function() {
-    // Make an AJAX call to the server endpoint to retrieve the appropriate data for the child dropdown
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/get_kota_kabupaten/" + encodeURIComponent(cabang.value));
-    xhr.onload = function() {
-      // When the data is retrieved, update the options for the child dropdown
-      var response = JSON.parse(xhr.responseText);
-      kabupatenKota.innerHTML = "";
-      for (var i = 0; i < response.length; i++) {
-        var option = document.createElement("option");
-        option.value = response[i].kota_kabupaten_id;
-        option.text = response[i].kota_kabupaten_name;
-        kabupatenKota.appendChild(option);
-      }
-    };
-    xhr.send();
+        /* 
 
-    var xhr2 = new XMLHttpRequest();
-    xhr2.open("GET", "/get_kcu_kcp_kk/" + encodeURIComponent(cabang.value));
-    xhr2.onload = function() {
-      // When the data is retrieved, update the options for the child dropdown
-      var response = JSON.parse(xhr2.responseText);
-      kcuKcpKk.innerHTML = "";
-      for (var i = 0; i < response.length; i++) {
-        var option = document.createElement("option");
-        option.value = response[i].kantor_id;
-        option.text = response[i].kantor;
-        kcuKcpKk.appendChild(option);
-      }
-    };
-    xhr2.send();
-  });
+        DYNAMIC FORM END
 
-  /* 
-
-  DYNAMIC FORM END
-
-  */
+        */
 
 
-  /* 
+        /* 
 
-  THIS PART TO CREATE MULTIPLE AFILIASI BUTTON
-  
-  */
-  $(document).ready(function() {
-    // Add Afiliasi fields when the button is clicked
-    $("#add-afiliasi-btn").click(function() {
-      var afiliasiGroup = $(".afiliasi-group").first().clone(); // Clone the first group
-      afiliasiGroup.find("input, select").val(""); // Clear the input values
-      $("#afiliasi-container").append(afiliasiGroup); // Append the cloned group to the container
-    });
+        THIS PART TO CREATE MULTIPLE AFILIASI BUTTON
+        
+        */
+        $(document).ready(function() {
+          // Add Afiliasi fields when the button is clicked
+          $("#add-afiliasi-btn").click(function() {
+            var afiliasiGroup = $(".afiliasi-group").first().clone(); // Clone the first group
+            afiliasiGroup.find("input, select").val(""); // Clear the input values
+            $("#afiliasi-container").append(afiliasiGroup); // Append the cloned group to the container
+          });
 
-    // Remove the last added Afiliasi group when the button is clicked
-    $("#remove-afiliasi-btn").click(function() {
-      var afiliasiGroups = $(".afiliasi-group");
-      if (afiliasiGroups.length > 1) {
-        afiliasiGroups.last().remove(); // Remove the last group
-      }
-    });
-  });
-</script>
+          // Remove the last added Afiliasi group when the button is clicked
+          $("#remove-afiliasi-btn").click(function() {
+            var afiliasiGroups = $(".afiliasi-group");
+            if (afiliasiGroups.length > 1) {
+              afiliasiGroups.last().remove(); // Remove the last group
+            }
+          });
+        });
+      </script>
