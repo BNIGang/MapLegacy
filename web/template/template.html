@@ -77,9 +77,19 @@
             <span>Affiliasi</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/user_page">
             <i class="fas fa-user"></i>
             <span>User</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/add_users">
+            <i class="fas fa-user"></i>
+            <span>Tambah User</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/edit_password">
+            <i class="fas fa-user"></i>
+            <span>Ganti Password</span></a>
         </li>
         
 
@@ -180,7 +190,13 @@
                 {{ template "create_afiliasi" . }}
                 {{ else if eq .content "edit_afiliasi"}}
                 {{ template "edit_afiliasi" . }}
-                {{ else}}
+                {{ else if eq .content "user_page"}}
+                {{ template "user_page" . }}
+                {{ else if eq .content "add_users"}}
+                {{ template "add_users" . }}
+                {{ else if eq .content "edit_password"}}
+                {{ template "edit_password" . }}
+                {{ else }}
                 {{ template "edit_nasabah" . }}
                 {{ end }}
             </div>

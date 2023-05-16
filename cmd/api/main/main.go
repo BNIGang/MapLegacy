@@ -4,6 +4,7 @@ import (
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
+
 	// "github.com/derpen/fastergoding"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
@@ -211,6 +212,49 @@ func main() {
 
 	// handle autofill
 	app.Get("/get_suggestions/:nama_pengusaha", web.JWTMiddleware(secret, engine), web.AutoFillHandler)
+
+	// Handle User accour
+	app.Get("/add_users", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"content":   "add_users",
+		})
+	})
+
+	app.Get("/edit_password", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"content":   "edit_password",
+		})
+	})
+
+	app.Get("/user_page", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"content":   "user_page",
+		})
+	})
 
 	app.Get("/logout", login.LogoutHandler)
 
