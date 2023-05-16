@@ -1485,6 +1485,7 @@ pre code {
 .table {
     width: 100%;
     margin-bottom: 1rem;
+    margin-left: 1rem;
     color: #858796
 }
 
@@ -9689,7 +9690,7 @@ a:focus {
 
 #wrapper #content-wrapper {
     background-color: #f8f9fc;
-    width: 100%;
+    /* width: 100%; */
 }
 
 div#content-wrapper {

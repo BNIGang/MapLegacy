@@ -10,10 +10,6 @@
     <title>BNI Map Legacy</title>
 </head>
 <style>
-
-  body{
-    background-image:url("/web/template/images/LoginPage.svg");
-  }
     .navbar {
     display: flex;
     justify-content: space-between;
@@ -64,17 +60,26 @@
         </a>
         <!-- Side Navbar -->
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="/home">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
-        </li>
-    
-        <!-- Nav Item - Tables -->
+          </li>
+          <!-- Nav Item - Tables -->
         <li class="nav-item">
             <a class="nav-link" href="#">
-            <i class="fas fa-file-invoice"></i>
-            <span>Tambah User</span></a>
+            <i class="fas fa-database"></i>
+            <span>Data Nasabah</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+            <i class="fas fa-duotone fa-users"></i>
+            <span>Affiliasi</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+            <i class="fas fa-user"></i>
+            <span>User</span></a>
         </li>
         
 
@@ -169,6 +174,12 @@
                 {{ template "create_nasabah" . }}
                 {{ else if eq .content "map_legacy" }}
                 {{ template "map_legacy" . }}
+                {{ else if eq .content "afiliasi"}}
+                {{ template "afiliasi" . }}
+                {{ else if eq .content "create_afiliasi"}}
+                {{ template "create_afiliasi" . }}
+                {{ else if eq .content "edit_afiliasi"}}
+                {{ template "edit_afiliasi" . }}
                 {{ else}}
                 {{ template "edit_nasabah" . }}
                 {{ end }}
