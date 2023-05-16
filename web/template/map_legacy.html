@@ -20,22 +20,23 @@
         text-align: center;
     }
 
-    .frame:nth-child(0) {
-        top: 50%;
-        left: 20%;
-        transform: translate(-20%, -50%);
+    /* Positioning classes */
+    .frame-bottom {
+        top: calc(100% + 20px);
+        left: 50%;
+        transform: translateX(-50%);
     }
 
-    .frame:nth-child(1) {
+    .frame-aside {
         top: 50%;
-        left: 80%;
-        transform: translate(-80%, -50%);
+        left: calc(100% + 20px);
+        transform: translateY(-50%);
     }
 
-    .frame:nth-child(2) {
-        top: 50%;
-        left: 80%;
-        transform: translate(-80%, -50%);
+    .frame-top {
+        top: calc(-100% - 20px);
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     #line {
@@ -57,7 +58,15 @@
         </div>
         {{ if .data.AfiliasiList}}
             {{ range $index, $afiliasi := .data.AfiliasiList }}
-                <div class="frame frame{{ $index }}" id="frame{{ $index }}">
+                {{ $positionClass := "" }}
+                {{ if eq $afiliasi.HubunganAfiliasi "Anak" }}
+                    {{ $positionClass = "frame-bottom" }}
+                {{ else if eq $afiliasi.HubunganAfiliasi "Istri" }}
+                    {{ $positionClass = "frame-aside" }}
+                {{ else if eq $afiliasi.HubunganAfiliasi "Ayah" }}
+                    {{ $positionClass = "frame-top" }}
+                {{ end }}
+                <div class="frame {{ $positionClass }} afiliasi-frame" id="frame{{ $index }}">
                     <h2>Name: {{ $afiliasi.NamaAfiliasi }}</h2>
                     <p>Afiliasi: {{ $afiliasi.HubunganAfiliasi }}</p>
                 </div>
@@ -68,6 +77,18 @@
 </div>
 
 <script>
+    // Retrieve all the frames with the class "afiliasi-frame"
+    const frames = document.querySelectorAll('.afiliasi-frame');
+
+    // Iterate over the frames
+    frames.forEach((frame, index) => {
+        // Calculate the horizontal positioning based on the index and frame width
+        const leftOffset = (index + 1) * (frame.offsetWidth + 20); // Add 20px spacing between frames
+
+        // Apply the horizontal positioning
+        frame.style.left = `${leftOffset}px`;
+    });
+
     function connectFrames(frame1, frame2) {
         const line = document.getElementById("line");
         const container = document.getElementById("container");
@@ -118,14 +139,14 @@
     const frameori = document.getElementById("frame-ori")
 
     // Call the connectFrames() function within the loop
-    const frames = [];
+    const frames_array = [];
 
     {{ range $index, $afiliasi := .data.AfiliasiList }}
-        frames[{{ $index }}] = document.getElementById("frame{{ $index }}");
+        frames_array[{{ $index }}] = document.getElementById("frame{{ $index }}");
     {{ end }}
 
     for (let i = 0; i < frames.length; i++) {
-        connectFrames(frameori, frames[i]);
+        connectFrames(frameori, frames_array[i]);
     }
 
     // Variables to track zoom level and container position
