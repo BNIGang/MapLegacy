@@ -191,23 +191,23 @@ func main() {
 	// TODO: add confirmation before deleting
 	app.Post("/delete_afiliasi/:afiliasi_id", web.JWTMiddleware(secret, engine), v1.DeleteAfiliasiData)
 
-	// app.Get("/edit_afiliasi/:afiliasi_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-	// 	afiliasi_id := c.Params("afiliasi_id")
+	app.Get("/edit_afiliasi/:id_child", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		id_child := c.Params("id_child")
 
-	// 	data_nasabah, err := v1.GetNasabahByID(afiliasi_id)
-	// 	if err != nil {
-	// 		return c.Redirect("/home")
-	// 	}
+		data_afiliasi, err := v1.GetAfiliasiById(id_child)
+		if err != nil {
+			return c.Redirect("/home")
+		}
 
-	// 	return c.Render("template", fiber.Map{
-	// 		"Name":         username,
-	// 		"Wilayah":      user.Wilayah_ID,
-	// 		"Cabang":       user.Cabang_ID,
-	// 		"Privilege":    user.User_Privileges,
-	// 		"data_nasabah": data_nasabah,
-	// 		"content":      "edit_afiliasi",
-	// 	})
-	// })
+		return c.Render("template", fiber.Map{
+			"Name":          username,
+			"Wilayah":       user.Wilayah_ID,
+			"Cabang":        user.Cabang_ID,
+			"Privilege":     user.User_Privileges,
+			"data_afiliasi": data_afiliasi,
+			"content":       "edit_afiliasi",
+		})
+	})
 
 	// handle autofill
 	app.Get("/get_suggestions/:nama_pengusaha", web.JWTMiddleware(secret, engine), web.AutoFillHandler)

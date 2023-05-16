@@ -1,22 +1,18 @@
 <style>
     /* Style each row of the table */
     table tr {
-    cursor: pointer;
+        cursor: pointer;
     }
 
     /* Alternate row colors */
-    table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    tbody:nth-child(even) tr {
+        background-color: #f2f2f2;
     }
 
-    table tr:nth-child(odd) {
-    background-color: #ffffff;
+    tbody:nth-child(odd) tr {
+        background-color: #ffffff;
     }
 
-    /* Hover effect */
-    table tr:hover {
-    background-color: #ddd;
-    }
     button {
         background-color: #035259;
     }
@@ -45,7 +41,7 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Nama Pengusaha</th>
+            <th>Nama</th>
             <th>Nama Afiliasi</th>
             <th>Hubungan Afiliasi</th>
             <th>Ditambahkan Oleh</th>
@@ -54,15 +50,22 @@
     </thead>
     <tbody>
         {{range .data_afiliasi}}
-        <tr onclick="window.location.href='/add_afiliasi/{{ .Id_child }}';">
-            <td>{{.NamaPengusaha}}</td>
-            <td>{{.NamaAfiliasi}}</td>
-            <td>{{.HubunganAfiliasi}}</td>
-            <td>{{.Username}}</td>
-            <td><form action="/add_afiliasi/{{ .Id_child }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
-            <td><form action="/edit_afiliasi/{{ .Id_child }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
-            <td><form action="/delete_afiliasi/{{ .Id_child }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
-        </tr>
+        <tbody>
+            {{$rowCount := .RowCount}}
+            {{range $index, $afiliasi := .MergedAfiliasi}}
+            <tr onclick="window.location.href='/info_afiliasi/{{ .Id_child }}';">
+                {{if eq $index 0}}
+                <td rowspan="{{$rowCount}}">{{.NamaPengusaha}}</td>
+                {{end}}
+                <td>{{.NamaAfiliasi}}</td>
+                <td>{{.HubunganAfiliasi}}</td>
+                <td>{{.Username}}</td>
+                <td><form action="/add_afiliasi/{{ .Id_child }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+                <td><form action="/edit_afiliasi/{{ .Id_child }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
+                <td><form action="/delete_afiliasi/{{ .Id_child }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
+            </tr>
+            {{end}}
+        </tbody>
         {{end}}
     </tbody>
 </table>

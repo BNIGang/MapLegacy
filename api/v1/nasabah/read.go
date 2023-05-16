@@ -44,11 +44,19 @@ type Afiliasi struct {
 	Username         string
 }
 
+type MergedRow struct {
+	NamaPengusaha  string
+	MergedAfiliasi []Afiliasi
+	RowCount       int
+}
+
 var nasabahMap = make(map[string]*Nasabah)
-var afiliasiMap = make(map[string]*Afiliasi)
+var mergedMap = make(map[string][]Afiliasi)
+var idChildMap = make(map[string]Afiliasi)
 
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
 	nasabahMap = make(map[string]*Nasabah)
+	idChildMap = make(map[string]Afiliasi)
 
 	db, err := web.Connect()
 	if err != nil {
@@ -174,8 +182,8 @@ func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	return nasabah, nil
 }
 
-func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Afiliasi, error) {
-	afiliasiMap = make(map[string]*Afiliasi)
+func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]MergedRow, error) {
+	mergedMap = make(map[string][]Afiliasi)
 
 	//TODO , another one of those wilayah only thing
 
@@ -186,19 +194,19 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 	defer db.Close()
 
 	rows, err := db.Query(`
-		SELECT 
-			a.*, dn.nama_pengusaha, u.name
-		FROM
-			afiliasi a
-		LEFT JOIN
-			data_nasabah dn
-		ON
-			a.id_parent = dn.id
-		LEFT JOIN
-			users u
-		ON
-			a.added_by = u.user_id
-	`)
+        SELECT 
+            a.*, dn.nama_pengusaha, u.name
+        FROM
+            afiliasi a
+        LEFT JOIN
+            data_nasabah dn
+        ON
+            a.id_parent = dn.id
+        LEFT JOIN
+            users u
+        ON
+            a.added_by = u.user_id
+    `)
 
 	if err != nil {
 		return nil, err
@@ -221,32 +229,45 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 			return nil, err // database error
 		}
 
-		// Check if the nasabah is already in the map
-		if _, ok := afiliasiMap[afiliasi.Id_child]; !ok {
-			afiliasiMap[afiliasi.Id_child] = &afiliasi
+		// Check if the NamaPengusaha is already in the mergedMap
+		if _, ok := mergedMap[afiliasi.Id_parent]; !ok {
+			mergedMap[afiliasi.Id_parent] = []Afiliasi{afiliasi}
+		} else {
+			mergedMap[afiliasi.Id_parent] = append(mergedMap[afiliasi.Id_parent], afiliasi)
 		}
+
+		idChildMap[afiliasi.Id_child] = afiliasi
+
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
-	// Create a slice of Nasabah from the values in the map
-	afiliasis := make([]Afiliasi, 0, len(afiliasiMap))
-	for _, afiliasi := range afiliasiMap {
-		afiliasis = append(afiliasis, *afiliasi)
+	mergedRows := make([]MergedRow, 0, len(mergedMap))
+	for nama, afiliasiList := range mergedMap {
+		rowCount := (len(afiliasiList)) // Calculate the row count
+		mergedRows = append(mergedRows, MergedRow{
+			NamaPengusaha:  nama,
+			MergedAfiliasi: afiliasiList,
+			RowCount:       rowCount, // Store the row count in the struct
+		})
 	}
 
-	sort.Slice(afiliasis, func(i, j int) bool {
-		return afiliasis[i].NamaAfiliasi < afiliasis[j].NamaAfiliasi
+	sort.Slice(mergedRows, func(i, j int) bool {
+		return mergedRows[i].NamaPengusaha > mergedRows[j].NamaPengusaha
 	})
 
-	return afiliasis, nil
+	return mergedRows, nil
 }
 
-// func GetAfiliasiById(id_afiliasi string){
-
-// }
+func GetAfiliasiById(id_child string) (*Afiliasi, error) {
+	afiliasi, ok := idChildMap[id_child]
+	if !ok {
+		return nil, fmt.Errorf("nasabah with id %s not found", id_child)
+	}
+	return &afiliasi, nil
+}
 
 // func SearchNasabah(query string) {
 // 	//TODO

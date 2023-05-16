@@ -179,6 +179,8 @@
                 {{ template "afiliasi" . }}
                 {{ else if eq .content "create_afiliasi"}}
                 {{ template "create_afiliasi" . }}
+                {{ else if eq .content "edit_afiliasi"}}
+                {{ template "edit_afiliasi" . }}
                 {{ else}}
                 {{ template "edit_nasabah" . }}
                 {{ end }}
