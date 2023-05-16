@@ -31,3 +31,27 @@ func DeleteNasabahData(c *fiber.Ctx) error {
 	// Redirect to home page
 	return c.Redirect("/home")
 }
+
+func DeleteAfiliasiData(c *fiber.Ctx) error {
+	// Extract the cabang_id parameter from the request URL
+	afiliasi_id := c.Params("afiliasi_id")
+
+	db, err := web.Connect()
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("DELETE FROM afiliasi WHERE id_child=?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	_, err2 := stmt.Exec(afiliasi_id)
+	if err2 != nil {
+		log.Fatal(err)
+	}
+
+	return c.Redirect("/afiliasi")
+}

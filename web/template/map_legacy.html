@@ -20,10 +20,16 @@
         text-align: center;
     }
 
-    .frame:nth-child(1) {
+    .frame:nth-child(0) {
         top: 50%;
         left: 20%;
         transform: translate(-20%, -50%);
+    }
+
+    .frame:nth-child(1) {
+        top: 50%;
+        left: 80%;
+        transform: translate(-80%, -50%);
     }
 
     .frame:nth-child(2) {
@@ -45,88 +51,82 @@
 
 <div id="viewport">
     <div id="container">
-        {{ range .data}}
-        <div class="frame">
-            <h2>Name: {{ .Name }}</h2>
-            <p>Afiliasi: {{ .Afiliasi }}</p>
-            {{ if .AfiliasiList }}
-            <ul>
-                {{ range .AfiliasiList }}
-                <li>
-                    <h3>{{ .Name }}</h3>
-                    <p>Afiliasi: {{ .Afiliasi }}</p>
-                    {{ if .AfiliasiList }}
-                    <ul>
-                        {{ range .AfiliasiList }}
-                        <li>
-                            <h4>{{ .Name }}</h4>
-                            <p>Afiliasi: {{ .Afiliasi }}</p>
-                            <!-- Render further nested levels here if needed -->
-                        </li>
-                        {{ end }}
-                    </ul>
-                    {{ end }}
-                </li>
-                {{ end }}
-            </ul>
-            {{ end }}
+        <div class="frame frame-ori" id="frame-ori">
+            <h2>Name: {{ .data.Nama_pengusaha }}</h2>
+            <p>Afiliasi: {{ .data.Nomor_kontak }}</p>
         </div>
-        {{end}}
+        {{ if .data.AfiliasiList}}
+            {{ range $index, $afiliasi := .data.AfiliasiList }}
+                <div class="frame frame{{ $index }}" id="frame{{ $index }}">
+                    <h2>Name: {{ $afiliasi.NamaAfiliasi }}</h2>
+                    <p>Afiliasi: {{ $afiliasi.HubunganAfiliasi }}</p>
+                </div>
+            {{ end }}
+        {{ end }}
         <div id="line"></div>
     </div>
 </div>
 
 <script>
-    // function connectFrames() {
-    //     const frame1 = document.getElementById("frame1");
-    //     const frame2 = document.getElementById("frame2");
-    //     const line = document.getElementById("line");
-    //     const container = document.getElementById("container");
+    function connectFrames(frame1, frame2) {
+        const line = document.getElementById("line");
+        const container = document.getElementById("container");
 
-    //     const frame1Rect = frame1.getBoundingClientRect();
-    //     const frame2Rect = frame2.getBoundingClientRect();
-    //     const containerRect = container.getBoundingClientRect();
+        const frame1Rect = frame1.getBoundingClientRect();
+        const frame2Rect = frame2.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
 
-    //     const frame1Points = [
-    //         { x: frame1Rect.left - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
-    //         { x: frame1Rect.right - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
-    //         { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.top - containerRect.top },
-    //         { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.bottom - containerRect.top }
-    //     ];
+        const frame1Points = [
+            { x: frame1Rect.left - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
+            { x: frame1Rect.right - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
+            { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.top - containerRect.top },
+            { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.bottom - containerRect.top }
+        ];
 
-    //     const frame2Points = [
-    //         { x: frame2Rect.left - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
-    //         { x: frame2Rect.right - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
-    //         { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.top - containerRect.top },
-    //         { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.bottom - containerRect.top }
-    //     ];
+        const frame2Points = [
+            { x: frame2Rect.left - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
+            { x: frame2Rect.right - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
+            { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.top - containerRect.top },
+            { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.bottom - containerRect.top }
+        ];
 
-    //     let shortestDistance = Infinity;
-    //     let closestPoints = { frame1: null, frame2: null };
+        let shortestDistance = Infinity;
+        let closestPoints = { frame1: null, frame2: null };
 
-    //     for (let i = 0; i < frame1Points.length; i++) {
-    //         for (let j = 0; j < frame2Points.length; j++) {
-    //             const distance = calculateDistance(frame1Points[i].x, frame1Points[i].y, frame2Points[j].x, frame2Points[j].y);
-    //             if (distance < shortestDistance) {
-    //                 shortestDistance = distance;
-    //                 closestPoints.frame1 = frame1Points[i];
-    //                 closestPoints.frame2 = frame2Points[j];
-    //             }
-    //         }
-    //     }
+        for (let i = 0; i < frame1Points.length; i++) {
+            for (let j = 0; j < frame2Points.length; j++) {
+                const distance = calculateDistance(frame1Points[i].x, frame1Points[i].y, frame2Points[j].x, frame2Points[j].y);
+                if (distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closestPoints.frame1 = frame1Points[i];
+                    closestPoints.frame2 = frame2Points[j];
+                }
+            }
+        }
 
-    //     const angle = Math.atan2(closestPoints.frame2.y - closestPoints.frame1.y, closestPoints.frame2.x - closestPoints.frame1.x);
-    //     const distance = calculateDistance(closestPoints.frame2.x, closestPoints.frame2.y, closestPoints.frame1.x, closestPoints.frame1.y);
+        const angle = Math.atan2(closestPoints.frame2.y - closestPoints.frame1.y, closestPoints.frame2.x - closestPoints.frame1.x);
+        const distance = calculateDistance(closestPoints.frame2.x, closestPoints.frame2.y, closestPoints.frame1.x, closestPoints.frame1.y);
 
-    //     line.style.transform = `translate(${closestPoints.frame1.x}px, ${closestPoints.frame1.y}px) rotate(${angle}rad)`;
-    //     line.style.width = `${distance}px`;
-    // }
+        line.style.transform = `translate(${closestPoints.frame1.x}px, ${closestPoints.frame1.y}px) rotate(${angle}rad)`;
+        line.style.width = `${distance}px`;
+    }
 
-    // function calculateDistance(x1, y1, x2, y2) {
-    //     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    // }
+    function calculateDistance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
 
-    // connectFrames();
+    const frameori = document.getElementById("frame-ori")
+
+    // Call the connectFrames() function within the loop
+    const frames = [];
+
+    {{ range $index, $afiliasi := .data.AfiliasiList }}
+        frames[{{ $index }}] = document.getElementById("frame{{ $index }}");
+    {{ end }}
+
+    for (let i = 0; i < frames.length; i++) {
+        connectFrames(frameori, frames[i]);
+    }
 
     // Variables to track zoom level and container position
     let zoomLevel = 1;

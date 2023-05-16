@@ -1,0 +1,61 @@
+<!-- <div class="modal fade" id="tambah_barang" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header"> -->
+        <h5 style="margin-left: 20px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Input Afiliasi Baru</h5>
+      </div>
+      <div class="modal-body">
+
+        <form action="/update_afiliasi" method="POST" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label for="nama_pengusaha">Nama Orang Pertama:</label>
+            <input type="text" id="nama_pengusaha" name="nama_pengusaha" class="form-control" value="{{ .data_afiliasi.NamaPengusaha}}" disabled>
+            <div id="suggestions"></div>
+        </div>
+
+        <input type="hidden" id="id_pengusaha" name="id_pengusaha">
+
+          <div class="form-group">
+            <div id="afiliasi-container">
+              <div class="afiliasi-group">
+                <label for="afiliasi">Nama Afiliasi:</label>
+                <input type="text" id="afiliasi" class="afiliasi form-control" name="afiliasi[]" value="{{ .data_afiliasi.NamaAfiliasi}}">
+
+                <label for="hubungan_afiliasi">Hubungan Afiliasi:</label>
+                <select id="hubungan_afiliasi" class="hubungan_afiliasi form-control" name="hubungan_afiliasi[]">
+                    <option value="Direktur" {{if eq .data_afiliasi.HubunganAfiliasi `Direktur`}}selected{{end}}>Direktur</option>
+                    <option value="Komisaris" {{if eq .data_afiliasi.HubunganAfiliasi `Komisaris`}}selected{{end}}>Komisaris</option>
+                    <option value="Owner/Pemegang Saham" {{if eq .data_afiliasi.HubunganAfiliasi `Owner/Pemegang Saham`}}selected{{end}}>Owner/Pemegang Saham</option>
+                    <option value="Suami" {{if eq .data_afiliasi.HubunganAfiliasi `Suami`}}selected{{end}}>Suami</option>
+                    <option value="Istri" {{if eq .data_afiliasi.HubunganAfiliasi `Istri`}}selected{{end}}>Istri</option>
+                    <option value="Ayah" {{if eq .data_afiliasi.HubunganAfiliasi `Ayah`}}selected{{end}}>Ayah</option>
+                    <option value="Ibu" {{if eq .data_afiliasi.HubunganAfiliasi `Ibu`}}selected{{end}}>Ibu</option>
+                    <option value="Mertua" {{if eq .data_afiliasi.HubunganAfiliasi `Mertua`}}selected{{end}}>Mertua</option>
+                    <option value="Anak" {{if eq .data_afiliasi.HubunganAfiliasi `Anak`}}selected{{end}}>Anak</option>
+                    <option value="Kakak" {{if eq .data_afiliasi.HubunganAfiliasi `Kakak`}}selected{{end}}>Kakak</option>
+                    <option value="Adik" {{if eq .data_afiliasi.HubunganAfiliasi `Adik`}}selected{{end}}>Adik</option>
+                    <option value="Keponakan" {{if eq .data_afiliasi.HubunganAfiliasi `Keponakan`}}selected{{end}}>Keponakan</option>
+                    <option value="Sepupu" {{if eq .data_afiliasi.HubunganAfiliasi `Sepupu`}}selected{{end}}>Sepupu</option>
+                    <option value="Paman" {{if eq .data_afiliasi.HubunganAfiliasi `Paman`}}selected{{end}}>Paman</option>
+                    <option value="Tante" {{if eq .data_afiliasi.HubunganAfiliasi `Tante`}}selected{{end}}>Tante</option>
+                    <option value="Kakek" {{if eq .data_afiliasi.HubunganAfiliasi `Kakek`}}selected{{end}}>Kakek</option>
+                    <option value="Nenek" {{if eq .data_afiliasi.HubunganAfiliasi `Nenek`}}selected{{end}}>Nenek</option>
+                    <option value="Cucu" {{if eq .data_afiliasi.HubunganAfiliasi `Cucu`}}selected{{end}}>Cucu</option>
+                    <option value="Saudara Ipar" {{if eq .data_afiliasi.HubunganAfiliasi `Saudara Ipar`}}selected{{end}}>Saudara Ipar</option>
+                    <option value="Besan" {{if eq .data_afiliasi.HubunganAfiliasi `Besan`}}selected{{end}}>Besan</option>
+                </select><br>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <a href="/afiliasi" type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

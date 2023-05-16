@@ -157,3 +157,63 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 		return c.Redirect("/home")
 	}
 }
+
+func AddAfiliasi(user_id string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		form, err := c.MultipartForm()
+		if err != nil {
+			return err
+		}
+
+		db, err := web.Connect()
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		defer db.Close()
+
+		// This part to add data afiliasi to afiliasi table
+		stmt, err := db.Prepare(`
+		INSERT INTO afiliasi 
+		(
+			id_child,
+			id_parent,
+			nama_child,
+			hubungan,
+			added_by
+		) VALUES 
+		(
+			UUID(),
+			?,
+			?,
+			?,
+			?
+		)
+		`)
+		if err != nil {
+			return err
+		}
+		defer stmt.Close()
+
+		// Retrieve the text fields
+		// pengusaha := form.Value["nama_pengusaha"][0]
+		id_pengusaha := form.Value["id_pengusaha"][0]
+
+		// Retrieve the array values
+		afiliasiValues := form.Value["afiliasi[]"]
+		hubunganAfiliasiValues := form.Value["hubungan_afiliasi[]"]
+
+		// Iterate over the array values and process them accordingly
+		for i := 0; i < len(afiliasiValues); i++ {
+			afiliasi := afiliasiValues[i]
+			hubunganAfiliasi := hubunganAfiliasiValues[i]
+
+			// Execute the SQL statement with the current values
+			_, err := stmt.Exec(id_pengusaha, afiliasi, hubunganAfiliasi, user_id)
+			if err != nil {
+				return err
+			}
+		}
+
+		return c.Redirect("/afiliasi")
+	}
+}
