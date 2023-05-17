@@ -1,1 +1,92 @@
-<h1>add users page!</h1>
+<h5 style="margin-left: 10px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Tambah User</h5>
+</div>
+<div class="modal-body">
+
+  <form action="/add" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="name">Nama Lengkap:</label>
+      <input type="text" id="name" name="name" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" class="form-control">
+    </div>
+
+    <div class="form-group">
+    <label for="cabang">Cabang:</label>
+    <select id="cabang" name="cabang" class="form-control">
+      <option value="">Pilih Cabang</option>
+    </select><br>
+    </div>
+
+    <div class="form-group">
+    <label for="user_privileges">Privilege:</label>
+    <select id="user_privileges" name="user_privilage" class="form-control">
+      <option value="">Pilih Privilage</option>
+    </select><br>
+    </div>
+    <div class="modal-footer">
+        <a href="/home" type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+        <button type="submit" class="btn btn-primary">submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      /* 
+
+      THIS PART TO CREATE DYNAMIC FORM
+      
+      */
+
+      // Get a reference to the parent and child dropdowns
+      var cabang = document.getElementById("cabang");
+      var privilage = document.getElementById("user_privilage")
+
+      var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/get_cabang");
+        xhr.onload = function() {
+          // When the data is retrieved, update the options for the parent dropdown
+          var response = JSON.parse(xhr.responseText);
+          cabang.innerHTML = "";
+          for (var i = 0; i < response.length; i++) {
+            var option = document.createElement("option");
+            option.value = response[i].cabang_id;
+            option.text = response[i].cabang_name;
+            cabang.appendChild(option);
+          }
+        };
+        xhr.send();
+
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("GET", "/get_user_privileges");
+        xhr2.onload = function() {
+          // When the data is retrieved, update the options for the parent dropdown
+          var response = JSON.parse(xhr2.responseText);
+          user_privileges.innerHTML = "";
+          for (var i = 0; i < response.length; i++) {
+            var option = document.createElement("option");
+            option.value = response[i].user_id;
+            option.text = response[i].user_privilege;
+            user_privileges.appendChild(option);
+          }
+        };
+        xhr2.send();
+
+    </script>

@@ -123,13 +123,15 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 			id_child,
 			id_parent,
 			nama_child,
-			hubungan
+			hubungan,
+			added_by,
 		) VALUES 
 		(
 			UUID(),
 			(SELECT id FROM data_nasabah WHERE nama_pengusaha = ?),
 			?,
-			?
+			?,
+			?,
 		)
 		`)
 		if err2 != nil {
@@ -147,7 +149,7 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 			hubunganAfiliasi := hubunganAfiliasiValues[i]
 
 			// Execute the SQL statement with the current values
-			_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi)
+			_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi, user_id)
 			if err != nil {
 				return err
 			}

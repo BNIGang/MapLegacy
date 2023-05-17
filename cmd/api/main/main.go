@@ -4,8 +4,7 @@ import (
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
-
-	// "github.com/derpen/fastergoding"
+	"github.com/derpen/fastergoding"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 )
@@ -18,7 +17,7 @@ func main() {
 
 	//TODO
 	//Probably Remove this Later
-	// fastergoding.Run("./cmd/api/main")
+	fastergoding.Run("./cmd/api/main")
 
 	engine := html.New("./web/template", ".html")
 
@@ -151,7 +150,13 @@ func main() {
 	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
 
 	// Update nasabah
-	app.Post("/update/:nasabah_id", web.JWTMiddleware(secret, engine), v1.UpdateNasabahData)
+	app.Post("/update/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return v1.UpdateNasabahData(user.User_ID)(c)
+	})
+
+	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return v1.AddNasabahHandler(user.User_ID)(c)
+	})
 
 	// Now, do CRUD for afiliasi
 	app.Get("/afiliasi", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {

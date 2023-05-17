@@ -6379,9 +6379,6 @@ a.bg-dark:focus,a.bg-dark:hover,button.bg-dark:focus,button.bg-dark:hover {
     display: table-cell!important
 }
 
-.d-flex {
-    display: flex!important
-}
 
 .d-inline-flex {
     display: inline-flex!important
@@ -9685,7 +9682,7 @@ a:focus {
 }
 
 #wrapper {
-    display: flex
+    display:flex
 }
 
 #wrapper #content-wrapper {
