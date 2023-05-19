@@ -45,3 +45,12 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]byte, error) {
 
 	return data, nil
 }
+
+func TranslateIdIntoName() {
+	// Add SQL query here to change id into names
+}
+
+func HubunganHandler() {
+	// Connect Istri to Suami, vice versa
+	// Also, handle cucu without parent or whatever idk honestly Lmao!
+}

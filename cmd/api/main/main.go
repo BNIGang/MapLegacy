@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
@@ -131,22 +129,19 @@ func main() {
 		if err != nil {
 			return err
 		}
-		fmt.Println(string(afiliasiList))
 
 		if user == nil || username == "" {
 			return c.Redirect("/home")
 		}
 
-		counter := 1
-
 		return c.Render("template", fiber.Map{
-			"Name":      username,
-			"Wilayah":   user.Wilayah_ID,
-			"Cabang":    user.Cabang_ID,
-			"Privilege": user.User_Privileges,
-			"data":      data_nasabah,
-			"counter":   counter,
-			"content":   "map_legacy",
+			"Name":          username,
+			"Wilayah":       user.Wilayah_ID,
+			"Cabang":        user.Cabang_ID,
+			"Privilege":     user.User_Privileges,
+			"data":          data_nasabah,
+			"afiliasi_list": string(afiliasiList),
+			"content":       "map_legacy",
 		})
 	})
 
