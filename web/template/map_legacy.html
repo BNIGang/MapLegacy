@@ -10,144 +10,147 @@
         position: relative;
         width: 100%;
         height: 100%;
-        transform: scale(1) translate(-22px, -50px);
+        display: flex;
     }
 
-    .frame {
-        position: absolute;
-        border: 3px solid black;
-        padding: 10px;
-        text-align: center;
+    .node rect {
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 2px;
     }
 
-    /* Positioning classes */
-    .frame-bottom {
-        top: calc(100% + 20px);
-        left: 50%;
-        transform: translateX(-50%);
+    .node text {
+        font: 12px sans-serif;
+        text-anchor: middle;
     }
 
-    .frame-aside {
-        top: 50%;
-        left: calc(100% + 20px);
-        transform: translateY(-50%);
+    .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1.5px;
     }
 
-    .frame-top {
-        top: calc(-100% - 20px);
-        left: 50%;
-        transform: translateX(-50%);
+    path {
+        fill:none;
+        stroke:silver;
+        stroke-width:2;
     }
 
-    #line {
-        position: absolute;
-        z-index: -1;
-        width: 100%;
-        height: 2px;
-        background-color: #ccc;
+    rect {
+        fill: white;
+        stroke: silver;
+        width: 80px;
+        height: 40px;
+        stroke-width: 2;
     }
+
+    text {
+        text-anchor: middle;
+    }
+
+    .hide {
+        visibility: hidden;
+    }
+
 </style>
 
 <h1>Map Legacy</h1>
 
 <div id="viewport">
     <div id="container">
-        <div class="frame frame-ori" id="frame-ori">
-            <h2>Name: {{ .data.Nama_pengusaha }}</h2>
-            <p>Afiliasi: {{ .data.Nomor_kontak }}</p>
-        </div>
-        {{ if .data.AfiliasiList}}
-            {{ range $index, $afiliasi := .data.AfiliasiList }}
-                {{ $positionClass := "" }}
-                {{ if eq $afiliasi.HubunganAfiliasi "Anak" }}
-                    {{ $positionClass = "frame-bottom" }}
-                {{ else if eq $afiliasi.HubunganAfiliasi "Istri" }}
-                    {{ $positionClass = "frame-aside" }}
-                {{ else if eq $afiliasi.HubunganAfiliasi "Ayah" }}
-                    {{ $positionClass = "frame-top" }}
-                {{ end }}
-                <div class="frame {{ $positionClass }} afiliasi-frame" id="frame{{ $index }}">
-                    <h2>Name: {{ $afiliasi.NamaAfiliasi }}</h2>
-                    <p>Afiliasi: {{ $afiliasi.HubunganAfiliasi }}</p>
-                </div>
-            {{ end }}
-        {{ end }}
-        <div id="line"></div>
+        <div width="100vw" height="100vh" id="svg-container"></div>
     </div>
 </div>
 
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    // Retrieve all the frames with the class "afiliasi-frame"
-    const frames = document.querySelectorAll('.afiliasi-frame');
+    var svg = d3.select("#svg-container").append("svg")
+                .attr("width", "100vw").attr("height", "100vh")
+                .append("g").attr("transform", "translate(50,50)");
+    
+    var data = [
+        {"child":"John", "parent":"", "spouse":"Isabella"},
+        {"child":"Aaron", "parent":"Kevin"},
+        {"child":"Kevin", "parent":"John", "spouse":"Emma"},
+        {"child":"Mark", "parent":"Ann"},
+        {"child":"Hannah", "parent":"Ann", "spouse":"Williams"},
+        {"child":"Rose", "parent":"Sarah"},
+        {"child":"Ann", "parent":"John", "spouse":"George"},
+        {"child":"Sarah", "parent":"Kevin", "spouse":"James"},
+        {"child":"Angel", "parent":"Sarah"},
+        {"child":null, "parent":"Hannah"},
+    ];
 
-    // Iterate over the frames
-    frames.forEach((frame, index) => {
-        // Calculate the horizontal positioning based on the index and frame width
-        const leftOffset = (index + 1) * (frame.offsetWidth + 20); // Add 20px spacing between frames
+    var dataStructure = d3.stratify()
+                            .id(function(d){return d.child;})
+                            .parentId(function(d){return d.parent;})
+                            (data);
+    
+    var treeStructure = d3.tree().size([650, 300]);
 
-        // Apply the horizontal positioning
-        frame.style.left = `${leftOffset}px`;
+    var information = treeStructure(dataStructure);
+    console.log(information.descendants());
+
+    var connections = svg.append("g").selectAll("path")
+                         .data(information.links());
+    connections.enter().append("path")
+               .attr("d", function (d){
+                    return "M" + (d.source.x-20) + "," + d.source.y + "h 60 v 50 H" +
+                    d.target.x + " V" + d.target.y;})
+               .classed("hide", function(d){
+                    if(d.target.data.child == undefined)
+                        return true;
+                    else
+                        return false;
+                    });
+
+    var connections2 = svg.append("g").selectAll("path")
+                         .data(information.links());
+    connections2.enter().append("path")
+               .attr("d", function (d){
+                if(d.target.data.child == null)
+                    return "M" + (d.source.x) + "," + d.source.y + "h 80";
+                else
+                    return "M" + (d.source.x+40) + "," + d.source.y + "h 80";
     });
+    
+    var rectangles = svg.append("g").selectAll("rect")
+                        .data(information.descendants());
+    rectangles.enter().append("rect")
+              .attr("x", function(d){return d.x-60;})
+              .attr("y", function(d){return d.y-20;})
+              .classed("hide", function(d){
+                if(d.data.child == undefined)
+                    return true;
+                else
+                    return false;
+              });
 
-    function connectFrames(frame1, frame2) {
-        const line = document.getElementById("line");
-        const container = document.getElementById("container");
+    var names = svg.append("g").selectAll("text")
+                   .data(information.descendants());
+    names.enter().append("text")
+                 .text(function(d){return d.data.child;})
+                 .attr("x", function(d){return d.x-20;})
+                 .attr("y", function(d){return d.y;})
 
-        const frame1Rect = frame1.getBoundingClientRect();
-        const frame2Rect = frame2.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-
-        const frame1Points = [
-            { x: frame1Rect.left - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
-            { x: frame1Rect.right - containerRect.left, y: frame1Rect.top - containerRect.top + frame1Rect.height / 2 },
-            { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.top - containerRect.top },
-            { x: frame1Rect.left - containerRect.left + frame1Rect.width / 2, y: frame1Rect.bottom - containerRect.top }
-        ];
-
-        const frame2Points = [
-            { x: frame2Rect.left - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
-            { x: frame2Rect.right - containerRect.left, y: frame2Rect.top - containerRect.top + frame2Rect.height / 2 },
-            { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.top - containerRect.top },
-            { x: frame2Rect.left - containerRect.left + frame2Rect.width / 2, y: frame2Rect.bottom - containerRect.top }
-        ];
-
-        let shortestDistance = Infinity;
-        let closestPoints = { frame1: null, frame2: null };
-
-        for (let i = 0; i < frame1Points.length; i++) {
-            for (let j = 0; j < frame2Points.length; j++) {
-                const distance = calculateDistance(frame1Points[i].x, frame1Points[i].y, frame2Points[j].x, frame2Points[j].y);
-                if (distance < shortestDistance) {
-                    shortestDistance = distance;
-                    closestPoints.frame1 = frame1Points[i];
-                    closestPoints.frame2 = frame2Points[j];
-                }
-            }
-        }
-
-        const angle = Math.atan2(closestPoints.frame2.y - closestPoints.frame1.y, closestPoints.frame2.x - closestPoints.frame1.x);
-        const distance = calculateDistance(closestPoints.frame2.x, closestPoints.frame2.y, closestPoints.frame1.x, closestPoints.frame1.y);
-
-        line.style.transform = `translate(${closestPoints.frame1.x}px, ${closestPoints.frame1.y}px) rotate(${angle}rad)`;
-        line.style.width = `${distance}px`;
-    }
-
-    function calculateDistance(x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
-
-    const frameori = document.getElementById("frame-ori")
-
-    // Call the connectFrames() function within the loop
-    const frames_array = [];
-
-    {{ range $index, $afiliasi := .data.AfiliasiList }}
-        frames_array[{{ $index }}] = document.getElementById("frame{{ $index }}");
-    {{ end }}
-
-    for (let i = 0; i < frames.length; i++) {
-        connectFrames(frameori, frames_array[i]);
-    }
+    var spouseRectangles = svg.append("g").selectAll("rect")
+                              .data(information.descendants());
+    spouseRectangles.enter().append("rect")
+                .attr("x", function(d){return d.x+60;})
+                .attr("y", function(d){return d.y-20;})
+                .classed("hide", function(d){
+                    if(d.data.spouse == undefined)
+                        return true;
+                    else
+                        return false;
+                });
+    
+    var spouseNames = svg.append("g").selectAll("text")
+                         .data(information.descendants());
+    spouseNames.enter().append("text")
+               .text(function(d){return d.data.spouse;})
+               .attr("x", function(d){return d.x+100;})
+               .attr("y", function(d){return d.y;})
 
     // Variables to track zoom level and container position
     let zoomLevel = 1;
