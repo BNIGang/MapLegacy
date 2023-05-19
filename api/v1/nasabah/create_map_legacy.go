@@ -1,56 +1,47 @@
 package v1
 
-func MapLegacyHandler(nasabah_id string) ([]Afiliasi, error) {
-	data_nasabah, err := GetNasabahByID(nasabah_id)
-	if err != nil {
-		return nil, err
-	}
+import (
+	"encoding/json"
+	"fmt"
+)
 
-	return data_nasabah.AfiliasiList, nil
+type Node struct {
+	Child  string `json:"child"`
+	Parent string `json:"parent"`
 }
 
-// {
-// 	nama: Lmao,
-// 	afiliasi_list: {
-// 		{
-// 			nama: Lmao Jr.,
-// 			afiliasi: anak,
-// 			afiliasi_list: {
-// 				{}
-// 			}
-// 		},
-// 		{
-// 			nama: Lmao Sr.,
-// 			afiliasi: ayah,
-// 			afiliasi_list: {
-// 				nama: Mrs. Lmao,
-// 				afiliasi: istri,
-// 				afiliasi_list:{
-// 					{}
-// 				}
-// 			}
-// 		},
-// 	}
-// }
+func MapLegacyHandler(afiliasi *MergedRow) ([]byte, error) {
+	// Check if afiliasi is empty
+	if len(afiliasi.MergedAfiliasi) == 0 {
+		// Create a single empty node
+		node := Node{
+			Child:  "",
+			Parent: "",
+		}
+		// Convert the empty node to JSON
+		data, err := json.Marshal([]Node{node})
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal JSON: %v", err)
+		}
+		return data, nil
+	}
 
-// {
-// 	nama: Mrs.Lmao,
-// 	afiliasi_list: {
-// 		nama: Lmao Sr.,
-// 		afiliasi: suami,
-// 		afiliasi_list: {
-// 			nama: Lmao,
-// 			afiliasi: anak,
-// 			afiliasi_list: {
-// 				nama: Lmao Jr.,
-// 				afiliasi: cucu,
-// 				afiliasi_list: {
-// 					{}
-// 				}
-// 			}
+	var nodes []Node
 
-// 		}
-// 	}
-// }
+	// Iterate over the AfiliasiList and create the nodes
+	for _, a := range afiliasi.MergedAfiliasi {
+		node := Node{
+			Child:  a.IdChild,
+			Parent: a.IdParent,
+		}
+		nodes = append(nodes, node)
+	}
 
-// Lmao Sr., Mrs.Lmao, Lmao, Lmao Jr.,
+	// Convert nodes to JSON
+	data, err := json.Marshal(nodes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal JSON: %v", err)
+	}
+
+	return data, nil
+}

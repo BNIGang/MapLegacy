@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
@@ -120,13 +122,16 @@ func main() {
 
 	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		nasabah_id := c.Params("nasabah_id")
-		data_nasabah, err := v1.GetNasabahByID(nasabah_id)
-		// afiliasiList, err := v1.MapLegacyHandler(nasabah_id)
-
+		data_nasabah, err := v1.GetAfiliasiListById(nasabah_id)
 		if err != nil {
-			// Handle the error appropriately
+			data_nasabah = &v1.MergedRow{}
+		}
+
+		afiliasiList, err := v1.MapLegacyHandler(data_nasabah)
+		if err != nil {
 			return err
 		}
+		fmt.Println(string(afiliasiList))
 
 		if user == nil || username == "" {
 			return c.Redirect("/home")
