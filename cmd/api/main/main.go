@@ -140,7 +140,7 @@ func main() {
 			"Cabang":        user.Cabang_ID,
 			"Privilege":     user.User_Privileges,
 			"data":          data_nasabah,
-			"afiliasi_list": string(afiliasiList),
+			"afiliasi_list": afiliasiList,
 			"content":       "map_legacy",
 		})
 	})
