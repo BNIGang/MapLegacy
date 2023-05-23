@@ -35,11 +35,11 @@ type Nasabah struct {
 }
 
 type Afiliasi struct {
-	Id_child         string
-	Id_parent        string
+	IdChild          string
+	IdParent         string
 	NamaAfiliasi     string
 	HubunganAfiliasi string
-	Added_by         string
+	AddedBy          string
 	NamaPengusaha    string
 	Username         string
 }
@@ -51,8 +51,9 @@ type MergedRow struct {
 }
 
 var nasabahMap = make(map[string]*Nasabah)
-var mergedMap = make(map[string][]Afiliasi)
+var mergedMap = make(map[string]MergedRow)
 var idChildMap = make(map[string]Afiliasi)
+var mergedRows = make([]MergedRow, 0, len(mergedMap))
 
 func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]Nasabah, error) {
 	nasabahMap = make(map[string]*Nasabah)
@@ -182,8 +183,8 @@ func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	return nasabah, nil
 }
 
-func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]MergedRow, error) {
-	mergedMap = make(map[string][]Afiliasi)
+func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) (map[string]MergedRow, error) {
+	mergedMap = make(map[string]MergedRow)
 
 	//TODO , another one of those wilayah only thing
 
@@ -217,11 +218,11 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		var afiliasi Afiliasi
 
 		err = rows.Scan(
-			&afiliasi.Id_child,
-			&afiliasi.Id_parent,
+			&afiliasi.IdChild,
+			&afiliasi.IdParent,
 			&afiliasi.NamaAfiliasi,
 			&afiliasi.HubunganAfiliasi,
-			&afiliasi.Added_by,
+			&afiliasi.AddedBy,
 			&afiliasi.NamaPengusaha,
 			&afiliasi.Username,
 		)
@@ -230,13 +231,19 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		}
 
 		// Check if the NamaPengusaha is already in the mergedMap
-		if _, ok := mergedMap[afiliasi.Id_parent]; !ok {
-			mergedMap[afiliasi.Id_parent] = []Afiliasi{afiliasi}
+		if _, ok := mergedMap[afiliasi.IdParent]; !ok {
+			mergedMap[afiliasi.IdParent] = MergedRow{
+				MergedAfiliasi: []Afiliasi{afiliasi},
+				RowCount:       1,
+			}
 		} else {
-			mergedMap[afiliasi.Id_parent] = append(mergedMap[afiliasi.Id_parent], afiliasi)
+			mergedRow := mergedMap[afiliasi.IdParent]
+			mergedRow.MergedAfiliasi = append(mergedRow.MergedAfiliasi, afiliasi)
+			mergedRow.RowCount++
+			mergedMap[afiliasi.IdParent] = mergedRow
 		}
 
-		idChildMap[afiliasi.Id_child] = afiliasi
+		idChildMap[afiliasi.IdChild] = afiliasi
 
 	}
 
@@ -244,27 +251,21 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		return nil, err
 	}
 
-	mergedRows := make([]MergedRow, 0, len(mergedMap))
-	for nama, afiliasiList := range mergedMap {
-		rowCount := (len(afiliasiList)) // Calculate the row count
-		mergedRows = append(mergedRows, MergedRow{
-			NamaPengusaha:  nama,
-			MergedAfiliasi: afiliasiList,
-			RowCount:       rowCount, // Store the row count in the struct
-		})
-	}
-
-	sort.Slice(mergedRows, func(i, j int) bool {
-		return mergedRows[i].NamaPengusaha > mergedRows[j].NamaPengusaha
-	})
-
-	return mergedRows, nil
+	return mergedMap, nil
 }
 
 func GetAfiliasiById(id_child string) (*Afiliasi, error) {
 	afiliasi, ok := idChildMap[id_child]
 	if !ok {
-		return nil, fmt.Errorf("nasabah with id %s not found", id_child)
+		return nil, fmt.Errorf("Afiliasi with id %s not found", id_child)
+	}
+	return &afiliasi, nil
+}
+
+func GetAfiliasiListById(id_parent string) (*MergedRow, error) {
+	afiliasi, ok := mergedMap[id_parent]
+	if !ok {
+		return nil, fmt.Errorf("Afiliasi list with id %s not found", id_parent)
 	}
 	return &afiliasi, nil
 }
