@@ -68,18 +68,7 @@
                 .attr("width", "100vw").attr("height", "100vh")
                 .append("g").attr("transform", "translate(50,50)");
     
-    var data = [
-        {"child":"John", "parent":"", "spouse":"Isabella"},
-        {"child":"Aaron", "parent":"Kevin"},
-        {"child":"Kevin", "parent":"John", "spouse":"Emma"},
-        {"child":"Mark", "parent":"Ann"},
-        {"child":"Hannah", "parent":"Ann", "spouse":"Williams"},
-        {"child":"Rose", "parent":"Sarah"},
-        {"child":"Ann", "parent":"John", "spouse":"George"},
-        {"child":"Sarah", "parent":"Kevin", "spouse":"James"},
-        {"child":"Angel", "parent":"Sarah"},
-        {"child":null, "parent":"Hannah"},
-    ];
+    var data = {{ .afiliasi_list }};
 
     var dataStructure = d3.stratify()
                             .id(function(d){return d.child;})
