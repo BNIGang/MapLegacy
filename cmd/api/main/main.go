@@ -82,6 +82,24 @@ func main() {
 		})
 	})
 
+	app.Get("/nasabah_detail/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		nasabah_id := c.Params("nasabah_id")
+
+		data_nasabah, err := v1.GetNasabahByID(nasabah_id)
+		if err != nil {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":         username,
+			"Wilayah":      user.Wilayah_ID,
+			"Cabang":       user.Cabang_ID,
+			"Privilege":    user.User_Privileges,
+			"data_nasabah": data_nasabah,
+			"content":      "nasabah_detail",
+		})
+	})
+
 	app.Get("/edit/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		nasabah_id := c.Params("nasabah_id")
 

@@ -196,6 +196,8 @@
                 {{ template "add_users" . }}
                 {{ else if eq .content "edit_password"}}
                 {{ template "edit_password" . }}
+                {{ else if eq .content "nasabah_detail"}}
+                {{ template "nasabah_detail" . }}
                 {{ else }}
                 {{ template "edit_nasabah" . }}
                 {{ end }}

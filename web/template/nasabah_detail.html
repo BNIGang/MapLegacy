@@ -1,1 +1,121 @@
-<h1>Le Detail!</h1>
+<h1 style="margin-left: 10px;">Detail Pengusaha</h1>
+ 
+<div>
+    <div class="button-container">
+        <button class="btn btm-sm btn-primary mb-3" style="margin-left: 10px; margin-top: 10px;" type="button" onclick="window.location.href='/create_map_legacy/{{ .data_nasabah.Id }}'">Lihat Legacy</button>
+    </div>
+</div>
+
+<table class="table table-bordered" style="margin-left: 10px;">
+<tr>
+    <td>Nama Pengusaha</td>
+    <td>{{ .data_nasabah.Nama_pengusaha           }}</td>
+</tr>
+
+<tr>
+    <td>Nomor Kontak</td>
+    <td>{{ .data_nasabah.Nomor_kontak             }}</td>
+</tr>
+
+
+<tr>
+    <td>Alamat Tempat Tinggal</td>
+    <td>{{ .data_nasabah.Alamat_tempat_tinggal    }}</td>
+</tr>
+
+<tr>
+    <td>Bidang usaha</td>
+    <td>{{ .data_nasabah.Bidang_usaha             }}</td>
+</tr>
+
+<tr>
+    <td>Produk Usaha</td>
+    <td>{{ .data_nasabah.Produk_usaha             }}</td>
+</tr>
+
+<tr>
+    <td>Bidang Usaha</td>
+    <td>{{ .data_nasabah.Detail_bidang_usaha      }}</td>
+</tr>
+
+<tr>
+    <td>Kabupaten Kota</td>
+    <td>{{ .data_nasabah.Kabupaten_kota           }}</td>
+</tr>
+
+<tr>
+    <td>Cabang</td>
+    <td>{{ .data_nasabah.Cabang                   }}</td>
+</tr>
+
+<tr>
+    <td>KCU/KCP/KK</td>
+    <td>{{ .data_nasabah.KCU_KCP_KK               }}</td>
+</tr>
+
+<tr>
+    <td>Nasabah</td>
+    <td>{{ .data_nasabah.Nasabah                  }}</td>
+</tr>
+
+<tr>
+    <td>No CIF</td>
+    <td>{{ .data_nasabah.No_CIF                   }}</td>
+</tr>
+
+<tr>
+    <td>AUM di BNI</td>
+    <td>{{ .data_nasabah.AUM_di_BNI               }}</td>
+</tr>
+
+<tr>
+    <td>Debitur</td>
+    <td>{{ .data_nasabah.Debitur                  }}</td>
+</tr>
+
+<tr>
+    <td>Kredit di BNI</td>
+    <td>{{ .data_nasabah.Kredit_di_bni            }}</td>
+</tr>
+
+<tr>
+    <td>Produk BNI yang dimiliki</td>
+    <td>{{ .data_nasabah.Produk_bni_yang_dimiliki }}</td>
+</tr>
+
+<tr>
+    <td>Mitra Bank Dominan</td>
+    <td>{{ .data_nasabah.Mitra_bank_dominan       }}</td>
+</tr>
+
+<tr>
+    <td>AUM di Bank Lain</td>
+    <td>{{ .data_nasabah.Aum_di_bank_lain         }}</td>
+</tr>
+
+<tr>
+    <td>Kredit di Bank Lain</td>
+    <td>{{ .data_nasabah.Kredit_di_bank_lain      }}</td>
+</tr>
+
+<tr>
+    <td>Ditambahkan Oleh</td>
+    <td>{{ .data_nasabah.Username                 }}</td>
+</tr>
+</table>
+
+
+{{ if .data_nasabah.AfiliasiList }}
+<table class="table table-bordered" style="margin-left: 10px;">
+    <tr>
+        <th>Nama Afiliasi</th>
+        <th>Hubungan Afiliasi</th>
+    </tr>
+{{range .data_nasabah.AfiliasiList}}
+    <tr>
+        <td>{{.NamaAfiliasi}}</td>
+        <td>{{.HubunganAfiliasi}}</td>
+    </tr>
+{{end}}
+</table>
+{{end}}
