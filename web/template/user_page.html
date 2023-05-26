@@ -1,3 +1,27 @@
+<style>
+    /* Style each row of the table */
+    table tr {
+    cursor: pointer;
+    }
+
+    /* Alternate row colors */
+    table tr:nth-child(even) {
+    background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(odd) {
+    background-color: #ffffff;
+    }
+
+    /* Hover effect */
+    table tr:hover {
+    background-color: #ddd;
+    }
+    button {
+        background-color: #035259;
+    }
+</style>
+
 <h5 style="margin-left: 10px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Daftar Pengguna</h5>
 
 <table class="table table-bordered" style="margin-left: 10px;">
@@ -17,7 +41,7 @@
             <td>{{.Name}}</td>
             <td>{{.Username}}</td>
             <td>{{.Wilayah}}</td>
-            td>{{.CabangName}}</td>
+            <td>{{.CabangName}}</td>
             <td>{{.UserPrivilege}}</td>
             <td><form action="/edit_user/{{ .User_ID }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
             <td><form action="/delete_user/{{ .User_ID }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
