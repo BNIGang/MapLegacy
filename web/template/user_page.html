@@ -1,1 +1,27 @@
-<h1>this is user page!</h1>
+<h5 style="margin-left: 10px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Daftar Pengguna</h5>
+
+<table class="table table-bordered" style="margin-left: 10px;">
+    <thead>
+        <tr>
+            <th>Nama Pengguna</th>
+            <th>Username</th>
+            <th>Wilayah</th>
+            <th>Cabang</th>
+            <th>Privilege</th>
+            <th colspan="2">Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .UserList}}
+        <tr onclick="window.location.href='/edit_user/{{ .User_ID }}';">
+            <td>{{.Name}}</td>
+            <td>{{.Username}}</td>
+            <td>{{.Wilayah}}</td>
+            td>{{.CabangName}}</td>
+            <td>{{.UserPrivilege}}</td>
+            <td><form action="/edit_user/{{ .User_ID }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
+            <td><form action="/delete_user/{{ .User_ID }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>

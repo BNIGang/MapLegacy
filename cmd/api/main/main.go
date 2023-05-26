@@ -1,7 +1,9 @@
 package main
 
 import (
+	v "github.com/BNIGang/MapLegacy/api/v1/nasabah"
 	v1 "github.com/BNIGang/MapLegacy/api/v1/nasabah"
+	u "github.com/BNIGang/MapLegacy/api/v1/user"
 	"github.com/BNIGang/MapLegacy/login"
 	"github.com/BNIGang/MapLegacy/web"
 	"github.com/derpen/fastergoding"
@@ -53,7 +55,7 @@ func main() {
 			return c.Render("login", fiber.Map{"Error": err})
 		}
 
-		data_nasabah, err := v1.GetNasabahDataByUser(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
+		data_nasabah, err := v.GetNasabahDataByUser(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
 		if err != nil {
 			return err
 		}
@@ -85,7 +87,7 @@ func main() {
 	app.Get("/nasabah_detail/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		nasabah_id := c.Params("nasabah_id")
 
-		data_nasabah, err := v1.GetNasabahByID(nasabah_id)
+		data_nasabah, err := v.GetNasabahByID(nasabah_id)
 		if err != nil {
 			return c.Redirect("/home")
 		}
@@ -103,7 +105,7 @@ func main() {
 	app.Get("/edit/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		nasabah_id := c.Params("nasabah_id")
 
-		data_nasabah, err := v1.GetNasabahByID(nasabah_id)
+		data_nasabah, err := v.GetNasabahByID(nasabah_id)
 		if err != nil {
 			return c.Redirect("/home")
 		}
@@ -133,17 +135,17 @@ func main() {
 
 	// Add nasabah
 	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		return v1.AddNasabahHandler(user.User_ID)(c)
+		return v.AddNasabahHandler(user.User_ID)(c)
 	})
 
 	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		nasabah_id := c.Params("nasabah_id")
-		data_nasabah, err := v1.GetAfiliasiListById(nasabah_id)
+		data_nasabah, err := v.GetAfiliasiListById(nasabah_id)
 		if err != nil {
-			data_nasabah = &v1.MergedRow{}
+			data_nasabah = &v.MergedRow{}
 		}
 
-		afiliasiList, err := v1.MapLegacyHandler(data_nasabah)
+		afiliasiList, err := v.MapLegacyHandler(data_nasabah)
 		if err != nil {
 			return err
 		}
@@ -165,15 +167,15 @@ func main() {
 
 	// Delete nasabah
 	// TODO: add confirmation before deleting
-	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v1.DeleteNasabahData)
+	app.Post("/delete/:nasabah_id", web.JWTMiddleware(secret, engine), v.DeleteNasabahData)
 
 	// Update nasabah
 	app.Post("/update/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		return v1.UpdateNasabahData(user.User_ID)(c)
+		return v.UpdateNasabahData(user.User_ID)(c)
 	})
 
 	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		return v1.AddNasabahHandler(user.User_ID)(c)
+		return v.AddNasabahHandler(user.User_ID)(c)
 	})
 
 	// Now, do CRUD for afiliasi
@@ -182,7 +184,7 @@ func main() {
 			return c.Redirect("/home")
 		}
 
-		data_afiliasi, err := v1.GetAfiliasiByUser(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
+		data_afiliasi, err := v.GetAfiliasiByUser(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
 		if err != nil {
 			return err
 		}
@@ -213,12 +215,12 @@ func main() {
 
 	// Delete nasabah
 	// TODO: add confirmation before deleting
-	app.Post("/delete_afiliasi/:afiliasi_id", web.JWTMiddleware(secret, engine), v1.DeleteAfiliasiData)
+	app.Post("/delete_afiliasi/:afiliasi_id", web.JWTMiddleware(secret, engine), v.DeleteAfiliasiData)
 
 	app.Get("/edit_afiliasi/:id_child", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		id_child := c.Params("id_child")
 
-		data_afiliasi, err := v1.GetAfiliasiById(id_child)
+		data_afiliasi, err := v.GetAfiliasiById(id_child)
 		if err != nil {
 			return c.Redirect("/home")
 		}
@@ -270,11 +272,17 @@ func main() {
 			return c.Redirect("/home")
 		}
 
+		userslist, err := u.GetUsers()
+		if err != nil {
+			return nil
+		}
+
 		return c.Render("template", fiber.Map{
 			"Name":      username,
 			"Wilayah":   user.Wilayah_ID,
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
+			"UserList":  userslist,
 			"content":   "user_page",
 		})
 	})
