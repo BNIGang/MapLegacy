@@ -66,8 +66,78 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 	defer db.Close()
 
 	// TODO, query only based on wilayah/cabang/privilege/etc
+	var query string
+	var args []interface{}
 
-	rows, err := db.Query(`
+	if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {
+		// Retrieve cabang_name based on cabang_id
+		var cabangName string
+		err := db.QueryRow("SELECT cabang_name FROM cabang WHERE cabang_id=?", cabang_id).Scan(&cabangName)
+		if err != nil {
+			return nil, err
+		}
+
+		// Set the WHERE clause in the query
+		query = `
+		SELECT 
+			dn.*, 
+			GROUP_CONCAT(a.nama_child) AS nama_child, 
+			GROUP_CONCAT(a.hubungan) AS hubungan, 
+			u.name 
+		FROM 
+			data_nasabah dn 
+		LEFT JOIN 
+			afiliasi a 
+		ON  
+			dn.id = a.id_parent 
+		LEFT JOIN 
+			users u 
+		ON 
+			dn.added_by = u.user_id 
+		WHERE 
+			dn.cabang = ? 
+		GROUP BY 
+			dn.id 
+		ORDER BY 
+			dn.nama_pengusaha ASC
+	`
+		args = append(args, cabangName)
+	} else if privilege == "individu" {
+		// Retrieve username based on user_id
+		var name string
+		err := db.QueryRow("SELECT name FROM users WHERE user_id=?", user_id).Scan(&name)
+		if err != nil {
+			return nil, err
+		}
+
+		// Set the WHERE clause in the query
+		query = `
+		SELECT 
+			dn.*, 
+			GROUP_CONCAT(a.nama_child) AS nama_child, 
+			GROUP_CONCAT(a.hubungan) AS hubungan, 
+			u.name 
+		FROM 
+			data_nasabah dn 
+		LEFT JOIN 
+			afiliasi a 
+		ON  
+			dn.id = a.id_parent 
+		LEFT JOIN 
+			users u 
+		ON 
+			dn.added_by = u.user_id 
+		WHERE 
+			u.name = ? 
+		GROUP BY 
+			dn.id 
+		ORDER BY 
+			dn.nama_pengusaha ASC
+	`
+		args = append(args, name)
+	} else {
+		// No additional WHERE clause
+		query = `
 		SELECT 
 			dn.*, 
 			GROUP_CONCAT(a.nama_child) AS nama_child, 
@@ -87,8 +157,11 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 			dn.id 
 		ORDER BY 
 			dn.nama_pengusaha ASC
-	`)
+	`
+	}
 
+	// Execute the query
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
