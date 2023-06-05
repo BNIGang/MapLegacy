@@ -240,6 +240,13 @@ func main() {
 
 	// Handle User accour
 	app.Get("/add_users", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+
+		privilege := c.Locals("privilege").(string)
+
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+
 		if user == nil || username == "" {
 			return c.Redirect("/home")
 		}
@@ -268,6 +275,13 @@ func main() {
 	})
 
 	app.Get("/user_page", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+
+		privilege := c.Locals("privilege").(string)
+
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+
 		if user == nil || username == "" {
 			return c.Redirect("/home")
 		}

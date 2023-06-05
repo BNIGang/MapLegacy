@@ -18,6 +18,19 @@ func GenerateJWT(username string, secret []byte) (string, error) {
 	claims["exp"] = time.Now().Add(time.Hour).Unix() // expires in 1 hour
 	claims["refreshed"] = false
 
+	db, err := Connect()
+	if err != nil {
+		return "", err
+	}
+	defer db.Close()
+
+	var privilege string
+	err2 := db.QueryRow("SELECT user_privilege FROM user_privileges WHERE user_id=(SELECT user_id FROM users WHERE username=?)", username).Scan(&privilege)
+	if err2 != nil {
+		return "", err2
+	}
+	claims["privilege"] = privilege
+
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
 		return "", err
@@ -52,6 +65,7 @@ func JWTMiddleware(secret []byte, engine *html.Engine) fiber.Handler {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			c.Locals("username", claims["username"])
+			c.Locals("privilege", claims["privilege"])
 			return c.Next()
 		}
 
