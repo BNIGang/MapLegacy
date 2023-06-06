@@ -24,6 +24,7 @@ func Connect() (*sql.DB, error) {
 
 type User struct {
 	User_ID         string
+	Name            string
 	Username        string
 	Password        string
 	Wilayah_ID      string
@@ -39,16 +40,27 @@ func GetUserByUsername(username string) (*User, error) {
 	defer db.Close()
 
 	row := db.QueryRow(`
-        SELECT users.user_id, users.username, users.password,
-               user_privileges.wilayah_id, user_privileges.cabang_id, user_privileges.user_privilege
-        FROM users
-        JOIN user_privileges ON users.user_id = user_privileges.user_id
-        WHERE users.username = ?`,
-		username,
+			SELECT 
+				u.user_id, 
+				u.name, 
+				u.username, 
+				u.password, 
+				up.wilayah_id, 
+				up.cabang_id, 
+				up.user_privilege 
+			FROM 
+				users u 
+			JOIN 
+				user_privileges up 
+			ON 
+				u.user_id = up.user_id 
+			WHERE 
+				u.username=?
+		`, username,
 	)
 
 	var user User
-	err = row.Scan(&user.User_ID, &user.Username, &user.Password, &user.Wilayah_ID, &user.Cabang_ID, &user.User_Privileges)
+	err = row.Scan(&user.User_ID, &user.Name, &user.Username, &user.Password, &user.Wilayah_ID, &user.Cabang_ID, &user.User_Privileges)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // user not found

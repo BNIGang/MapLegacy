@@ -1,15 +1,18 @@
+{{ if .Alert }}
+<h3 style="color: red; margin-left: 40px;">{{ .Alert }}</h3>
+{{ end }}
+
 <h5 style="margin-left: 10px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Tambah User</h5>
 </div>
 <div class="modal-body">
-
-  <form action="/add" method="POST" enctype="multipart/form-data">
+  <form action="/add_users" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       <label for="name">Nama Lengkap:</label>
       <input type="text" id="name" name="name" class="form-control">
     </div>
 
     <div class="form-group">
-      <label for="username">Username</label>
+      <label for="username">Username:</label>
       <input type="text" id="username" name="username" class="form-control">
     </div>
 
@@ -26,9 +29,13 @@
     </div>
 
     <div class="form-group">
-    <label for="user_privileges">Privilege:</label>
-    <select id="user_privileges" name="user_privilage" class="form-control">
-      <option value="">Pilih Privilage</option>
+    <label for="user_privilege">Privilege:</label>
+    <select id="user_privilege" name="user_privilege" class="form-control">
+      <option value="admin">Admin</option>
+      <option value="pemimpin_wilayah">Pemimpin Wilayah</option>
+      <option value="pemimpin_cabang">Pemimpin Cabang</option>
+      <option value="pemimpin_cabang_pembantu">Pemimpin Cabang Pembantu</option>
+      <option value="individu">Individu</option>
     </select><br>
     </div>
     <div class="modal-footer">

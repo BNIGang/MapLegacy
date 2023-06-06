@@ -60,6 +60,8 @@ func main() {
 			return err
 		}
 
+		username = user.Name
+
 		return c.Render("template", fiber.Map{
 			"Name":         username,
 			"Wilayah":      user.Wilayah_ID,
@@ -136,6 +138,10 @@ func main() {
 	// Add nasabah
 	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		return v.AddNasabahHandler(user.User_ID)(c)
+	})
+
+	app.Post("/add_afiliasi", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return v1.AddAfiliasi(user.User_ID)(c)
 	})
 
 	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
@@ -242,6 +248,7 @@ func main() {
 	app.Get("/add_users", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 
 		privilege := c.Locals("privilege").(string)
+		alert := c.Query("alert") // Get the value of the "alert" query parameter
 
 		if privilege != "admin" {
 			return c.Redirect("/home")
@@ -256,6 +263,7 @@ func main() {
 			"Wilayah":   user.Wilayah_ID,
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
+			"Alert":     alert,
 			"content":   "add_users",
 		})
 	})
@@ -270,6 +278,7 @@ func main() {
 			"Wilayah":   user.Wilayah_ID,
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
+			"Id":        user.User_ID,
 			"content":   "edit_password",
 		})
 	})
@@ -301,11 +310,25 @@ func main() {
 		})
 	})
 
-	app.Get("/logout", login.LogoutHandler)
+	app.Post("/add_users", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		privilege := c.Locals("privilege").(string)
 
-	app.Post("/add_afiliasi", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		return v1.AddAfiliasi(user.User_ID)(c)
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+		return u.AddUsersHandler()(c)
 	})
+
+	app.Post("/delete_user/:user_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		privilege := c.Locals("privilege").(string)
+
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+		return u.DeleteUser()(c)
+	})
+
+	app.Get("/logout", login.LogoutHandler)
 
 	port := ":8000"
 	app.Listen(port)
