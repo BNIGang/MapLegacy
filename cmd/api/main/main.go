@@ -244,31 +244,9 @@ func main() {
 	// handle autofill
 	app.Get("/get_suggestions/:nama_pengusaha", web.JWTMiddleware(secret, engine), web.AutoFillHandler)
 
-	// Handle User accour
-	app.Get("/add_users", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-
-		privilege := c.Locals("privilege").(string)
+	app.Get("/edit_password", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		alert := c.Query("alert") // Get the value of the "alert" query parameter
 
-		if privilege != "admin" {
-			return c.Redirect("/home")
-		}
-
-		if user == nil || username == "" {
-			return c.Redirect("/home")
-		}
-
-		return c.Render("template", fiber.Map{
-			"Name":      username,
-			"Wilayah":   user.Wilayah_ID,
-			"Cabang":    user.Cabang_ID,
-			"Privilege": user.User_Privileges,
-			"Alert":     alert,
-			"content":   "add_users",
-		})
-	})
-
-	app.Get("/edit_password", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		if user == nil || username == "" {
 			return c.Redirect("/home")
 		}
@@ -279,8 +257,13 @@ func main() {
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
 			"Id":        user.User_ID,
+			"Alert":     alert,
 			"content":   "edit_password",
 		})
+	})
+
+	app.Post("/edit_pass", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return u.EditPassword()(c)
 	})
 
 	app.Get("/user_page", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
@@ -317,6 +300,30 @@ func main() {
 			return c.Redirect("/home")
 		}
 		return u.AddUsersHandler()(c)
+	})
+
+	// Handle User account
+	app.Get("/add_users", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+
+		privilege := c.Locals("privilege").(string)
+		alert := c.Query("alert") // Get the value of the "alert" query parameter
+
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"Alert":     alert,
+			"content":   "add_users",
+		})
 	})
 
 	app.Post("/delete_user/:user_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
