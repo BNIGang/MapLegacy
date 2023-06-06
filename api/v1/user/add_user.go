@@ -18,6 +18,7 @@ func AddUsersHandler() fiber.Handler {
 		nama_lengkap := form.Value["name"][0]
 		username := form.Value["username"][0]
 		password := form.Value["password"][0]
+		confirmpassword := form.Value["confirmpassword"][0]
 		cabang := form.Value["cabang"][0]
 		privilege := form.Value["user_privilege"][0]
 
@@ -30,6 +31,12 @@ func AddUsersHandler() fiber.Handler {
 		// If user exists, render a page with the error message
 		if exists {
 			alert := "Username sudah ada, tolong pilih Username lain."
+			return c.Redirect("/add_users?alert=" + alert)
+		}
+
+		// Pass does not match
+		if confirmpassword != password {
+			alert := "Konfirmasi password tidak sama"
 			return c.Redirect("/add_users?alert=" + alert)
 		}
 

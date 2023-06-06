@@ -1,0 +1,95 @@
+{{ if .Alert }}
+<h3 style="color: red; margin-left: 40px;">{{ .Alert }}</h3>
+{{ end }}
+
+<h5 style="margin-left: 10px; font-weight: bold;"class="modal-title" id="exampleModalLabel">Tambah User</h5>
+</div>
+<div class="modal-body">
+  <form action="/update_user/{{ .DataUser.User_ID }}" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="name">Nama Lengkap:</label>
+      <input type="text" id="name" name="name" class="form-control" value="{{ .DataUser.Name }}">
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" class="form-control" value="{{ .DataUser.Username }}">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password: (Kosongkan Jika Tidak Ingin Dirubah)</label>
+      <input type="password" id="password" name="password" class="form-control" oninput="toggleConfirmPassword()">
+    </div>
+
+  <div class="form-group" id="confirmPasswordGroup" style="display: none;">
+        <!-- TODO, Only add this if Password is changed-->
+      <label for="confirmpassword">Konfirmasi Password:</label>
+      <input type="password" id="confirmpassword" name="confirmpassword" class="form-control">
+    </div>
+
+    <div class="form-group">
+    <label for="cabang">Cabang:</label>
+    <select id="cabang" name="cabang" class="form-control">
+      <option value="">Pilih Cabang</option>
+    </select><br>
+    </div>
+
+    <div class="form-group">
+    <label for="user_privilege">Privilege:</label>
+    <select id="user_privilege" name="user_privilege" class="form-control">
+      <option value="admin" {{if eq .DataUser.UserPrivilege `admin`}}selected{{end}}>Admin</option>
+      <option value="pemimpin_wilayah" {{if eq .DataUser.UserPrivilege `pemimpin_wilayah`}}selected{{end}}>Pemimpin Wilayah</option>
+      <option value="pemimpin_cabang" {{if eq .DataUser.UserPrivilege `pemimpin_cabang`}}selected{{end}}>Pemimpin Cabang</option>
+      <option value="pemimpin_cabang_pembantu" {{if eq .DataUser.UserPrivilege `pemimpin_cabang_pembantu`}}selected{{end}}>Pemimpin Cabang Pembantu</option>
+      <option value="individu" {{if eq .DataUser.UserPrivilege `individu`}}selected{{end}}>Individu</option>
+    </select><br>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    /* 
+
+    THIS PART TO CREATE DYNAMIC FORM
+    
+    */
+
+    // Get a reference to the parent and child dropdowns
+    var cabang = document.getElementById("cabang");
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/get_cabang");
+    xhr.onload = function() {
+        // When the data is retrieved, update the options for the parent dropdown
+        var response = JSON.parse(xhr.responseText);
+        cabang.innerHTML = "";
+        for (var i = 0; i < response.length; i++) {
+        var option = document.createElement("option");
+        option.value = response[i].cabang_id;
+        option.text = response[i].cabang_name;
+        if (response[i].cabang_name === "{{ .DataUser.CabangName }}") {
+            option.selected = true;
+        }
+        cabang.appendChild(option);
+        }
+    };
+    xhr.send();
+
+    function toggleConfirmPassword() {
+        const newPassword = document.getElementById("password").value;
+        const confirmPasswordGroup = document.getElementById("confirmPasswordGroup");
+
+        if (newPassword !== "") {
+            confirmPasswordGroup.style.display = "block";
+        } else {
+            confirmPasswordGroup.style.display = "none";
+        }
+    }
+</script>

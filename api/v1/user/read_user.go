@@ -1,6 +1,10 @@
 package v1
 
-import "github.com/BNIGang/MapLegacy/web"
+import (
+	"fmt"
+
+	"github.com/BNIGang/MapLegacy/web"
+)
 
 type UserList struct {
 	User_ID       string
@@ -75,4 +79,12 @@ func GetUsers() ([]UserList, error) {
 	}
 
 	return userList, nil
+}
+
+func GetUserByID(user_id string) (*UserList, error) {
+	nasabah, ok := userMap[user_id]
+	if !ok {
+		return nil, fmt.Errorf("User with id %s not found", user_id)
+	}
+	return nasabah, nil
 }

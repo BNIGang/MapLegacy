@@ -335,6 +335,46 @@ func main() {
 		return u.DeleteUser()(c)
 	})
 
+	app.Get("/edit_user/:user_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		privilege := c.Locals("privilege").(string)
+
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
+		user_id := c.Params("user_id")
+
+		data_user, err := u.GetUserByID(user_id)
+		if err != nil {
+			return err
+		}
+
+		return c.Render("template", fiber.Map{
+			"Name":      username,
+			"Wilayah":   user.Wilayah_ID,
+			"Cabang":    user.Cabang_ID,
+			"Privilege": user.User_Privileges,
+			"DataUser":  data_user,
+			"content":   "edit_user",
+		})
+	})
+
+	app.Post("/update_user/:user_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		privilege := c.Locals("privilege").(string)
+
+		if privilege != "admin" {
+			return c.Redirect("/home")
+		}
+
+		user_id := c.Params("user_id")
+
+		return u.UpdateUser(user_id)(c)
+	})
+
 	app.Get("/logout", login.LogoutHandler)
 
 	port := ":8000"
