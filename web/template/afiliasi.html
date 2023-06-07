@@ -56,14 +56,14 @@
         <tbody>
             {{$rowCount := .RowCount}}
             {{range $index, $afiliasi := .MergedAfiliasi}}
-            <tr onclick="window.location.href='/info_afiliasi/{{ .IdChild }}';">
+            <tr onclick="window.location.href='/create_map_legacy/{{ .IdParent }}';">
                 {{if eq $index 0}}
                 <td rowspan="{{$rowCount}}">{{.NamaPengusaha}}</td>
                 {{end}}
                 <td>{{.NamaAfiliasi}}</td>
                 <td>{{.HubunganAfiliasi}}</td>
                 <td>{{.Username}}</td>
-                <td><form action="/add_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+                <td><form action="/create_map_legacy/{{ .IdParent }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
                 <td><form action="/edit_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
                 <td><form action="/delete_afiliasi/{{ .IdChild }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
             </tr>

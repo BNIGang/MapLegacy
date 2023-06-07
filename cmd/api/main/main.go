@@ -60,6 +60,12 @@ func main() {
 			return err
 		}
 
+		//Placeholder: This is to read afiliasi
+		_, err2 := v.GetAfiliasiByUser(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)
+		if err2 != nil {
+			return err2
+		}
+
 		username = user.Name
 
 		return c.Render("template", fiber.Map{

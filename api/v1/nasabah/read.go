@@ -65,7 +65,6 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 	}
 	defer db.Close()
 
-	// TODO, query only based on wilayah/cabang/privilege/etc
 	var query string
 	var args []interface{}
 
@@ -251,7 +250,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	nasabah, ok := nasabahMap[nasabah_id]
 	if !ok {
-		return nil, fmt.Errorf("nasabah with id %s not found", nasabah_id)
+		return nil, fmt.Errorf("Nasabah with id %s not found", nasabah_id)
 	}
 	return nasabah, nil
 }
@@ -259,29 +258,59 @@ func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) (map[string]MergedRow, error) {
 	mergedMap = make(map[string]MergedRow)
 
-	//TODO , another one of those wilayah only thing
-
 	db, err := web.Connect()
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	rows, err := db.Query(`
-        SELECT 
-            a.*, dn.nama_pengusaha, u.name
-        FROM
-            afiliasi a
-        LEFT JOIN
-            data_nasabah dn
-        ON
-            a.id_parent = dn.id
-        LEFT JOIN
-            users u
-        ON
-            a.added_by = u.user_id
-    `)
+	var query string
+	var args []interface{}
 
+	query = `
+    SELECT 
+        a.*, dn.nama_pengusaha, u.name
+    FROM
+        afiliasi a
+    LEFT JOIN
+        data_nasabah dn
+    ON
+        a.id_parent = dn.id
+    LEFT JOIN
+        users u
+    ON
+        a.added_by = u.user_id
+	`
+
+	if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {
+		// Retrieve cabang_name based on cabang_id
+		var cabangName string
+		err := db.QueryRow("SELECT cabang_name FROM cabang WHERE cabang_id=?", cabang_id).Scan(&cabangName)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add WHERE clause to the query
+		query += " WHERE dn.cabang = ?"
+		args = append(args, cabangName)
+	} else if privilege == "individu" {
+		// Retrieve username based on user_id
+		var name string
+		err := db.QueryRow("SELECT name FROM users WHERE user_id=?", user_id).Scan(&name)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add WHERE clause to the query
+		query += " WHERE u.name = ?"
+		args = append(args, name)
+	}
+
+	// Append the ORDER BY clause to the query
+	query += " ORDER BY dn.nama_pengusaha ASC"
+
+	// Execute the query
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}

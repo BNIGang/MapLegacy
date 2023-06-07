@@ -13,17 +13,6 @@
         display: flex;
     }
 
-    .node rect {
-        fill: #fff;
-        stroke: steelblue;
-        stroke-width: 2px;
-    }
-
-    .node text {
-        font: 12px sans-serif;
-        text-anchor: middle;
-    }
-
     .link {
         fill: none;
         stroke: #ccc;
@@ -33,20 +22,20 @@
     path {
         fill:none;
         stroke:silver;
-        stroke-width:2;
+        stroke-width:7px;
     }
 
     rect {
         fill: white;
         stroke: silver;
-        width: 80px;
-        height: 40px;
+        width: 160px;
+        height: 80px;
         stroke-width: 2;
     }
 
-    text {
+    /* text {
         text-anchor: middle;
-    }
+    } */
 
     .hide {
         visibility: hidden;
@@ -84,8 +73,8 @@
                          .data(information.links());
     connections.enter().append("path")
                .attr("d", function (d){
-                    return "M" + (d.source.x-20) + "," + d.source.y + "h 60 v 50 H" +
-                    d.target.x + " V" + d.target.y;})
+                    return "M" + (d.source.x) + "," + (d.source.y) + "v 60 H" +
+                    (d.target.x) + " V" + (d.target.y);})
                .classed("hide", function(d){
                     if(d.target.data.child == undefined)
                         return true;
@@ -98,16 +87,16 @@
     connections2.enter().append("path")
                .attr("d", function (d){
                 if(d.target.data.child == null)
-                    return "M" + (d.source.x) + "," + d.source.y + "h 80";
+                    return "M" + (d.source.x) + "," + d.source.y + "h 10";
                 else
-                    return "M" + (d.source.x+40) + "," + d.source.y + "h 80";
-    });
+                    return "M" + (d.source.x-40) + "," + d.source.y + "h 10";
+                });
     
     var rectangles = svg.append("g").selectAll("rect")
                         .data(information.descendants());
     rectangles.enter().append("rect")
-              .attr("x", function(d){return d.x-60;})
-              .attr("y", function(d){return d.y-20;})
+              .attr("x", function(d){return d.x-80;})
+              .attr("y", function(d){return d.y-30;})
               .classed("hide", function(d){
                 if(d.data.child == undefined)
                     return true;
@@ -119,8 +108,38 @@
                    .data(information.descendants());
     names.enter().append("text")
                  .text(function(d){return d.data.child;})
-                 .attr("x", function(d){return d.x-20;})
-                 .attr("y", function(d){return d.y;})
+                 .attr("x", function(d){return d.x;})
+                 .attr("y", function(d){return d.y + 7;})
+                 .each(wrapText);
+
+    // Function to wrap text within a rectangle
+    function wrapText(d) {
+        var text = d3.select(this);
+        var rectWidth = 80; // Width of the rectangle
+        var x = d.x + 10 - rectWidth / 2; // Adjust the x position for left alignment
+
+        var words = text.text().split(/\s+/).reverse();
+        var word;
+        var line = [];
+        var lineNumber = 0;
+        var lineHeight = 1.1; // Adjust this value to set the line height
+        var y = text.attr("y");
+        var dy = parseFloat(text.attr("dy")) || 0;
+        var tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+
+            if (tspan.node().getComputedTextLength() > rectWidth) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
+        }
+    }
+     
 
     var spouseRectangles = svg.append("g").selectAll("rect")
                               .data(information.descendants());
@@ -141,6 +160,9 @@
                .attr("x", function(d){return d.x+100;})
                .attr("y", function(d){return d.y;})
 
+    
+
+    // This part onwards is to handle controls (zoom, drag&drop)
     // Variables to track zoom level and container position
     let zoomLevel = 1;
     let containerX = 0;
