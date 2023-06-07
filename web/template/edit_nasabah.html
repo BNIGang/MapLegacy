@@ -4,16 +4,16 @@
     <form action="/update/{{ .data_nasabah.Id }}" method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <label for="nama_pengusaha">Nama Pengusaha:</label><br>
-        <input type="text" class="form-control" id="nama_pengusaha" name="nama_pengusaha" value="{{ .data_nasabah.Nama_pengusaha }}"><br>
+        <input type="text" class="form-control" id="nama_pengusaha" name="nama_pengusaha" value="{{ .data_nasabah.Nama_pengusaha }}" required><br>
       </div>
 
       <div class="form-group">
         <label for="nomor_kontak">Nomor Kontak:</label><br>
-        <input type="text" class="form-control" id="nomor_kontak" name="nomor_kontak" value="{{ .data_nasabah.Nomor_kontak}}"><br>
+        <input type="text" class="form-control" id="nomor_kontak" name="nomor_kontak" value="{{ .data_nasabah.Nomor_kontak}}" required><br>
       </div>
 
       <label for="alamat_tempat_tinggal">Alamat Tempat Tinggal:</label><br>
-      <input type="text" class="form-control" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal" value="{{ .data_nasabah.Alamat_tempat_tinggal}}"><br>
+      <input type="text" class="form-control" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal" value="{{ .data_nasabah.Alamat_tempat_tinggal}}" required><br>
 
       <label for="bidang_usaha">Bidang Usaha:</label><br>
       <select class="form-control" id="bidang_usaha" name="bidang_usaha">
@@ -26,7 +26,7 @@
       </select><br>
 
       <label for="detail_bidang_usaha">Detail Bidang Usaha:</label><br>
-      <input type="text" class="form-control" id="detail_bidang_usaha" name="detail_bidang_usaha" value="{{ .data_nasabah.Detail_bidang_usaha}}"><br>
+      <input type="text" class="form-control" id="detail_bidang_usaha" name="detail_bidang_usaha" value="{{ .data_nasabah.Detail_bidang_usaha}}" required><br>
 
       <label for="cabang">Cabang:</label><br>
       <select class="form-control" id="cabang" name="cabang">
@@ -50,10 +50,10 @@
       </select><br>
 
       <label for="no_CIF">No CIF:</label><br>
-      <input type="number" class="form-control" id="no_CIF" name="no_CIF" value="{{ .data_nasabah.No_CIF}}"><br>
+      <input type="number" class="form-control" id="no_CIF" name="no_CIF" value="{{ .data_nasabah.No_CIF}}" required><br>
 
       <label for="aum_di_bni">AUM di BNI:</label><br>
-      <input type="number" class="form-control" id="aum_di_bni" name="aum_di_bni" value="{{ .data_nasabah.AUM_di_BNI}}"><br>
+      <input type="number" class="form-control" id="aum_di_bni" name="aum_di_bni" value="{{ .data_nasabah.AUM_di_BNI}}" required><br>
 
       <label for="debitur">Debitur:</label><br>
       <select class="form-control" id="debitur" name="debitur">
@@ -62,7 +62,7 @@
       </select><br>
 
       <label for="kredit_di_bni">Kredit di BNI:</label><br>
-      <input class="form-control" type="number" id="kredit_di_bni" name="kredit_di_bni" value="{{ .data_nasabah.Kredit_di_bni}}"><br>
+      <input class="form-control" type="number" id="kredit_di_bni" name="kredit_di_bni" value="{{ .data_nasabah.Kredit_di_bni}} required"><br>
 
       <label for="produk_bni_yang_dimiliki">Produk BNI yang Dimiliki:</label><br>
       <select class="form-control" id="produk_bni_yang_dimiliki" name="produk_bni_yang_dimiliki">
@@ -98,10 +98,10 @@
       </select><br>
 
       <label for="aum_di_bank_lain">AUM di Bank Lain:</label><br>
-      <input class="form-control" type="number" id="aum_di_bank_lain" name="aum_di_bank_lain" value="{{ .data_nasabah.Aum_di_bank_lain}}"><br>
+      <input class="form-control" type="number" id="aum_di_bank_lain" name="aum_di_bank_lain" value="{{ .data_nasabah.Aum_di_bank_lain}}" required><br>
 
       <label for="kredit_di_bank_lain">Kredit di bank lain:</label><br>
-      <input type="number" class="form-control" id="kredit_di_bank_lain" name="kredit_di_bank_lain" value="{{ .data_nasabah.Kredit_di_bank_lain}}"><br>
+      <input type="number" class="form-control" id="kredit_di_bank_lain" name="kredit_di_bank_lain" value="{{ .data_nasabah.Kredit_di_bank_lain}}" required><br>
 
       <div id="afiliasi-container">
         {{ if not .data_nasabah.AfiliasiList }}

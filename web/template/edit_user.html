@@ -8,12 +8,12 @@
   <form action="/update_user/{{ .DataUser.User_ID }}" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       <label for="name">Nama Lengkap:</label>
-      <input type="text" id="name" name="name" class="form-control" value="{{ .DataUser.Name }}">
+      <input type="text" id="name" name="name" class="form-control" value="{{ .DataUser.Name }}" required>
     </div>
 
     <div class="form-group">
       <label for="username">Username:</label>
-      <input type="text" id="username" name="username" class="form-control" value="{{ .DataUser.Username }}">
+      <input type="text" id="username" name="username" class="form-control" value="{{ .DataUser.Username }}" required>
     </div>
 
     <div class="form-group">

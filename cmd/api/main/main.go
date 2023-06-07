@@ -353,12 +353,15 @@ func main() {
 			return err
 		}
 
+		alert := c.Query("alert") // Get the value of the "alert" query parameter
+
 		return c.Render("template", fiber.Map{
 			"Name":      username,
 			"Wilayah":   user.Wilayah_ID,
 			"Cabang":    user.Cabang_ID,
 			"Privilege": user.User_Privileges,
 			"DataUser":  data_user,
+			"Alert":     alert,
 			"content":   "edit_user",
 		})
 	})
