@@ -73,7 +73,7 @@
                          .data(information.links());
     connections.enter().append("path")
                .attr("d", function (d){
-                    return "M" + (d.source.x) + "," + (d.source.y) + "v 60 H" +
+                    return "M" + (d.source.x) + "," + (d.source.y) + "v 100 H" +
                     (d.target.x) + " V " + (d.target.y);})
                .classed("hide", function(d){
                     if(d.target.data.child == undefined)
@@ -89,7 +89,7 @@
                 if(d.target.data.child == null)
                     return "M" + (d.source.x) + "," + (d.source.y) + "h 10";
                 else
-                    return "M" + "," + (d.source.y) + "h 10";
+                    return "M" + (d.source.x) + "," + (d.source.y) + "h 10";
                 });
     
     // var rectangles = svg.append("g").selectAll("rect")
@@ -159,8 +159,6 @@
                .text(function(d){return d.data.spouse;})
                .attr("x", function(d){return d.x+200;})
                .attr("y", function(d){return d.y+7;})
-
-    
 
     // This part onwards is to handle controls (zoom, drag&drop)
     // Variables to track zoom level and container position
