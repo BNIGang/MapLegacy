@@ -20,20 +20,44 @@ func AutoFillHandler(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
+	// query := `
+	// 	SELECT
+	// 		a.id_parent, dn.nama_pengusaha
+	// 	FROM
+	// 		afiliasi a
+	// 	LEFT JOIN
+	// 		data_nasabah dn
+	// 	ON
+	// 		a.id_parent = dn.id
+	// 	WHERE
+	// 		dn.nama_pengusaha LIKE ?
+	// `
+
 	query := `
 		SELECT 
-			a.id_parent, dn.nama_pengusaha
+			a.id_parent, 
+		COALESCE 
+			(dn.nama_pengusaha, af.nama_child) 
+		AS 
+			nama_pengusaha 
 		FROM 
-			afiliasi a
+			afiliasi a 
 		LEFT JOIN 
 			data_nasabah dn 
 		ON 
-			a.id_parent = dn.id
-		WHERE 
-			dn.nama_pengusaha LIKE ?
+			a.id_parent = dn.id 
+		LEFT JOIN 
+			afiliasi af 
+		ON 
+			af.id_child=a.id_parent
+		WHERE (
+				dn.nama_pengusaha LIKE ? 
+			OR 
+				af.nama_child LIKE ?
+		)
 	`
 
-	rows, err := db.Query(query, "%"+nama_pengusaha+"%")
+	rows, err := db.Query(query, "%"+nama_pengusaha+"%", "%"+nama_pengusaha+"%")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -268,18 +268,24 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 	var args []interface{}
 
 	query = `
-    SELECT 
-        a.*, dn.nama_pengusaha, u.name
-    FROM
-        afiliasi a
-    LEFT JOIN
-        data_nasabah dn
-    ON
-        a.id_parent = dn.id
-    LEFT JOIN
-        users u
-    ON
-        a.added_by = u.user_id
+	SELECT 
+		a.*, 
+		COALESCE(dn.nama_pengusaha, af.nama_child) AS nama_pengusaha, 
+		u.name
+	FROM 
+		afiliasi a
+	LEFT JOIN 
+		data_nasabah dn 
+	ON 
+		a.id_parent = dn.id
+	LEFT JOIN 
+		afiliasi af 
+	ON 
+		a.id_parent = af.id_child
+	LEFT JOIN 
+		users u 
+	ON 
+		a.added_by = u.user_id
 	`
 
 	if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {

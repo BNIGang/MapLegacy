@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"database/sql"
+	"errors"
+
 	"github.com/BNIGang/MapLegacy/web"
 	"github.com/gofiber/fiber/v2"
 )
@@ -173,32 +176,50 @@ func AddAfiliasi(user_id string) fiber.Handler {
 		}
 		defer db.Close()
 
-		// This part to add data afiliasi to afiliasi table
+		// Retrieve the text fields
+		id_pengusaha := form.Value["id_pengusaha"][0]
+		pengusaha := form.Value["nama_pengusaha"][0]
+
+		// Check if id_pengusaha is empty
+		if id_pengusaha == "" {
+			// Check if the pengusaha exists in the afiliasi table
+			var existingID string
+			err = db.QueryRow("SELECT id_child FROM afiliasi WHERE nama_child = ?", pengusaha).Scan(&existingID)
+			if err != nil && err != sql.ErrNoRows {
+				return err
+			}
+
+			// If an existingID is found, use it as id_parent
+			if existingID != "" {
+				id_pengusaha = existingID
+			} else {
+				// If pengusaha is a new name, prevent adding it to the database
+				return errors.New("Nama tidak ditemukan, tolong input nama yang telah tersedia")
+			}
+		}
+
+		// This part adds data afiliasi to afiliasi table
 		stmt, err := db.Prepare(`
-		INSERT INTO afiliasi 
-		(
-			id_child,
-			id_parent,
-			nama_child,
-			hubungan,
-			added_by
-		) VALUES 
-		(
-			UUID(),
-			?,
-			?,
-			?,
-			?
-		)
+			INSERT INTO afiliasi 
+			(
+				id_child,
+				id_parent,
+				nama_child,
+				hubungan,
+				added_by
+			) VALUES 
+			(
+				UUID(),
+				?,
+				?,
+				?,
+				?
+			)
 		`)
 		if err != nil {
 			return err
 		}
 		defer stmt.Close()
-
-		// Retrieve the text fields
-		// pengusaha := form.Value["nama_pengusaha"][0]
-		id_pengusaha := form.Value["id_pengusaha"][0]
 
 		// Retrieve the array values
 		afiliasiValues := form.Value["afiliasi[]"]
