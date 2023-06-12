@@ -74,24 +74,36 @@
                          .data(information.links());
     connections.enter().append("path")
                .attr("d", function (d){
-                    return "M" + (d.source.x-100) + "," + (d.source.y) + "h 100 v 100 H" +
-                    (d.target.x-100) + " V " + (d.target.y);
+                    var startX = d.source.x - 100;
+                    var startY = d.source.y;
+                    var endX = d.target.x - 100;
+
+                    var path = "M" + startX + "," + startY;
+
+                    if (d.source.data.spouse) {
+                        path += "h 100 v 100 H" + endX;
+                    } else {
+                        path += "v 100 H" + endX;
+                    }
+
+                    path += " V " + d.target.y;
+                    return path;
                 })
-               .classed("hide", function(d){
-                    if(d.target.data.child == undefined)
-                        return true;
-                    else
-                        return false;
-                    });
+                .classed("hide", function(d) {
+                        if (d.target.data.child === undefined)
+                            return true;
+                        else
+                            return false;
+                });
 
     var connections2 = svg.append("g").selectAll("path")
                          .data(information.links());
     connections2.enter().append("path")
                .attr("d", function (d){
-                if(d.target.data.child == null)
-                    return "M" + (d.source.x) + "," + (d.source.y) + "h 10";
-                else
+                if(d.source.data.spouse)
                     return "M" + (d.source.x) + "," + (d.source.y) + "h 100";
+                else
+                    return "";
                 });
     
     var rectangles = svg.append("g").selectAll("rect")
