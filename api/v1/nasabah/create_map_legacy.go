@@ -19,8 +19,8 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer db.Close()
+
 	// Check if afiliasi is empty
 	if len(afiliasi.MergedAfiliasi) == 0 {
 		// Create a single empty node
@@ -49,7 +49,6 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 
 	// Check for nested afiliasi
 	if hasNestedAfiliasi(db, afiliasi.MergedAfiliasi[0].IdChild) {
-		fmt.Println("NESTED DETECTED 2")
 		// Recursively process the nested afiliasi
 		err = processNestedAfiliasi(db, afiliasi.MergedAfiliasi[0].IdParent, &nodes, &nodeMap)
 		if err != nil {
@@ -72,12 +71,29 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 		// Check if the HubunganAfiliasi is "Istri" or "Suami"
 		if a.HubunganAfiliasi == "Istri" || a.HubunganAfiliasi == "Suami" {
 			// Find the index of the existing node with the matching child ID
-			idx, exists := nodeMap[a.IdParent]
+			idx, exists := nodeMap[a.IdChild]
 			if exists {
-				// Update the existing node's spouse field with the current parent name
+				// Update the existing node's spouse field with the current child name
 				nodes[idx].Spouse = childName
 				continue // Skip creating a new node
 			}
+		}
+
+		// Check if the node already exists in the node map
+		idx, exists := nodeMap[a.IdChild]
+		if exists {
+			// Update the existing node's parent field with the current parent name
+			nodes[idx].Parent = parentName
+
+			// Check if the existing node already has a spouse assigned
+			if nodes[idx].Spouse == "" {
+				// Update the spouse field if the current entry has a spouse
+				if a.HubunganAfiliasi == "Istri" || a.HubunganAfiliasi == "Suami" {
+					nodes[idx].Spouse = childName
+				}
+			}
+
+			continue // Skip creating a new node
 		}
 
 		node := Node{
@@ -129,9 +145,9 @@ func TranslateIdIntoName(db *sql.DB, id string) (string, error) {
 	return name, nil
 }
 
-func processNestedAfiliasi(db *sql.DB, idParent string, nodes *[]Node, nodeMap *map[string]int) error {
+func processNestedAfiliasi(db *sql.DB, idChild string, nodes *[]Node, nodeMap *map[string]int) error {
 	// Fetch the nested afiliasi for the given child ID from the database
-	nestedAfiliasi, err := fetchNestedAfiliasi(db, idParent)
+	nestedAfiliasi, err := fetchNestedAfiliasi(db, idChild)
 	if err != nil {
 		return fmt.Errorf("failed to fetch nested afiliasi: %v", err)
 	}
@@ -155,6 +171,13 @@ func processNestedAfiliasi(db *sql.DB, idParent string, nodes *[]Node, nodeMap *
 			}
 		}
 
+		// ADD CHECK HERE TO CHECK ID OR WHATEVER
+		_, childExists := (*nodeMap)[childName]
+		_, parentExists := (*nodeMap)[parentName]
+		if childExists || parentExists {
+			continue // Skip creating a new node
+		}
+
 		node := Node{
 			Child:  childName,
 			Parent: parentName,
@@ -165,8 +188,7 @@ func processNestedAfiliasi(db *sql.DB, idParent string, nodes *[]Node, nodeMap *
 
 		// Check for further nested afiliasi recursively
 		if hasNestedAfiliasi(db, nested.IdChild) {
-			fmt.Println("NESTED DETECTED 1")
-			err = processNestedAfiliasi(db, childName, nodes, nodeMap)
+			err = processNestedAfiliasi(db, nested.IdChild, nodes, nodeMap)
 			if err != nil {
 				return fmt.Errorf("failed to process nested afiliasi: %v", err)
 			}
@@ -178,14 +200,14 @@ func processNestedAfiliasi(db *sql.DB, idParent string, nodes *[]Node, nodeMap *
 
 func hasNestedAfiliasi(db *sql.DB, idChild string) bool {
 	// Execute the SQL query to check if there are nested afiliasi for the given child ID
-	query := "SELECT COUNT(*) FROM afiliasi WHERE id_parent = ?"
+	query := "SELECT COUNT(*) FROM afiliasi WHERE id_parent = ? AND id_child <> ?"
 	var count int
-	err := db.QueryRow(query, idChild).Scan(&count)
+	err := db.QueryRow(query, idChild, idChild).Scan(&count)
 	if err != nil {
 		// Handle the error according to your application's error handling approach
 		return false
 	}
-	return count > 1
+	return count > 0
 }
 
 func fetchNestedAfiliasi(db *sql.DB, idChild string) ([]Afiliasi, error) {
