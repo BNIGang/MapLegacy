@@ -68,63 +68,67 @@
     var treeStructure = d3.tree().size([800, 300]);
 
     var information = treeStructure(dataStructure);
-    console.log(information.descendants());
+
+    information.descendants().forEach(function(d) {
+        if(d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami"){
+            d.x += 200;
+            d.y -= 300;
+        }
+    });
 
     var connections = svg.append("g").selectAll("path")
-                         .data(information.links());
-    connections.enter().append("path")
-               .attr("d", function (d){
-                    var startX = d.source.x - 100;
-                    var startY = d.source.y;
-                    var endX = d.target.x - 100;
+                        .data(information.links());
+                        connections.enter().append("path")
+                        .attr("d", function(d) {
+                            var startX = d.source.x - 100;
+                            var startY = d.source.y;
+                            var endX = d.target.x - 100;
 
-                    var path = "M" + startX + "," + startY;
+                            var path = "M" + startX + "," + startY;
 
-                    if (d.source.data.spouse) {
-                        path += "h 100 v 100 H" + endX;
-                    } else {
-                        path += "v 100 H" + endX;
-                    }
+                            if (d.target.data.afiliasi === "Istri" || d.target.data.afiliasi === "Suami") {
+                                path += "h 100";
+                            } else {
+                                path += "v 100";
+                            }
 
-                    path += " V " + d.target.y;
-                    return path;
-                })
-                .classed("hide", function(d) {
-                        if (d.target.data.child === undefined)
-                            return true;
-                        else
-                            return false;
-                });
-
-    var connections2 = svg.append("g").selectAll("path")
-                         .data(information.links());
-    connections2.enter().append("path")
-               .attr("d", function (d){
-                if(d.source.data.spouse)
-                    return "M" + (d.source.x) + "," + (d.source.y) + "h 100";
-                else
-                    return "";
-                });
+                            path += " H " + endX + " V " + d.target.y;
+                            return path;
+                        })
+                        .classed("hide", function(d) {
+                            return d.target.data.child === undefined;
+                        });
     
+
     var rectangles = svg.append("g").selectAll("rect")
                         .data(information.descendants());
-    rectangles.enter().append("rect")
-              .attr("x", function(d){return d.x-150;})
-              .attr("y", function(d){return d.y-30;})
-              .classed("hide", function(d){
-                if(d.data.child == null)
-                    return true;
-                else
-                    return false;
-              });
+                        rectangles.enter().append("rect")
+                        .attr("x", function(d) {
+                            return d.x - 150;
+                        })
+                        .attr("y", function(d) {
+                            return d.y - 30;
+                        })
+                        .classed("hide", function(d) {
+                            return d.data.child === null;
+                        });
 
     var names = svg.append("g").selectAll("text")
-                   .data(information.descendants());
-    names.enter().append("text")
-                 .text(function(d){return d.data.child;})
-                 .attr("x", function(d){return d.x;})
-                 .attr("y", function(d){return d.y;})
-                 .each(wrapText);
+                    .data(information.descendants());
+                    names.enter().append("text")
+                    .text(function(d) {
+                        return d.data.child;
+                    })
+                    .attr("x", function(d) {
+                        return d.x;
+                    })
+                    .attr("y", function(d) {
+                        return d.y;
+                    })
+                    .each(wrapText);
+
+    console.log(information.descendants());
+    console.log(information.links());
 
     // Function to wrap text within a rectangle
     function wrapText(d) {
@@ -154,26 +158,6 @@
             }
         }
     }
-     
-
-    var spouseRectangles = svg.append("g").selectAll("rect")
-                              .data(information.descendants());
-    spouseRectangles.enter().append("rect")
-                .attr("x", function(d){return d.x+25;})
-                .attr("y", function(d){return d.y-30;})
-                .classed("hide", function(d){
-                    if(d.data.spouse == undefined)
-                        return true;
-                    else
-                        return false;
-                });
-    
-    var spouseNames = svg.append("g").selectAll("text")
-                         .data(information.descendants());
-    spouseNames.enter().append("text")
-               .text(function(d){return d.data.spouse;})
-               .attr("x", function(d){return d.x+100;})
-               .attr("y", function(d){return d.y+7;})
 
     // This part onwards is to handle controls (zoom, drag&drop)
     // Variables to track zoom level and container position

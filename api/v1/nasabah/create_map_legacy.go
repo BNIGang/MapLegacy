@@ -9,11 +9,9 @@ import (
 )
 
 type Node struct {
-	Child  string `json:"child"`
-	Parent string `json:"parent"`
-	Spouse string `json:"spouse,omitempty"`
-	Ayah   string `json:"ayah,omitempty"`
-	Ibu    string `json:"ibu,omitempty"`
+	Child    string `json:"child"`
+	Parent   string `json:"parent"`
+	Afiliasi string `json:"afiliasi"`
 }
 
 func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
@@ -23,11 +21,13 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 	}
 	defer db.Close()
 
-	// Check if afiliasi is empty
 	if len(afiliasi.MergedAfiliasi) == 0 {
-		// Create a single empty node
-		node := Node{}
-		return []Node{node}, nil
+		firstNode := Node{
+			Child:    afiliasi.NamaPengusaha, // TODO: fix this later
+			Parent:   "",
+			Afiliasi: "",
+		}
+		return []Node{firstNode}, nil
 	}
 
 	var nodes []Node
@@ -40,9 +40,11 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 	}
 
 	firstNode := Node{
-		Child:  rootName,
-		Parent: "",
+		Child:    rootName,
+		Parent:   "",
+		Afiliasi: "",
 	}
+
 	nodes = append(nodes, firstNode)
 	nodeMap[afiliasi.MergedAfiliasi[0].IdParent] = 0
 
@@ -58,7 +60,7 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 			return nil, fmt.Errorf("failed to translate parent ID: %v", err)
 		}
 
-		if err := updateOrCreateNode(db, a, childName, parentName, &nodes, &nodeMap); err != nil {
+		if err := updateOrCreateNode(db, a, childName, parentName, a.HubunganAfiliasi, &nodes, &nodeMap); err != nil {
 			return nil, err
 		}
 	}
@@ -66,35 +68,12 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 	return nodes, nil
 }
 
-func updateOrCreateNode(db *sql.DB, afiliasi Afiliasi, childName, parentName string, nodes *[]Node, nodeMap *map[string]int) error {
-	// Check if the HubunganAfiliasi is "Istri" or "Suami"
-	if afiliasi.HubunganAfiliasi == "Istri" || afiliasi.HubunganAfiliasi == "Suami" {
-		// Find the index of the existing node with the matching child ID
-		idx, exists := (*nodeMap)[afiliasi.IdParent]
-		if exists {
-			// Update the existing node's spouse field with the current child name
-			(*nodes)[idx].Spouse = childName
-			return nil
-		}
-	}
-
-	if afiliasi.HubunganAfiliasi == "Ibu" || afiliasi.HubunganAfiliasi == "Ayah" {
-		// Find the index of the existing node with the matching child ID
-		idx, exists := (*nodeMap)[afiliasi.IdParent]
-		if exists {
-			// Update the existing node's spouse field with the current child name
-			if afiliasi.HubunganAfiliasi == "Ibu" {
-				(*nodes)[idx].Ibu = childName
-			} else {
-				(*nodes)[idx].Ayah = childName
-			}
-		}
-	}
-
+func updateOrCreateNode(db *sql.DB, afiliasi Afiliasi, childName, parentName, hubunganAfiliasi string, nodes *[]Node, nodeMap *map[string]int) error {
 	// Create a new node
 	node := Node{
-		Child:  childName,
-		Parent: parentName,
+		Child:    childName,
+		Parent:   parentName,
+		Afiliasi: hubunganAfiliasi,
 	}
 
 	*nodes = append(*nodes, node)
@@ -162,7 +141,7 @@ func processNestedAfiliasi(db *sql.DB, idChild string, nodes *[]Node, nodeMap *m
 			return err
 		}
 
-		if err := updateOrCreateNode(db, nested, childName, parentName, nodes, nodeMap); err != nil {
+		if err := updateOrCreateNode(db, nested, childName, parentName, nested.HubunganAfiliasi, nodes, nodeMap); err != nil {
 			return err
 		}
 	}
