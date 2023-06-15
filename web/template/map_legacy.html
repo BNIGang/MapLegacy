@@ -65,15 +65,94 @@
                             .parentId(function(d){return d.parent;})
                             (data);
     
-    var treeStructure = d3.tree().size([800, 300]);
+    
+    var treeX = 1600;
+    var treeY = 600;
+
+    var treeStructure = d3.tree().size([treeX, treeY]);
 
     var information = treeStructure(dataStructure);
 
-    information.descendants().forEach(function(d) {
-        if(d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami"){
-            d.x += 200;
-            d.y -= 300;
+    // // Separate spouse nodes and remaining child nodes
+    // var spouses = information.descendants().filter(function(d) {
+    //     return d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami";
+    // });
+
+    // var children = information.descendants().filter(function(d) {
+    //     return d.data.afiliasi !== "Istri" && d.data.afiliasi !== "Suami" && d.data.parent !== "";
+    // });
+
+    // // Group child nodes by parent
+    // var childGroups = d3.group(children, function(d) {
+    //     return d.data.parent;
+    // });
+
+    // // Position spouse nodes
+    // var spouseCount = spouses.length;
+    // var parentX = null;
+    // var parentY = null;
+    // spouses.forEach(function(d, i) {
+    //     if (d.parent) {
+    //         parentX = d.parent.x;
+    //         parentY = d.parent.y; // Get the Y-coordinate of the parent node
+    //     }
+    //     d.x = parentX + 100;
+    //     d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
+    // });
+
+
+    // // Position remaining child nodes evenly
+    // var childCount = children.length;
+    // children.forEach(function(d, i) {
+    //     d.x = (i + 1) * (treeX / (childCount + 1));
+    // });
+
+    // Separate spouse nodes and remaining child nodes
+    var spouses = information.descendants().filter(function(d) {
+        return d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami";
+    });
+
+    var children = information.descendants().filter(function(d) {
+        return (
+            d.data.afiliasi !== "Istri" &&
+            d.data.afiliasi !== "Suami" &&
+            d.data.parent !== ""
+        );
+    });
+
+    // Group child nodes by parent
+    var childGroups = Array.from(
+        d3.group(children, function(d) {
+            return d.data.parent;
+        }).values()
+    );
+
+    console.log(childGroups)
+
+    // Position spouse nodes
+    var spouseCount = spouses.length;
+    var parentX = null;
+    var parentY = null;
+    spouses.forEach(function(d, i) {
+        if (d.parent) {
+            parentX = d.parent.x;
+            parentY = d.parent.y; // Get the Y-coordinate of the parent node
         }
+        d.x = parentX + 100;
+        d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
+    });
+
+    // Position remaining child nodes evenly within each parent group
+    childGroups.forEach(function(group) {
+        var childCount = group.length;
+        var parentX = null;
+        group.forEach(function(d, i) {
+            if (d.parent) {
+                parentX = d.parent.x;
+            }
+            // d.x = parentX + (i + 1) * (800 / (childCount + 1));
+            d.x = (parentX/2) + (i + 1) * (800 / (childCount + 1));
+        });
     });
 
     var connections = svg.append("g").selectAll("path")
