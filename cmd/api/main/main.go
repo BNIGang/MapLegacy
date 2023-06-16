@@ -247,6 +247,10 @@ func main() {
 		})
 	})
 
+	app.Post("/update_afiliasi/:afiliasi_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		return v.UpdateAfiliasi(user.User_ID)(c)
+	})
+
 	// handle autofill
 	app.Get("/get_suggestions/:nama_pengusaha", web.JWTMiddleware(secret, engine), web.AutoFillHandler)
 

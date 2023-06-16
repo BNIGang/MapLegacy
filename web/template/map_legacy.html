@@ -73,49 +73,21 @@
 
     var information = treeStructure(dataStructure);
 
-    // // Separate spouse nodes and remaining child nodes
-    // var spouses = information.descendants().filter(function(d) {
-    //     return d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami";
-    // });
-
-    // var children = information.descendants().filter(function(d) {
-    //     return d.data.afiliasi !== "Istri" && d.data.afiliasi !== "Suami" && d.data.parent !== "";
-    // });
-
-    // // Group child nodes by parent
-    // var childGroups = d3.group(children, function(d) {
-    //     return d.data.parent;
-    // });
-
-    // // Position spouse nodes
-    // var spouseCount = spouses.length;
-    // var parentX = null;
-    // var parentY = null;
-    // spouses.forEach(function(d, i) {
-    //     if (d.parent) {
-    //         parentX = d.parent.x;
-    //         parentY = d.parent.y; // Get the Y-coordinate of the parent node
-    //     }
-    //     d.x = parentX + 100;
-    //     d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
-    // });
-
-
-    // // Position remaining child nodes evenly
-    // var childCount = children.length;
-    // children.forEach(function(d, i) {
-    //     d.x = (i + 1) * (treeX / (childCount + 1));
-    // });
-
     // Separate spouse nodes and remaining child nodes
     var spouses = information.descendants().filter(function(d) {
         return d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami";
+    });
+
+    var theirParents = information.descendants().filter(function(d) {
+        return d.data.afiliasi === "Ayah" || d.data.afiliasi === "Ibu";
     });
 
     var children = information.descendants().filter(function(d) {
         return (
             d.data.afiliasi !== "Istri" &&
             d.data.afiliasi !== "Suami" &&
+            d.data.afiliasi !== "Ayah" &&
+            d.data.afiliasi !== "Ibu" &&
             d.data.parent !== ""
         );
     });
@@ -127,20 +99,14 @@
         }).values()
     );
 
-    console.log(childGroups)
+    // Group theirParent nodes by parent
+    var theirParentGroups = Array.from(
+        d3.group(theirParents, function(d) {
+            return d.data.parent;
+        }).values()
+    );  
 
-    // Position spouse nodes
-    var spouseCount = spouses.length;
-    var parentX = null;
-    var parentY = null;
-    spouses.forEach(function(d, i) {
-        if (d.parent) {
-            parentX = d.parent.x;
-            parentY = d.parent.y; // Get the Y-coordinate of the parent node
-        }
-        d.x = parentX + 100;
-        d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
-    });
+    console.log(childGroups)
 
     // Position remaining child nodes evenly within each parent group
     childGroups.forEach(function(group) {
@@ -151,8 +117,38 @@
                 parentX = d.parent.x;
             }
             // d.x = parentX + (i + 1) * (800 / (childCount + 1));
-            d.x = (parentX/2) + (i + 1) * (800 / (childCount + 1));
+            var offset = (childCount > 1) ? (800 / 2) / (childCount - 1) : 0;
+            d.x = parentX + (i * offset) - (childCount - 1) * offset / 2;
         });
+    });
+
+    // Position theirParent nodes
+    theirParentGroups.forEach(function(group) {
+        var parentX = null;
+        var parentY = null;
+        var parent = group[0].parent;
+        if (parent) {
+            parentX = parent.x;
+            parentY = parent.y;
+        }
+        var parentChildCount = group.length;
+        var offset = (parentChildCount > 1) ? (800 / 2) / (parentChildCount - 1) : 0;
+        group.forEach(function(d, i) {
+            d.x = parentX + (i * offset) - (parentChildCount - 1) * offset / 2;
+            d.y = parentY - 100;
+        });
+    });
+
+    // Position spouse nodes
+    var parentX = null;
+    var parentY = null;
+    spouses.forEach(function(d, i) {
+        if (d.parent) {
+            parentX = d.parent.x;
+            parentY = d.parent.y; // Get the Y-coordinate of the parent node
+        }
+        d.x = parentX + 100;
+        d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
     });
 
     var connections = svg.append("g").selectAll("path")
@@ -238,112 +234,112 @@
         }
     }
 
-    // This part onwards is to handle controls (zoom, drag&drop)
-    // Variables to track zoom level and container position
-    let zoomLevel = 1;
-    let containerX = 0;
-    let containerY = 0;
-    let isDragging = false;
-    let prevX = 0;
-    let prevY = 0;
+    // // This part onwards is to handle controls (zoom, drag&drop)
+    // // Variables to track zoom level and container position
+    // let zoomLevel = 1;
+    // let containerX = 0;
+    // let containerY = 0;
+    // let isDragging = false;
+    // let prevX = 0;
+    // let prevY = 0;
 
-    const viewport = document.getElementById("viewport");
+    // const viewport = document.getElementById("viewport");
 
-    // Zoom in function
-    function zoomIn() {
-        zoomLevel += 0.1;
-        container.style.transform = `scale(${zoomLevel})`;
-        container.classList.add("zoom-out");
-    }
+    // // Zoom in function
+    // function zoomIn() {
+    //     zoomLevel += 0.1;
+    //     container.style.transform = `scale(${zoomLevel})`;
+    //     container.classList.add("zoom-out");
+    // }
 
-    // Zoom out function
-    function zoomOut() {
-        zoomLevel -= 0.1;
-        container.style.transform = `scale(${zoomLevel})`;
-        container.classList.add("zoom-in");
-    }
+    // // Zoom out function
+    // function zoomOut() {
+    //     zoomLevel -= 0.1;
+    //     container.style.transform = `scale(${zoomLevel})`;
+    //     container.classList.add("zoom-in");
+    // }
 
-    // Reset zoom function
-    function resetZoom() {
-        zoomLevel = 1;
-        container.style.transform = "scale(1)";
-        container.classList.remove("zoom-in", "zoom-out");
-    }
+    // // Reset zoom function
+    // function resetZoom() {
+    //     zoomLevel = 1;
+    //     container.style.transform = "scale(1)";
+    //     container.classList.remove("zoom-in", "zoom-out");
+    // }
 
-    // Mouse event handlers
-    viewport.addEventListener("mousedown", startDrag);
-    viewport.addEventListener("mousemove", dragContainer);
-    viewport.addEventListener("mouseup", endDrag);
-    viewport.addEventListener("mouseleave", endDrag);
+    // // Mouse event handlers
+    // viewport.addEventListener("mousedown", startDrag);
+    // viewport.addEventListener("mousemove", dragContainer);
+    // viewport.addEventListener("mouseup", endDrag);
+    // viewport.addEventListener("mouseleave", endDrag);
 
-    // Touch event handlers
-    viewport.addEventListener("touchstart", startDrag, { passive: false });
-    viewport.addEventListener("touchmove", dragContainer, { passive: false });
-    viewport.addEventListener("touchend", endDrag);
-    viewport.addEventListener("touchcancel", endDrag);
+    // // Touch event handlers
+    // viewport.addEventListener("touchstart", startDrag, { passive: false });
+    // viewport.addEventListener("touchmove", dragContainer, { passive: false });
+    // viewport.addEventListener("touchend", endDrag);
+    // viewport.addEventListener("touchcancel", endDrag);
 
-    // Start dragging
-    function startDrag(event) {
-        event.preventDefault();
-        isDragging = true;
+    // // Start dragging
+    // function startDrag(event) {
+    //     event.preventDefault();
+    //     isDragging = true;
 
-        if (event.type === "mousedown") {
-            prevX = event.clientX;
-            prevY = event.clientY;
-        } else if (event.type === "touchstart") {
-            prevX = event.touches[0].clientX;
-            prevY = event.touches[0].clientY;
-        }
+    //     if (event.type === "mousedown") {
+    //         prevX = event.clientX;
+    //         prevY = event.clientY;
+    //     } else if (event.type === "touchstart") {
+    //         prevX = event.touches[0].clientX;
+    //         prevY = event.touches[0].clientY;
+    //     }
 
-        container.style.cursor = "grabbing";
-    }
+    //     container.style.cursor = "grabbing";
+    // }
 
-    // Drag container
-    function dragContainer(event) {
-        if (!isDragging) return;
-        event.preventDefault();
+    // // Drag container
+    // function dragContainer(event) {
+    //     if (!isDragging) return;
+    //     event.preventDefault();
 
-        let newX, newY;
+    //     let newX, newY;
 
-        if (event.type === "mousemove") {
-            newX = event.clientX;
-            newY = event.clientY;
-        } else if (event.type === "touchmove") {
-            newX = event.touches[0].clientX;
-            newY = event.touches[0].clientY;
-        }
+    //     if (event.type === "mousemove") {
+    //         newX = event.clientX;
+    //         newY = event.clientY;
+    //     } else if (event.type === "touchmove") {
+    //         newX = event.touches[0].clientX;
+    //         newY = event.touches[0].clientY;
+    //     }
 
-        const deltaX = newX - prevX;
-        const deltaY = newY - prevY;
+    //     const deltaX = newX - prevX;
+    //     const deltaY = newY - prevY;
 
-        containerX += deltaX;
-        containerY += deltaY;
+    //     containerX += deltaX;
+    //     containerY += deltaY;
 
-        container.style.transform = `scale(${zoomLevel}) translate(${containerX}px, ${containerY}px)`;
+    //     container.style.transform = `scale(${zoomLevel}) translate(${containerX}px, ${containerY}px)`;
 
-        prevX = newX;
-        prevY = newY;
-    }
+    //     prevX = newX;
+    //     prevY = newY;
+    // }
 
-    // End dragging
-    function endDrag() {
-        isDragging = false;
-        container.style.cursor = "grab";
-    }
+    // // End dragging
+    // function endDrag() {
+    //     isDragging = false;
+    //     container.style.cursor = "grab";
+    // }
 
-    // Double-click to reset zoom
-    viewport.addEventListener("dblclick", function (event) {
-        resetZoom();
-    });
+    // // Double-click to reset zoom
+    // viewport.addEventListener("dblclick", function (event) {
+    //     resetZoom();
+    // });
 
-    // Add event listener for wheel event (zoom in/out)
-    viewport.addEventListener("wheel", function (event) {
-        event.preventDefault();
+    // // Add event listener for wheel event (zoom in/out)
+    // viewport.addEventListener("wheel", function (event) {
+    //     event.preventDefault();
 
-        if (event.deltaY < 0) {
-            zoomIn();
-        } else {
-            zoomOut();
-        }
-    });
+    //     if (event.deltaY < 0) {
+    //         zoomIn();
+    //     } else {
+    //         zoomOut();
+    //     }
+    // });
 </script>

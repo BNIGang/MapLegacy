@@ -174,3 +174,45 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 		return c.Redirect("/home")
 	}
 }
+
+func UpdateAfiliasi(user_id string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		afiliasi_id := c.Params("afiliasi_id")
+
+		// Retrieve the form data
+		form, err := c.MultipartForm()
+		if err != nil {
+			return err
+		}
+		// Retrieve the text fields
+		afiliasi := form.Value["afiliasi[]"][0]
+		hubunganAfiliasi := form.Value["hubungan_afiliasi[]"][0]
+
+		db, err := web.Connect()
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		defer db.Close()
+
+		stmt, err := db.Prepare(`
+				UPDATE 
+					afiliasi
+				SET
+					nama_child = ?,
+					hubungan = ?
+				WHERE
+					id_child = ?
+				`)
+		if err != nil {
+			return err
+		}
+		defer stmt.Close()
+
+		_, err2 := stmt.Exec(afiliasi, hubunganAfiliasi, afiliasi_id)
+		if err2 != nil {
+			return err2
+		}
+
+		return c.Redirect("/afiliasi")
+	}
+}
