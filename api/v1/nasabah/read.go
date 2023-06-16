@@ -227,6 +227,10 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 					})
 				}
 			}
+			// Sort the afiliasi list
+			sort.Slice(nasabahMap[nasabah.Id].AfiliasiList, func(i, j int) bool {
+				return nasabahMap[nasabah.Id].AfiliasiList[i].NamaAfiliasi < nasabahMap[nasabah.Id].AfiliasiList[j].NamaAfiliasi
+			})
 		}
 	}
 
@@ -357,6 +361,13 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 
 	if err = rows.Err(); err != nil {
 		return nil, err
+	}
+
+	// Sort each MergedRow's MergedAfiliasi slice
+	for _, mergedRow := range mergedMap {
+		sort.Slice(mergedRow.MergedAfiliasi, func(i, j int) bool {
+			return mergedRow.MergedAfiliasi[i].NamaAfiliasi < mergedRow.MergedAfiliasi[j].NamaAfiliasi
+		})
 	}
 
 	return mergedMap, nil
