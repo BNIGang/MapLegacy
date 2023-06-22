@@ -20,19 +20,6 @@ func AutoFillHandler(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
-	// query := `
-	// 	SELECT
-	// 		a.id_parent, dn.nama_pengusaha
-	// 	FROM
-	// 		afiliasi a
-	// 	LEFT JOIN
-	// 		data_nasabah dn
-	// 	ON
-	// 		a.id_parent = dn.id
-	// 	WHERE
-	// 		dn.nama_pengusaha LIKE ?
-	// `
-
 	query := `
 	SELECT * FROM (
 		SELECT 

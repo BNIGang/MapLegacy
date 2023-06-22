@@ -78,6 +78,7 @@ func main() {
 		})
 	})
 
+	// Handle page for adding nasabah
 	app.Get("/create", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
 		if user == nil || username == "" {
 			return c.Redirect("/home")
@@ -195,8 +196,14 @@ func main() {
 		return v.UpdateNasabahData(user.User_ID)(c)
 	})
 
-	app.Post("/add", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
-		return v.AddNasabahHandler(user.User_ID)(c)
+	app.Get("/search_nasabah/:query", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		// Check if user is nil or username is empty
+		if user == nil || user.Username == "" {
+			return c.Redirect("/home")
+		}
+
+		// Call SearchNasabah function with user information
+		return v.SearchNasabah(user.User_ID, user.Wilayah_ID, user.Cabang_ID, user.User_Privileges)(c)
 	})
 
 	// Now, do CRUD for afiliasi

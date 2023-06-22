@@ -3,10 +3,12 @@ package v1
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 
 	"github.com/BNIGang/MapLegacy/web"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Nasabah struct {
@@ -395,6 +397,216 @@ func GetAfiliasiListById(id_parent string) (*MergedRow, error) {
 	return &mergedRow, nil
 }
 
-// func SearchNasabah(query string) {
-// 	//TODO
-// }
+func SearchNasabah(user_id string, wilayah_id string, cabang_id string, privilege string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		nasabahMap = make(map[string]*Nasabah)
+		idChildMap = make(map[string]Afiliasi)
+
+		// Extract the query parameter from the request URL
+		match := c.Params("query")
+
+		db, err := web.Connect()
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		defer db.Close()
+
+		var queryLine string
+		var args []interface{}
+
+		if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {
+			// Retrieve cabang_name based on cabang_id
+			var cabangName string
+			err := db.QueryRow("SELECT cabang_name FROM cabang WHERE cabang_id=?", cabang_id).Scan(&cabangName)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Set the WHERE clause in the query
+			queryLine = `
+				SELECT 
+					dn.*, 
+					GROUP_CONCAT(a.nama_child) AS nama_child, 
+					GROUP_CONCAT(a.hubungan) AS hubungan, 
+					u.name 
+				FROM 
+					data_nasabah dn 
+				LEFT JOIN 
+					afiliasi a 
+				ON  
+					dn.id = a.id_parent 
+				LEFT JOIN 
+					users u 
+				ON 
+					dn.added_by = u.user_id 
+				WHERE 
+					dn.cabang = ? 
+				AND
+					dn.nama_pengusaha LIKE ?
+				GROUP BY 
+					dn.id 
+				ORDER BY 
+					dn.nama_pengusaha ASC
+			`
+			args = append(args, cabangName, "%"+match+"%")
+		} else if privilege == "individu" {
+			// Retrieve username based on user_id
+			var name string
+			err := db.QueryRow("SELECT name FROM users WHERE user_id=?", user_id).Scan(&name)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Set the WHERE clause in the query
+			queryLine = `
+		SELECT 
+			dn.*, 
+			GROUP_CONCAT(a.nama_child) AS nama_child, 
+			GROUP_CONCAT(a.hubungan) AS hubungan, 
+			u.name 
+		FROM 
+			data_nasabah dn 
+		LEFT JOIN 
+			afiliasi a 
+		ON  
+			dn.id = a.id_parent 
+		LEFT JOIN 
+			users u 
+		ON 
+			dn.added_by = u.user_id 
+		WHERE 
+			u.name = ? 
+		AND
+			dn.nama_pengusaha LIKE ?
+		GROUP BY 
+			dn.id 
+		ORDER BY 
+			dn.nama_pengusaha ASC
+	`
+			args = append(args, name, "%"+match+"%")
+		} else {
+			// No additional WHERE clause
+			queryLine = `
+		SELECT 
+			dn.*, 
+			GROUP_CONCAT(a.nama_child) AS nama_child, 
+			GROUP_CONCAT(a.hubungan) AS hubungan, 
+			u.name 
+		FROM 
+			data_nasabah dn 
+		LEFT JOIN 
+			afiliasi a 
+		ON  
+			dn.id = a.id_parent 
+		LEFT JOIN 
+			users u 
+		ON 
+			dn.added_by = u.user_id 
+		WHERE
+			dn.nama_pengusaha LIKE ?
+		GROUP BY 
+			dn.id 
+		ORDER BY 
+			dn.nama_pengusaha ASC
+	`
+			args = append(args, "%"+match+"%")
+		}
+
+		// Execute the query
+		rows, err := db.Query(queryLine, args...)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var nasabah Nasabah
+			var afiliasi, hubunganAfiliasi sql.NullString
+
+			err = rows.Scan(
+				&nasabah.Id,
+				&nasabah.Nama_pengusaha,
+				&nasabah.Nomor_kontak,
+				&nasabah.Alamat_tempat_tinggal,
+				&nasabah.Bidang_usaha,
+				&nasabah.Produk_usaha,
+				&nasabah.Detail_bidang_usaha,
+				&nasabah.Kabupaten_kota,
+				&nasabah.Cabang,
+				&nasabah.KCU_KCP_KK,
+				&nasabah.Nasabah,
+				&nasabah.No_CIF,
+				&nasabah.AUM_di_BNI,
+				&nasabah.Debitur,
+				&nasabah.Kredit_di_bni,
+				&nasabah.Produk_bni_yang_dimiliki,
+				&nasabah.Mitra_bank_dominan,
+				&nasabah.Aum_di_bank_lain,
+				&nasabah.Kredit_di_bank_lain,
+				&nasabah.Latitude,
+				&nasabah.Longtitude,
+				&nasabah.Added_by,
+				&afiliasi,
+				&hubunganAfiliasi,
+				&nasabah.Username,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Check if the nasabah is already in the map
+			if _, ok := nasabahMap[nasabah.Id]; !ok {
+				// If not, add it to the map with an empty list of afiliasi
+				nasabah.AfiliasiList = make([]Afiliasi, 0)
+				nasabahMap[nasabah.Id] = &nasabah
+			}
+
+			// If the afiliasi is not null, add it to the nasabah's list of afiliasi
+			if afiliasi.Valid {
+				afiliasiSlice := strings.Split(afiliasi.String, ",")
+				hubunganAfiliasiSlice := strings.Split(hubunganAfiliasi.String, ",")
+				for i := range afiliasiSlice {
+					// Check if the afiliasi is already in the nasabah's list
+					alreadyExists := false
+					for j := range nasabahMap[nasabah.Id].AfiliasiList {
+						if nasabahMap[nasabah.Id].AfiliasiList[j].NamaAfiliasi == afiliasiSlice[i] {
+							alreadyExists = true
+							break
+						}
+					}
+					// If the afiliasi is not already in the nasabah's list, add it
+					if !alreadyExists {
+						nasabahMap[nasabah.Id].AfiliasiList = append(nasabahMap[nasabah.Id].AfiliasiList, Afiliasi{
+							NamaAfiliasi:     afiliasiSlice[i],
+							HubunganAfiliasi: hubunganAfiliasiSlice[i],
+						})
+					}
+				}
+				// Sort the afiliasi list
+				sort.Slice(nasabahMap[nasabah.Id].AfiliasiList, func(i, j int) bool {
+					return nasabahMap[nasabah.Id].AfiliasiList[i].NamaAfiliasi < nasabahMap[nasabah.Id].AfiliasiList[j].NamaAfiliasi
+				})
+			}
+		}
+
+		if err = rows.Err(); err != nil {
+			log.Fatal(err)
+		}
+
+		// Create a slice of Nasabah from the values in the map
+		nasabahs := make([]Nasabah, 0, len(nasabahMap))
+		for _, nasabah := range nasabahMap {
+			nasabahs = append(nasabahs, *nasabah)
+		}
+
+		sort.Slice(nasabahs, func(i, j int) bool {
+			return nasabahs[i].Nama_pengusaha < nasabahs[j].Nama_pengusaha
+		})
+
+		response := map[string]interface{}{
+			"nasabahs": nasabahs,
+		}
+
+		return c.JSON(response)
+	}
+}
