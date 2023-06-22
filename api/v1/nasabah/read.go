@@ -610,3 +610,125 @@ func SearchNasabah(user_id string, wilayah_id string, cabang_id string, privileg
 		return c.JSON(response)
 	}
 }
+
+func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privilege string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		match := c.Params("query")
+
+		mergedMap = make(map[string]MergedRow)
+
+		db, err := web.Connect()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+
+		var query string
+		var args []interface{}
+
+		query = `
+			SELECT 
+				a.*, 
+				COALESCE(dn.nama_pengusaha, af.nama_child) AS nama_pengusaha, 
+				u.name
+			FROM 
+				afiliasi a
+			LEFT JOIN 
+				data_nasabah dn 
+			ON 
+				a.id_parent = dn.id
+			LEFT JOIN 
+				afiliasi af 
+			ON 
+				a.id_parent = af.id_child
+			LEFT JOIN 
+				users u 
+			ON 
+				a.added_by = u.user_id
+		`
+
+		if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {
+			// Retrieve cabang_name based on cabang_id
+			var cabangName string
+			err := db.QueryRow("SELECT cabang_name FROM cabang WHERE cabang_id=?", cabang_id).Scan(&cabangName)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Add WHERE clause to the query
+			query += " WHERE dn.cabang = ? AND dn.nama_pengusaha LIKE ?"
+			args = append(args, cabangName, "%"+match+"%")
+		} else if privilege == "individu" {
+			// Retrieve username based on user_id
+			var name string
+			err := db.QueryRow("SELECT name FROM users WHERE user_id=?", user_id).Scan(&name)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Add WHERE clause to the query
+			query += " WHERE u.name = ? AND dn.nama_pengusaha LIKE ?"
+			args = append(args, name, "%"+match+"%")
+		}
+
+		// Append the ORDER BY clause to the query
+		query += " ORDER BY dn.nama_pengusaha ASC"
+
+		// Execute the query
+		rows, err := db.Query(query, args...)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var afiliasi Afiliasi
+
+			err = rows.Scan(
+				&afiliasi.IdChild,
+				&afiliasi.IdParent,
+				&afiliasi.NamaAfiliasi,
+				&afiliasi.HubunganAfiliasi,
+				&afiliasi.AddedBy,
+				&afiliasi.NamaPengusaha,
+				&afiliasi.Username,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Check if the NamaPengusaha is already in the mergedMap
+			if _, ok := mergedMap[afiliasi.IdParent]; !ok {
+				mergedMap[afiliasi.IdParent] = MergedRow{
+					MergedAfiliasi: []Afiliasi{afiliasi},
+					RowCount:       1,
+				}
+			} else {
+				mergedRow := mergedMap[afiliasi.IdParent]
+				mergedRow.MergedAfiliasi = append(mergedRow.MergedAfiliasi, afiliasi)
+				mergedRow.RowCount++
+				mergedMap[afiliasi.IdParent] = mergedRow
+			}
+
+			idChildMap[afiliasi.IdChild] = afiliasi
+
+		}
+
+		if err = rows.Err(); err != nil {
+			log.Fatal(err)
+		}
+
+		// Sort each MergedRow's MergedAfiliasi slice
+		for _, mergedRow := range mergedMap {
+			sort.Slice(mergedRow.MergedAfiliasi, func(i, j int) bool {
+				return mergedRow.MergedAfiliasi[i].NamaAfiliasi < mergedRow.MergedAfiliasi[j].NamaAfiliasi
+			})
+		}
+
+		response := map[string]interface{}{
+			"afiliasi": mergedMap,
+		}
+
+		return c.JSON(response)
+	}
+}
