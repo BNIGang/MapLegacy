@@ -34,6 +34,8 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 		mitra_bank_dominan := form.Value["mitra_bank_dominan"][0]
 		aum_di_bank_lain := form.Value["aum_di_bank_lain"][0]
 		kredit_di_bank_lain := form.Value["kredit_di_bank_lain"][0]
+		latitude := form.Value["latitude"][0]
+		longtitude := form.Value["longtitude"][0]
 		user_id := user_id
 
 		db, err := web.Connect()
@@ -64,7 +66,9 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 					produk_bni_yang_dimiliki = ?,
 					mitra_bank_dominan = ?,
 					aum_di_bank_lain = ?,
-					kredit_di_bank_lain = ?
+					kredit_di_bank_lain = ?,
+					latitude = ?,
+					longtitude = ?
 				WHERE 
 					id = ?
 				`)
@@ -93,6 +97,8 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 			mitra_bank_dominan,
 			aum_di_bank_lain,
 			kredit_di_bank_lain,
+			latitude,
+			longtitude,
 			nasabah_id,
 		)
 		if err != nil {

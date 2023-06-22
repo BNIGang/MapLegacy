@@ -28,6 +28,17 @@ func DeleteNasabahData(c *fiber.Ctx) error {
 		log.Fatal(err)
 	}
 
+	stmt2, err3 := db.Prepare("DELETE FROM afiliasi WHERE id_parent=?")
+	if err3 != nil {
+		log.Fatal(err3)
+	}
+	defer stmt2.Close()
+
+	_, err4 := stmt2.Exec(nasabah_id)
+	if err4 != nil {
+		log.Fatal(err)
+	}
+
 	// Redirect to home page
 	return c.Redirect("/home")
 }

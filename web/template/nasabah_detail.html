@@ -10,8 +10,8 @@
     <tr>
         <td>Nama Pengusaha</td>
         <td>{{ .data_nasabah.Nama_pengusaha           }}</td>
-        <td rowspan="19">
-            <iframe src="https://www.google.com/maps/d/embed?mid=1-pdQ4VUcBqtQ2gZs2B_jghjDCoJj0Ls&ll=-1.6445114097384297%2C103.64357432828662&z=17" width="640" height="480"></iframe>
+        <td rowspan="21">
+            <iframe src="https://www.google.com/maps/d/embed?mid=1-pdQ4VUcBqtQ2gZs2B_jghjDCoJj0Ls&ll={{.data_nasabah.Latitude}}%2C{{.data_nasabah.Longtitude}}&z=17" width="640" height="480"></iframe>
         </td>
     </tr>
 
@@ -99,6 +99,16 @@
     <tr>
         <td>Kredit di Bank Lain</td>
         <td>{{ .data_nasabah.Kredit_di_bank_lain      }}</td>
+    </tr>
+
+    <tr>
+        <td>Latitude</td>
+        <td>{{ .data_nasabah.Latitude      }}</td>
+    </tr>
+
+    <tr>
+        <td>Longtitude</td>
+        <td>{{ .data_nasabah.Longtitude      }}</td>
     </tr>
 
     <tr>

@@ -29,6 +29,8 @@ type Nasabah struct {
 	Mitra_bank_dominan       string
 	Aum_di_bank_lain         string
 	Kredit_di_bank_lain      string
+	Latitude                 string
+	Longtitude               string
 	Added_by                 string
 	Username                 string
 	AfiliasiList             []Afiliasi
@@ -190,6 +192,8 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 			&nasabah.Mitra_bank_dominan,
 			&nasabah.Aum_di_bank_lain,
 			&nasabah.Kredit_di_bank_lain,
+			&nasabah.Latitude,
+			&nasabah.Longtitude,
 			&nasabah.Added_by,
 			&afiliasi,
 			&hubunganAfiliasi,
@@ -382,11 +386,13 @@ func GetAfiliasiById(id_child string) (*Afiliasi, error) {
 }
 
 func GetAfiliasiListById(id_parent string) (*MergedRow, error) {
-	afiliasi, ok := mergedMap[id_parent]
+	mergedRow, ok := mergedMap[id_parent]
+
 	if !ok {
 		return nil, fmt.Errorf("Afiliasi list with id %s not found", id_parent)
 	}
-	return &afiliasi, nil
+
+	return &mergedRow, nil
 }
 
 // func SearchNasabah(query string) {

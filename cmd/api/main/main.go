@@ -157,6 +157,15 @@ func main() {
 			data_nasabah = &v.MergedRow{}
 		}
 
+		if len(data_nasabah.MergedAfiliasi) == 0 {
+			data_nasabah2, err := v.GetNasabahByID(nasabah_id)
+			if err != nil {
+				return err
+			}
+			nama_pengusaha := data_nasabah2.Nama_pengusaha
+			data_nasabah.NamaPengusaha = nama_pengusaha
+		}
+
 		afiliasiList, err := v.MapLegacyHandler(data_nasabah)
 		if err != nil {
 			return err

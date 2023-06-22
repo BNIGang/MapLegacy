@@ -56,7 +56,7 @@
 <script>
     var svg = d3.select("#svg-container").append("svg")
                 .attr("width", "100vw").attr("height", "100vh")
-                .append("g").attr("transform", "translate(100,150)");
+                .append("g").attr("transform", "translate(200,150)");
     
     var data = {{ .afiliasi_list }};
 
@@ -64,7 +64,9 @@
                             .id(function(d){return d.child;})
                             .parentId(function(d){return d.parent;})
                             (data);
-    
+
+
+    // ------------------------ WORKING CODE STARTS FROM HERE --------//
     
     var treeX = 1600;
     var treeY = 600;
@@ -151,11 +153,9 @@
             parentX = d.parent.x;
             parentY = d.parent.y; // Get the Y-coordinate of the parent node
         }
-        d.x = parentX + 150;
+        d.x = parentX + 250;
         d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
     });
-
-    //-------------------------DUPLICATES STARTS HERE-------------------------//
 
     // Position sibling nodes
     siblings.forEach(function(d, i) {
@@ -165,9 +165,11 @@
             parentX = d.parent.x;
             parentY = d.parent.y; 
         }
-        d.x = parentX - 150;
+        d.x = parentX - 300;
         d.y = parentY; 
     });
+
+    //-------------------------DUPLICATES STARTS HERE-------------------------//
 
     // Position remaining child nodes evenly within each parent group
     childGroups.forEach(function(group) {
@@ -191,7 +193,7 @@
             parentX = d.parent.x;
             parentY = d.parent.y; // Get the Y-coordinate of the parent node
         }
-        d.x = parentX + 80 ;
+        d.x = parentX + 100 ;
         d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
     });
 

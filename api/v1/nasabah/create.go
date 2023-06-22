@@ -35,6 +35,8 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 		mitra_bank_dominan := form.Value["mitra_bank_dominan"][0]
 		aum_di_bank_lain := form.Value["aum_di_bank_lain"][0]
 		kredit_di_bank_lain := form.Value["kredit_di_bank_lain"][0]
+		latitude := form.Value["latitude"][0]
+		longtitude := form.Value["longtitude"][0]
 		user_id := user_id
 
 		db, err := web.Connect()
@@ -65,6 +67,8 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 								mitra_bank_dominan,
 								aum_di_bank_lain,
 								kredit_di_bank_lain,
+								latitude,
+								longtitude,
 								added_by
 							) VALUES (
 								UUID(),
@@ -77,6 +81,8 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 								(SELECT kota_kabupaten_name FROM kota_kabupaten WHERE kota_kabupaten_id = ?),
 								(SELECT cabang_name FROM cabang WHERE cabang_id = ?),
 								(SELECT kantor FROM kantor WHERE kantor_id = ?),
+								?,
+								?,
 								?,
 								?,
 								?,
@@ -113,6 +119,8 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 			mitra_bank_dominan,
 			aum_di_bank_lain,
 			kredit_di_bank_lain,
+			latitude,
+			longtitude,
 			user_id,
 		)
 		if err != nil {
