@@ -45,26 +45,24 @@
             <th colspan="3">Aksi</th>
         </tr>
     </thead>
-    <tbody>
-        {{range .data_afiliasi}}
-        <tbody>
-            {{$rowCount := .RowCount}}
-            {{range $index, $afiliasi := .MergedAfiliasi}}
-            <tr onclick="window.location.href='/create_map_legacy/{{ .IdParent }}';">
-                {{if eq $index 0}}
-                <td rowspan="{{$rowCount}}">{{.NamaPengusaha}}</td>
+            {{range .data_afiliasi}}
+            <tbody>
+                {{$rowCount := .RowCount}}
+                {{range $index, $afiliasi := .MergedAfiliasi}}
+                <tr onclick="window.location.href='/create_map_legacy/{{ .IdParent }}';">
+                    {{if eq $index 0}}
+                    <td rowspan="{{$rowCount}}">{{.NamaPengusaha}}</td>
+                    {{end}}
+                    <td>{{.NamaAfiliasi}}</td>
+                    <td>{{.HubunganAfiliasi}}</td>
+                    <td>{{.Username}}</td>
+                    <td><form action="/create_map_legacy/{{ .IdParent }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+                    <td><form action="/edit_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
+                    <td><form action="/delete_afiliasi/{{ .IdChild }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
+                </tr>
                 {{end}}
-                <td>{{.NamaAfiliasi}}</td>
-                <td>{{.HubunganAfiliasi}}</td>
-                <td>{{.Username}}</td>
-                <td><form action="/create_map_legacy/{{ .IdParent }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
-                <td><form action="/edit_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
-                <td><form action="/delete_afiliasi/{{ .IdChild }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
-            </tr>
-            {{end}}
-        </tbody>
+            </tbody>
         {{end}}
-    </tbody>
 </table>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -95,26 +93,48 @@
         xhr.send();
     }
 
-     function updateTable(afiliasiData) {
-        var tableBody = document.getElementById("tableResult").getElementsByTagName("tbody")[0];
-        tableBody.innerHTML = ""; // Clear previous results
+    function updateTable(afiliasiData) {
+  var table = document.getElementById("tableResult");
+  var tableBodies = table.getElementsByTagName("tbody");
 
-        // Generate table rows based on the search results
-        for (var i = 0; i < afiliasiData.length; i++) {
-        var afiliasi = afiliasiData[i];
-        var row = "<tr onclick=\"window.location.href='/create_map_legacy/" + afiliasi.IdParent + "';\">" +
-            "<td>" + afiliasi.NamaPengusaha + "</td>" +
-            "<td>" + afiliasi.NamaAfiliasi + "</td>" +
-            "<td>" + afiliasi.HubunganAfiliasi + "</td>" +
-            "<td>" + afiliasi.Username + "</td>" +
-            "<td><form action=\"/create_map_legacy/" + afiliasi.IdParent + "\" method=\"GET\"><button class=\"btn btn-success btn-sm\" type=\"submit\"><i class=\"fas fa-search-plus\"></i></button></form></td>" +
-            "<td><form action=\"/edit_afiliasi/" + afiliasi.IdChild + "\" method=\"GET\"><button class=\"btn btn-primary btn-sm\" type=\"submit\"><i class=\"fas fa-edit\"></i></button></form></td>" +
-            "<td><form action=\"/delete_afiliasi/" + afiliasi.IdChild + "\" method=\"POST\"><button class=\"btn btn-danger btn-sm\" type=\"submit\"><i class=\"fas fa-trash\"></i></button></form></td>" +
-            "</tr>";
+  // Remove all existing tbody elements
+  while (tableBodies.length > 0) {
+    table.removeChild(tableBodies[0]);
+  }
 
-        tableBody.innerHTML += row;
+  // Generate table rows based on the search results
+  for (var key in afiliasiData) {
+    if (afiliasiData.hasOwnProperty(key)) {
+      var afiliasi = afiliasiData[key];
+      var rowCount = afiliasi.RowCount;
+      var mergedAfiliasi = afiliasi.MergedAfiliasi;
+
+      var tbody = document.createElement("tbody");
+
+      for (var i = 0; i < mergedAfiliasi.length; i++) {
+        var afiliasiRow = mergedAfiliasi[i];
+        var row = "<tr onclick=\"window.location.href='/create_map_legacy/" + afiliasiRow.IdParent + "';\">";
+
+        if (i === 0) {
+          row += "<td rowspan=\"" + rowCount + "\">" + afiliasiRow.NamaPengusaha + "</td>";
         }
+        row += "<td>" + afiliasiRow.NamaAfiliasi + "</td>" +
+          "<td>" + afiliasiRow.HubunganAfiliasi + "</td>" +
+          "<td>" + afiliasiRow.Username + "</td>" +
+          "<td><form action=\"/create_map_legacy/" + afiliasiRow.IdParent + "\" method=\"GET\"><button class=\"btn btn-success btn-sm\" type=\"submit\"><i class=\"fas fa-search-plus\"></i></button></form></td>" +
+          "<td><form action=\"/edit_afiliasi/" + afiliasiRow.IdChild + "\" method=\"GET\"><button class=\"btn btn-primary btn-sm\" type=\"submit\"><i class=\"fas fa-edit\"></i></button></form></td>" +
+          "<td><form action=\"/delete_afiliasi/" + afiliasiRow.IdChild + "\" method=\"POST\"><button class=\"btn btn-danger btn-sm\" type=\"submit\"><i class=\"fas fa-trash\"></i></button></form></td>" +
+          "</tr>";
+
+        tbody.innerHTML += row;
+      }
+
+      table.appendChild(tbody);
     }
+  }
+}
+
+   
 
     //For every change
     document.getElementById("search_button").addEventListener("input", handleSearch);

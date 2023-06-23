@@ -669,6 +669,10 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			// Add WHERE clause to the query
 			query += " WHERE u.name = ? AND dn.nama_pengusaha LIKE ?"
 			args = append(args, name, "%"+match+"%")
+		} else {
+			// Admin
+			query += " WHERE dn.nama_pengusaha LIKE ?"
+			args = append(args, "%"+match+"%")
 		}
 
 		// Append the ORDER BY clause to the query

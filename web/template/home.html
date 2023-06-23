@@ -132,6 +132,8 @@
                 var response = JSON.parse(xhr.responseText);
                 var nasabahData = response.nasabahs;
 
+                console.log(nasabahData)
+
                 // Update the table with the search results
                 updateTable(nasabahData);
                 } else {
