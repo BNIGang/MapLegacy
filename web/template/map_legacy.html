@@ -157,16 +157,40 @@
         d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
     });
 
-    // Position sibling nodes
-    siblings.forEach(function(d, i) {
+    // // Position sibling nodes
+    // siblings.forEach(function(d, i) {
+    //     var parentX = null;
+    //     var parentY = null;
+    //     if (d.parent) {
+    //         parentX = d.parent.x;
+    //         parentY = d.parent.y; 
+    //     }
+    //     d.x = parentX - 300;
+    //     d.y = parentY; 
+    // });
+
+    // Group sibling nodes by parent
+    var siblingsGroup = Array.from(
+        d3.group(siblings, function(d) {
+            return d.data.parent;
+        }).values()
+    );
+
+    // Position siblings nodes
+    siblingsGroup.forEach(function(group) {
+        var siblingCount = group.length;
         var parentX = null;
         var parentY = null;
-        if (d.parent) {
-            parentX = d.parent.x;
-            parentY = d.parent.y; 
-        }
-        d.x = parentX - 300;
-        d.y = parentY; 
+        group.forEach(function(d, i) {
+            if (d.parent) {
+                parentX = d.parent.x;
+                parentY = d.parent.y;
+            }
+            // d.x = parentX + (i + 1) * (800 / (childCount + 1));
+            var offset = (siblingCount > 1) ? (800 / 2) / (siblingCount - 1) : 0;
+            d.x = parentX - 300 + (i * offset) - (siblingCount - 1) * offset / 2;
+            d.y = parentY;
+        });
     });
 
     //-------------------------DUPLICATES STARTS HERE-------------------------//
