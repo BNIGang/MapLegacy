@@ -152,6 +152,10 @@ func main() {
 	})
 
 	app.Get("/create_map_legacy/:nasabah_id", web.JWTMiddleware(secret, engine), func(c *fiber.Ctx) error {
+		if user == nil || username == "" {
+			return c.Redirect("/home")
+		}
+
 		nasabah_id := c.Params("nasabah_id")
 		data_nasabah, err := v.GetAfiliasiListById(nasabah_id)
 		if err != nil {

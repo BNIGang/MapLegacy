@@ -23,7 +23,7 @@ func MapLegacyHandler(afiliasi *MergedRow) ([]Node, error) {
 
 	if len(afiliasi.MergedAfiliasi) == 0 {
 		firstNode := Node{
-			Child:    afiliasi.NamaPengusaha, // TODO: fix this later
+			Child:    afiliasi.NamaPengusaha,
 			Parent:   "",
 			Afiliasi: "",
 		}
