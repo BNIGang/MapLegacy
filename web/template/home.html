@@ -32,17 +32,12 @@
 
     <form class=" d-sm-inline-block form-inline mr-auto my-m10-0 mw-100 navbar-search" style="margin-left: 10px; margin-bottom: 13px; margin-top: -10px; border:1px solid #747474; border-radius: 8px;">
         <div class="input-group">
-          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
-              <i class="fas fa-search fa-sm"></i>
-            </button>
-          </div>
+          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2" id="search_button">
         </div>
-      </form>
+    </form>
 </div>
 
-<table class="table table-bordered" style="margin-left: 10px;">
+<table class="table table-bordered" style="margin-left: 10px;" id="tableResult">
     <thead>
         <tr>
             <th>Nama Pengusaha</th>
@@ -63,6 +58,8 @@
             <th>Mitra Bank Dominan</th>
             <th>AUM di Bank Lain</th>
             <th>Kredit di Bank Lain</th>
+            <th>Latitude</th>
+            <th>Longtitude</th>
             <th>Afiliasi</th>
             <th>Ditambahkan Oleh</th>
             <th colspan="3">Aksi</th>
@@ -70,7 +67,7 @@
     </thead>
     <tbody>
         {{range .data_nasabah}}
-        <tr onclick="window.location.href='/create_map_legacy/{{ .Id }}';">
+        <tr onclick="window.location.href='/nasabah_detail/{{ .Id }}';">
             <td>{{.Nama_pengusaha}}</td>
             <td>{{.Nomor_kontak}}</td>
             <td>{{.Alamat_tempat_tinggal}}</td>
@@ -89,6 +86,8 @@
             <td>{{.Mitra_bank_dominan}}</td>
             <td>{{.Aum_di_bank_lain}}</td>
             <td>{{.Kredit_di_bank_lain}}</td>
+            <td>{{.Latitude}}</td>
+            <td>{{.Longtitude}}</td>
 
             <td>
                 <table>
@@ -106,10 +105,90 @@
             </td>
 
             <td>{{.Username}}</td>
-            <td><form action="/create_map_legacy/{{ .Id }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+            <!-- <td><form action="/create_map_legacy/{{ .Id }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td> -->
+            <td><form action="/nasabah_detail/{{ .Id }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
             <td><form action="/edit/{{ .Id }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
             <td><form action="/delete/{{ .Id }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
         </tr>
         {{end}}
     </tbody>
 </table>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function handleSearch() {
+        var searchQuery = document.getElementById("search_button").value;
+
+        if (searchQuery.trim() === "") {
+            searchQuery = ""; // Replace "all" with the appropriate value for your API
+        }
+
+        // Make an AJAX request to the search endpoint
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/search_nasabah/" + encodeURIComponent(searchQuery));
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var nasabahData = response.nasabahs;
+
+                console.log(nasabahData)
+
+                // Update the table with the search results
+                updateTable(nasabahData);
+                } else {
+                console.error("Error:", xhr.statusText);
+            }
+        };
+        xhr.send();
+    }
+
+    function updateTable(nasabahData) {
+        var tableBody = document.getElementById("tableResult").getElementsByTagName("tbody")[0];
+        tableBody.innerHTML = ""; // Clear previous results
+
+        // Generate table rows based on the search results
+        for (var i = 0; i < nasabahData.length; i++) {
+            var nasabah = nasabahData[i];
+            var row = "<tr onclick=\"window.location.href='/nasabah_detail/" + nasabah.Id + "';\">" +
+            "<td>" + nasabah.Nama_pengusaha + "</td>" +
+            "<td>" + nasabah.Nomor_kontak + "</td>" +
+            "<td>" + nasabah.Alamat_tempat_tinggal + "</td>" +
+            "<td>" + nasabah.Bidang_usaha + "</td>" +
+            "<td>" + nasabah.Produk_usaha + "</td>" +
+            "<td>" + nasabah.Detail_bidang_usaha + "</td>" +
+            "<td>" + nasabah.Kabupaten_kota + "</td>" +
+            "<td>" + nasabah.Cabang + "</td>" +
+            "<td>" + nasabah.KCU_KCP_KK + "</td>" +
+            "<td>" + nasabah.Nasabah + "</td>" +
+            "<td>" + nasabah.No_CIF + "</td>" +
+            "<td>" + nasabah.AUM_di_BNI + "</td>" +
+            "<td>" + nasabah.Debitur + "</td>" +
+            "<td>" + nasabah.Kredit_di_bni + "</td>" +
+            "<td>" + nasabah.Produk_bni_yang_dimiliki + "</td>" +
+            "<td>" + nasabah.Mitra_bank_dominan + "</td>" +
+            "<td>" + nasabah.Aum_di_bank_lain + "</td>" +
+            "<td>" + nasabah.Kredit_di_bank_lain + "</td>" +
+            "<td>" + nasabah.Latitude + "</td>" +
+            "<td>" + nasabah.Longtitude + "</td>" +
+            "<td>" +
+            "<table>" +
+            (nasabah.AfiliasiList ? "<th>Nama Afiliasi</th><th>Hubungan Afiliasi</th>" +
+                nasabah.AfiliasiList.map(function(afiliasi) {
+                return "<tr><td>" + afiliasi.NamaAfiliasi + "</td><td>" + afiliasi.HubunganAfiliasi + "</td></tr>";
+                }).join("") : "") +
+            "</table>" +
+            "</td>" +
+            "<td>" + nasabah.Username + "</td>" +
+            "<td><form action=\"/nasabah_detail/" + nasabah.Id + "\" method=\"GET\"><button class=\"btn btn-success btn-sm\" type=\"submit\"><i class=\"fas fa-search-plus\"></i></button></form></td>" +
+            "<td><form action=\"/edit/" + nasabah.Id + "\" method=\"GET\"><button class=\"btn btn-primary btn-sm\" type=\"submit\"><i class=\"fas fa-edit\"></i></button></form></td>" +
+            "<td><form action=\"/delete/" + nasabah.Id + "\" method=\"POST\"><button class=\"btn btn-danger btn-sm\" type=\"submit\"><i class=\"fas fa-trash\"></i></button></form></td>" +
+            "</tr>";
+
+            tableBody.innerHTML += row;
+        }
+    }
+
+    //For every change
+    document.getElementById("search_button").addEventListener("input", handleSearch);
+</script>

@@ -28,20 +28,14 @@
         <button class="btn btm-sm btn-primary mb-3" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px;" type="button" onclick="window.location.href='/create_afiliasi'"><i class="fas fa-plus fa-sm"></i>Tambah Afiliasi Baru</button>
     </div>
 
-
     <form class=" d-sm-inline-block form-inline mr-auto my-m10-0 mw-100 navbar-search" style="margin-left: 10px; margin-bottom: 13px; margin-top: -10px; border:1px solid #747474; border-radius: 8px;">
         <div class="input-group">
-          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
-              <i class="fas fa-search fa-sm"></i>
-            </button>
-          </div>
+          <input type="text" class="form-control bg-light border-0 small" placeholder="Search " aria-label="Search" aria-describedby="basic-addon2" id="search_button">
         </div>
-      </form>
+    </form>
 </div>
 
-<table class="table table-bordered">
+<table class="table table-bordered" id="tableResult">
     <thead>
         <tr>
             <th>Nama</th>
@@ -51,24 +45,97 @@
             <th colspan="3">Aksi</th>
         </tr>
     </thead>
-    <tbody>
-        {{range .data_afiliasi}}
-        <tbody>
-            {{$rowCount := .RowCount}}
-            {{range $index, $afiliasi := .MergedAfiliasi}}
-            <tr onclick="window.location.href='/info_afiliasi/{{ .IdChild }}';">
-                {{if eq $index 0}}
-                <td rowspan="{{$rowCount}}">{{.NamaPengusaha}}</td>
+            {{range .data_afiliasi}}
+            <tbody>
+                {{$rowCount := .RowCount}}
+                {{range $index, $afiliasi := .MergedAfiliasi}}
+                <tr onclick="window.location.href='/create_map_legacy/{{ .IdParent }}';">
+                    {{if eq $index 0}}
+                    <td rowspan="{{$rowCount}}">{{.NamaPengusaha}}</td>
+                    {{end}}
+                    <td>{{.NamaAfiliasi}}</td>
+                    <td>{{.HubunganAfiliasi}}</td>
+                    <td>{{.Username}}</td>
+                    <td><form action="/create_map_legacy/{{ .IdParent }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
+                    <td><form action="/edit_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
+                    <td><form action="/delete_afiliasi/{{ .IdChild }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
+                </tr>
                 {{end}}
-                <td>{{.NamaAfiliasi}}</td>
-                <td>{{.HubunganAfiliasi}}</td>
-                <td>{{.Username}}</td>
-                <td><form action="/add_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-success btn-sm" type="submit"><i class="fas fa-search-plus"></i></button></form></td>
-                <td><form action="/edit_afiliasi/{{ .IdChild }}" method="GET"><button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-edit"></i></button></form></td>
-                <td><form action="/delete_afiliasi/{{ .IdChild }}" method="POST"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
-            </tr>
-            {{end}}
-        </tbody>
+            </tbody>
         {{end}}
-    </tbody>
 </table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function handleSearch() {
+        var searchQuery = document.getElementById("search_button").value;
+
+        if (searchQuery.trim() === "") {
+            searchQuery = ""; // Replace "all" with the appropriate value for your API
+        }
+
+        // Make an AJAX request to the search endpoint
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/search_afiliasi/" + encodeURIComponent(searchQuery));
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var afiliasiData = response.afiliasi;
+
+                console.log(afiliasiData)
+
+                // Update the table with the search results
+                updateTable(afiliasiData);
+                } else {
+                console.error("Error:", xhr.statusText);
+            }
+        };
+        xhr.send();
+    }
+
+    function updateTable(afiliasiData) {
+  var table = document.getElementById("tableResult");
+  var tableBodies = table.getElementsByTagName("tbody");
+
+  // Remove all existing tbody elements
+  while (tableBodies.length > 0) {
+    table.removeChild(tableBodies[0]);
+  }
+
+  // Generate table rows based on the search results
+  for (var key in afiliasiData) {
+    if (afiliasiData.hasOwnProperty(key)) {
+      var afiliasi = afiliasiData[key];
+      var rowCount = afiliasi.RowCount;
+      var mergedAfiliasi = afiliasi.MergedAfiliasi;
+
+      var tbody = document.createElement("tbody");
+
+      for (var i = 0; i < mergedAfiliasi.length; i++) {
+        var afiliasiRow = mergedAfiliasi[i];
+        var row = "<tr onclick=\"window.location.href='/create_map_legacy/" + afiliasiRow.IdParent + "';\">";
+
+        if (i === 0) {
+          row += "<td rowspan=\"" + rowCount + "\">" + afiliasiRow.NamaPengusaha + "</td>";
+        }
+        row += "<td>" + afiliasiRow.NamaAfiliasi + "</td>" +
+          "<td>" + afiliasiRow.HubunganAfiliasi + "</td>" +
+          "<td>" + afiliasiRow.Username + "</td>" +
+          "<td><form action=\"/create_map_legacy/" + afiliasiRow.IdParent + "\" method=\"GET\"><button class=\"btn btn-success btn-sm\" type=\"submit\"><i class=\"fas fa-search-plus\"></i></button></form></td>" +
+          "<td><form action=\"/edit_afiliasi/" + afiliasiRow.IdChild + "\" method=\"GET\"><button class=\"btn btn-primary btn-sm\" type=\"submit\"><i class=\"fas fa-edit\"></i></button></form></td>" +
+          "<td><form action=\"/delete_afiliasi/" + afiliasiRow.IdChild + "\" method=\"POST\"><button class=\"btn btn-danger btn-sm\" type=\"submit\"><i class=\"fas fa-trash\"></i></button></form></td>" +
+          "</tr>";
+
+        tbody.innerHTML += row;
+      }
+
+      table.appendChild(tbody);
+    }
+  }
+}
+
+   
+
+    //For every change
+    document.getElementById("search_button").addEventListener("input", handleSearch);
+</script>

@@ -59,13 +59,6 @@
           <div class="sidebar-brand-text mx-3" style="color: #fff;">BNI Wilayah 03</div>
         </a>
         <!-- Side Navbar -->
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item">
-            <a class="nav-link" href="/home">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
-          </li>
-          <!-- Nav Item - Tables -->
         <li class="nav-item">
             <a class="nav-link" href="/home">
             <i class="fas fa-database"></i>
@@ -76,6 +69,7 @@
             <i class="fas fa-duotone fa-users"></i>
             <span>Affiliasi</span></a>
         </li>
+        {{ if eq .Privilege "admin" }}
         <li class="nav-item">
             <a class="nav-link" href="/user_page">
             <i class="fas fa-user"></i>
@@ -86,13 +80,13 @@
             <i class="fas fa-user"></i>
             <span>Tambah User</span></a>
         </li>
+        {{ end }}
         <li class="nav-item">
             <a class="nav-link" href="/edit_password">
             <i class="fas fa-user"></i>
             <span>Ganti Password</span></a>
         </li>
         
-
         <!-- Sidebar Toggler (Sidebar) -->
         <!-- <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -134,7 +128,7 @@
           
                   <!-- Topbar -->
                   <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <h3 style="margin-left: 20px;">Welcome {{ .Name }}, Wilayah ID {{ .Wilayah }}, Cabang ID {{ .Cabang }}, dengan Privilege {{ .Privilege }}</h3>
+                    <h3 style="margin-left: 20px;">Selamat Datang, {{ .Name }}!</h3>
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                       <i class="fa fa-bars"></i>
@@ -196,6 +190,10 @@
                 {{ template "add_users" . }}
                 {{ else if eq .content "edit_password"}}
                 {{ template "edit_password" . }}
+                {{ else if eq .content "nasabah_detail"}}
+                {{ template "nasabah_detail" . }}
+                {{ else if eq .content "edit_user"}}
+                {{ template "edit_user" . }}
                 {{ else }}
                 {{ template "edit_nasabah" . }}
                 {{ end }}

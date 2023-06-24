@@ -13,17 +13,6 @@
         display: flex;
     }
 
-    .node rect {
-        fill: #fff;
-        stroke: steelblue;
-        stroke-width: 2px;
-    }
-
-    .node text {
-        font: 12px sans-serif;
-        text-anchor: middle;
-    }
-
     .link {
         fill: none;
         stroke: #ccc;
@@ -39,12 +28,25 @@
     rect {
         fill: white;
         stroke: silver;
-        width: 80px;
+        width: 70px;
         height: 40px;
         stroke-width: 2;
     }
 
+    .blue-rect {
+        fill: blue;
+    }
+
+    .red-rect {
+        fill: red;
+    }
+
+    .yellow-rect {
+        fill: yellow;
+    }
+
     text {
+        /* dominant-baseline: middle; */
         text-anchor: middle;
     }
 
@@ -54,7 +56,7 @@
 
 </style>
 
-<h1>Map Legacy</h1>
+<h1 style="margin-left: 10px;">Legacy</h1>
 
 <div id="viewport">
     <div id="container">
@@ -66,7 +68,7 @@
 <script>
     var svg = d3.select("#svg-container").append("svg")
                 .attr("width", "100vw").attr("height", "100vh")
-                .append("g").attr("transform", "translate(50,50)");
+                .append("g").attr("transform", "translate(200,150)");
     
     var data = {{ .afiliasi_list }};
 
@@ -74,73 +76,272 @@
                             .id(function(d){return d.child;})
                             .parentId(function(d){return d.parent;})
                             (data);
+
+
+    // ------------------------ WORKING CODE STARTS FROM HERE --------//
     
-    var treeStructure = d3.tree().size([650, 300]);
+    var treeX = 1600;
+    var treeY = 600;
+
+    var treeStructure = d3.tree().size([treeX, treeY]);
 
     var information = treeStructure(dataStructure);
-    console.log(information.descendants());
+
+    // Separate spouse nodes and remaining child nodes
+    var spouses = information.descendants().filter(function(d) {
+        return d.data.afiliasi === "Istri" || d.data.afiliasi === "Suami";
+    });
+
+    var theirParents = information.descendants().filter(function(d) {
+        return d.data.afiliasi === "Ayah" || d.data.afiliasi === "Ibu";
+    });
+
+    var siblings = information.descendants().filter(function(d) {
+        return d.data.afiliasi === "Adik" || d.data.afiliasi === "Kakak";
+    });
+
+    var children = information.descendants().filter(function(d) {
+        return (
+            d.data.afiliasi !== "Istri" &&
+            d.data.afiliasi !== "Suami" &&
+            d.data.afiliasi !== "Ayah" &&
+            d.data.afiliasi !== "Ibu" &&
+            d.data.afiliasi !== "Kakak" &&
+            d.data.afiliasi !== "Adik" &&
+            d.data.parent !== ""
+        );
+    });
+
+    // Group child nodes by parent
+    var childGroups = Array.from(
+        d3.group(children, function(d) {
+            return d.data.parent;
+        }).values()
+    );
+
+    // Group theirParent nodes by parent
+    var theirParentGroups = Array.from(
+        d3.group(theirParents, function(d) {
+            return d.data.parent;
+        }).values()
+    );  
+
+    // Group sibling nodes by parent
+    var siblingsGroup = Array.from(
+        d3.group(siblings, function(d) {
+            return d.data.parent;
+        }).values()
+    );
+
+    // Position remaining child nodes evenly within each parent group
+    childGroups.forEach(function(group) {
+        var childCount = group.length;
+        var parentX = null;
+        group.forEach(function(d, i) {
+            if (d.parent) {
+                parentX = d.parent.x;
+            }
+            // d.x = parentX + (i + 1) * (800 / (childCount + 1));
+            var offset = (childCount > 1) ? (800 / 2) / (childCount - 1) : 0;
+            d.x = parentX + (i * offset) - (childCount - 1) * offset / 2;
+        });
+    });
+
+    // Position theirParent nodes
+    theirParentGroups.forEach(function(group) {
+        var parentX = null;
+        var parentY = null;
+        var parent = group[0].parent;
+        if (parent) {
+            parentX = parent.x;
+            parentY = parent.y;
+        }
+        var parentChildCount = group.length;
+        var offset = (parentChildCount > 1) ? (800 / 2) / (parentChildCount - 1) : 0;
+        group.forEach(function(d, i) {
+            d.x = parentX + (i * offset) - (parentChildCount - 1) * offset / 2;
+            d.y = parentY - 100;
+        });
+    });
+
+    // Position spouse nodes
+    spouses.forEach(function(d, i) {
+        var parentX = null;
+        var parentY = null;
+        if (d.parent) {
+            parentX = d.parent.x;
+            parentY = d.parent.y; // Get the Y-coordinate of the parent node
+        }
+        d.x = parentX + 250;
+        d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
+    });
+
+    // Position siblings nodes
+    siblingsGroup.forEach(function(group) {
+        var siblingCount = group.length;
+        var parentX = null;
+        var parentY = null;
+        group.forEach(function(d, i) {
+            if (d.parent) {
+                parentX = d.parent.x;
+                parentY = d.parent.y;
+            }
+            // d.x = parentX + (i + 1) * (800 / (childCount + 1));
+            var offset = (siblingCount > 1) ? (800 / 2) / (siblingCount - 1) : 0;
+            d.x = parentX - 300 + (i * offset) - (siblingCount - 1) * offset / 2;
+            d.y = parentY;
+        });
+    });
+
+    //-------------------------DUPLICATES STARTS HERE-------------------------//
+
+    // Position remaining child nodes evenly within each parent group
+    childGroups.forEach(function(group) {
+        var childCount = group.length;
+        var parentX = null;
+        var parentY = null;
+        group.forEach(function(d, i) {
+            if (d.parent) {
+                parentX = d.parent.x;
+                parentY = d.parent.y;
+            }
+            // d.x = parentX + (i + 1) * (800 / (childCount + 1));
+            var offset = (childCount > 1) ? (800 / 2) / (childCount - 1) : 0;
+            d.x = parentX + (i * offset) - (childCount - 1) * offset / 2;
+            d.y = parentY + 200;
+        });
+    });
+
+    // Position spouse nodes
+    spouses.forEach(function(d, i) {
+        var parentX = null;
+        var parentY = null;
+        if (d.parent) {
+            parentX = d.parent.x;
+            parentY = d.parent.y; // Get the Y-coordinate of the parent node
+        }
+        d.x = parentX + 100 ;
+        d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
+    });
 
     var connections = svg.append("g").selectAll("path")
-                         .data(information.links());
-    connections.enter().append("path")
-               .attr("d", function (d){
-                    return "M" + (d.source.x-20) + "," + d.source.y + "h 60 v 50 H" +
-                    d.target.x + " V" + d.target.y;})
-               .classed("hide", function(d){
-                    if(d.target.data.child == undefined)
-                        return true;
-                    else
-                        return false;
-                    });
+                        .data(information.links());
+                        connections.enter().append("path")
+                        .attr("d", function(d) {
+                            var startX = d.source.x - 100;
+                            var startY = d.source.y;
+                            var endX = d.target.x - 100;
 
-    var connections2 = svg.append("g").selectAll("path")
-                         .data(information.links());
-    connections2.enter().append("path")
-               .attr("d", function (d){
-                if(d.target.data.child == null)
-                    return "M" + (d.source.x) + "," + d.source.y + "h 80";
-                else
-                    return "M" + (d.source.x+40) + "," + d.source.y + "h 80";
-    });
+                            var path = "M" + startX + "," + startY;
+
+                            if (d.target.data.afiliasi === "Istri" || d.target.data.afiliasi === "Suami") {
+                                path += "h 100";
+                            } else if (d.target.data.afiliasi === "Ibu" || d.target.data.afiliasi === "Ayah") {
+                                path +="v -100";
+                            } else if (d.target.data.afiliasi === "Adik" || d.target.data.afiliasi === "Kakak") {
+                                path +="v -50";
+                            }
+                            else {
+                                path += "v 100";
+                            }
+
+                            path += " H " + endX + " V " + d.target.y;
+                            return path;
+                        })
+                        .classed("hide", function(d) {
+                            return d.target.data.child === undefined;
+                        });
     
-    var rectangles = svg.append("g").selectAll("rect")
-                        .data(information.descendants());
-    rectangles.enter().append("rect")
-              .attr("x", function(d){return d.x-60;})
-              .attr("y", function(d){return d.y-20;})
-              .classed("hide", function(d){
-                if(d.data.child == undefined)
-                    return true;
-                else
-                    return false;
-              });
+
+    // var rectangles = svg.append("g").selectAll("rect")
+    //                     .data(information.descendants());
+    //                     rectangles.enter().append("rect")
+    //                     .attr("x", function(d) {
+    //                         return d.x - 150;
+    //                     })
+    //                     .attr("y", function(d) {
+    //                         return d.y - 30;
+    //                     })
+    //                     .classed("hide", function(d) {
+    //                         return d.data.child === null;
+    //                     });
+
+    var rectangles = svg.append("g")
+        .selectAll("rect")
+        .data(information.descendants());
+
+    rectangles.enter()
+        .append("rect")
+        .attr("x", function(d) {
+            return d.x - 135;
+        })
+        .attr("y", function(d) {
+            return d.y - 21;
+        })
+        .attr("class", function(d) {
+            var rectType = "rect"; // Default rectangle type
+
+            // Set the appropriate class based on the data value
+            if (d.data.child === null) {
+                rectType = "hide";
+            } else if (d.data.afiliasi === "Direktur") {
+                rectType = "yellow-rect";
+            } else if (d.data.afiliasi === "Komisaris") {
+                rectType = "red-rect";
+            } else if (d.data.afiliasi === "Owner/Pemegang Saham") {
+                rectType = "blue-rect";
+            }
+
+            return rectType;
+        });
 
     var names = svg.append("g").selectAll("text")
-                   .data(information.descendants());
-    names.enter().append("text")
-                 .text(function(d){return d.data.child;})
-                 .attr("x", function(d){return d.x-20;})
-                 .attr("y", function(d){return d.y;})
+                    .data(information.descendants());
+                    names.enter().append("text")
+                    .text(function(d) {
+                        return d.data.child;
+                    })
+                    .attr("x", function(d) {
+                        return d.x;
+                    })
+                    .attr("y", function(d) {
+                        return d.y;
+                    })
+                    .each(wrapText);
 
-    var spouseRectangles = svg.append("g").selectAll("rect")
-                              .data(information.descendants());
-    spouseRectangles.enter().append("rect")
-                .attr("x", function(d){return d.x+60;})
-                .attr("y", function(d){return d.y-20;})
-                .classed("hide", function(d){
-                    if(d.data.spouse == undefined)
-                        return true;
-                    else
-                        return false;
-                });
-    
-    var spouseNames = svg.append("g").selectAll("text")
-                         .data(information.descendants());
-    spouseNames.enter().append("text")
-               .text(function(d){return d.data.spouse;})
-               .attr("x", function(d){return d.x+100;})
-               .attr("y", function(d){return d.y;})
+    console.log(information.descendants());
+    console.log(information.links());
 
+    // Function to wrap text within a rectangle
+    function wrapText(d) {
+        var text = d3.select(this);
+        var rectWidth = 80; // Width of the rectangle
+        // var x = d.x - rectWidth / 2; // Adjust the x position for left alignment
+        var x = d.x - 100; // Adjust the x position for left alignment
+
+        var words = text.text().split(/\s+/).reverse();
+        var word;
+        var line = [];
+        var lineNumber = 0;
+        var lineHeight = 1.1; // Adjust this value to set the line height
+        var y = text.attr("y");
+        var dy = parseFloat(text.attr("dy")) || 0;
+        var tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+
+            if (tspan.node().getComputedTextLength() > rectWidth) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
+        }
+    }
+
+    // This part onwards is to handle controls (zoom, drag&drop)
     // Variables to track zoom level and container position
     let zoomLevel = 1;
     let containerX = 0;

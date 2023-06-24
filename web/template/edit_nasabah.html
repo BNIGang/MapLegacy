@@ -4,16 +4,16 @@
     <form action="/update/{{ .data_nasabah.Id }}" method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <label for="nama_pengusaha">Nama Pengusaha:</label><br>
-        <input type="text" class="form-control" id="nama_pengusaha" name="nama_pengusaha" value="{{ .data_nasabah.Nama_pengusaha }}"><br>
+        <input type="text" class="form-control" id="nama_pengusaha" name="nama_pengusaha" value="{{ .data_nasabah.Nama_pengusaha }}" required><br>
       </div>
 
       <div class="form-group">
         <label for="nomor_kontak">Nomor Kontak:</label><br>
-        <input type="text" class="form-control" id="nomor_kontak" name="nomor_kontak" value="{{ .data_nasabah.Nomor_kontak}}"><br>
+        <input type="text" class="form-control" id="nomor_kontak" name="nomor_kontak" value="{{ .data_nasabah.Nomor_kontak}}" required><br>
       </div>
 
       <label for="alamat_tempat_tinggal">Alamat Tempat Tinggal:</label><br>
-      <input type="text" class="form-control" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal" value="{{ .data_nasabah.Alamat_tempat_tinggal}}"><br>
+      <input type="text" class="form-control" id="alamat_tempat_tinggal" name="alamat_tempat_tinggal" value="{{ .data_nasabah.Alamat_tempat_tinggal}}" required><br>
 
       <label for="bidang_usaha">Bidang Usaha:</label><br>
       <select class="form-control" id="bidang_usaha" name="bidang_usaha">
@@ -26,7 +26,7 @@
       </select><br>
 
       <label for="detail_bidang_usaha">Detail Bidang Usaha:</label><br>
-      <input type="text" class="form-control" id="detail_bidang_usaha" name="detail_bidang_usaha" value="{{ .data_nasabah.Detail_bidang_usaha}}"><br>
+      <input type="text" class="form-control" id="detail_bidang_usaha" name="detail_bidang_usaha" value="{{ .data_nasabah.Detail_bidang_usaha}}" required><br>
 
       <label for="cabang">Cabang:</label><br>
       <select class="form-control" id="cabang" name="cabang">
@@ -50,10 +50,10 @@
       </select><br>
 
       <label for="no_CIF">No CIF:</label><br>
-      <input type="number" class="form-control" id="no_CIF" name="no_CIF" value="{{ .data_nasabah.No_CIF}}"><br>
+      <input type="number" class="form-control" id="no_CIF" name="no_CIF" value="{{ .data_nasabah.No_CIF}}" required><br>
 
       <label for="aum_di_bni">AUM di BNI:</label><br>
-      <input type="number" class="form-control" id="aum_di_bni" name="aum_di_bni" value="{{ .data_nasabah.AUM_di_BNI}}"><br>
+      <input type="number" class="form-control" id="aum_di_bni" name="aum_di_bni" value="{{ .data_nasabah.AUM_di_BNI}}" required><br>
 
       <label for="debitur">Debitur:</label><br>
       <select class="form-control" id="debitur" name="debitur">
@@ -62,7 +62,7 @@
       </select><br>
 
       <label for="kredit_di_bni">Kredit di BNI:</label><br>
-      <input class="form-control" type="number" id="kredit_di_bni" name="kredit_di_bni" value="{{ .data_nasabah.Kredit_di_bni}}"><br>
+      <input class="form-control" type="number" id="kredit_di_bni" name="kredit_di_bni" value="{{ .data_nasabah.Kredit_di_bni}}" required><br>
 
       <label for="produk_bni_yang_dimiliki">Produk BNI yang Dimiliki:</label><br>
       <select class="form-control" id="produk_bni_yang_dimiliki" name="produk_bni_yang_dimiliki">
@@ -98,10 +98,16 @@
       </select><br>
 
       <label for="aum_di_bank_lain">AUM di Bank Lain:</label><br>
-      <input class="form-control" type="number" id="aum_di_bank_lain" name="aum_di_bank_lain" value="{{ .data_nasabah.Aum_di_bank_lain}}"><br>
+      <input class="form-control" type="number" id="aum_di_bank_lain" name="aum_di_bank_lain" value="{{ .data_nasabah.Aum_di_bank_lain}}" required><br>
 
       <label for="kredit_di_bank_lain">Kredit di bank lain:</label><br>
-      <input type="number" class="form-control" id="kredit_di_bank_lain" name="kredit_di_bank_lain" value="{{ .data_nasabah.Kredit_di_bank_lain}}"><br>
+      <input type="number" class="form-control" id="kredit_di_bank_lain" name="kredit_di_bank_lain" value="{{ .data_nasabah.Kredit_di_bank_lain}}" required><br>
+
+      <label for="Latitude">Latitude:</label>
+      <input type="number" id="latitude" name="latitude" class="form-control" value="{{ .data_nasabah.Latitude}}" step="any">
+
+      <label for="Longtitude">Longtitude:</label>
+      <input type="number" id="longtitude" name="longtitude" class="form-control" value="{{ .data_nasabah.Longtitude}}" step="any">
 
       <div id="afiliasi-container">
         {{ if not .data_nasabah.AfiliasiList }}
@@ -111,23 +117,16 @@
 
               <label for="hubungan_afiliasi">Hubungan Afiliasi:</label><br>
               <select class="form-control" id="hubungan_afiliasi" class="hubungan_afiliasi" name="hubungan_afiliasi[]">
-                <option value="Direktur">Direktur</option>
-                <option value="Komisaris">Komisaris</option>
-                <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
-                <option value="Suami/Istri">Suami/Istri</option>
-                <option value="Ayah/Ibu">Ayah/Ibu</option>
-                <option value="Mertua">Mertua</option>
-                <option value="Anak">Anak</option>
-                <option value="Kakak">Kakak</option>
-                <option value="Adik">Adik</option>
-                <option value="Keponakan">Keponakan</option>
-                <option value="Sepupu">Sepupu</option>
-                <option value="Paman">Paman</option>
-                <option value="Tante">Tante</option>
-                <option value="Kakek/Nenek">Kakek/Nenek</option>
-                <option value="Cucu">Cucu</option>
-                <option value="Saudara Ipar">Saudara Ipar</option>
-                <option value="Besan">Besan</option>
+                  <option value="Adik">Adik</option>
+                  <option value="Anak">Anak</option>
+                  <option value="Ayah">Ayah</option>
+                  <option value="Ayah">Direktur</option>
+                  <option value="Ibu">Ibu</option>
+                  <option value="Istri">Istri</option>
+                  <option value="Kakak">Kakak</option>
+                  <option value="Komisaris">Komisaris</option>
+                  <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
+                  <option value="Suami">Suami</option>
               </select><br>
           </div>
         {{ end }}
@@ -139,26 +138,37 @@
 
             <label for="hubungan_afiliasi">Hubungan Afiliasi:</label><br>
             <select class="form-control" id="hubungan_afiliasi" class="hubungan_afiliasi" name="hubungan_afiliasi[]">
-              <option value="Direktur" {{if eq .HubunganAfiliasi `Direktur`}}selected{{end}}>Direktur</option>
-              <option value="Komisaris" {{if eq .HubunganAfiliasi `Komisaris`}}selected{{end}}>Komisaris</option>
-              <option value="Owner/Pemegang Saham" {{if eq .HubunganAfiliasi `Owner/Pemegang Saham`}}selected{{end}}>Owner/Pemegang Saham</option>
-              <option value="Suami" {{if eq .HubunganAfiliasi `Suami`}}selected{{end}}>Suami</option>
-              <option value="Istri" {{if eq .HubunganAfiliasi `Istri`}}selected{{end}}>Istri</option>
-              <option value="Ayah" {{if eq .HubunganAfiliasi `Ayah`}}selected{{end}}>Ayah</option>
-              <option value="Ibu" {{if eq .HubunganAfiliasi `Ibu`}}selected{{end}}>Ibu</option>
-              <option value="Mertua" {{if eq .HubunganAfiliasi `Mertua`}}selected{{end}}>Mertua</option>
-              <option value="Anak" {{if eq .HubunganAfiliasi `Anak`}}selected{{end}}>Anak</option>
-              <option value="Kakak" {{if eq .HubunganAfiliasi `Kakak`}}selected{{end}}>Kakak</option>
-              <option value="Adik" {{if eq .HubunganAfiliasi `Adik`}}selected{{end}}>Adik</option>
-              <option value="Keponakan" {{if eq .HubunganAfiliasi `Keponakan`}}selected{{end}}>Keponakan</option>
-              <option value="Sepupu" {{if eq .HubunganAfiliasi `Sepupu`}}selected{{end}}>Sepupu</option>
-              <option value="Paman" {{if eq .HubunganAfiliasi `Paman`}}selected{{end}}>Paman</option>
-              <option value="Tante" {{if eq .HubunganAfiliasi `Tante`}}selected{{end}}>Tante</option>
-              <option value="Kakek" {{if eq .HubunganAfiliasi `Kakek`}}selected{{end}}>Kakek</option>
-              <option value="Nenek" {{if eq .HubunganAfiliasi `Nenek`}}selected{{end}}>Nenek</option>
-              <option value="Cucu" {{if eq .HubunganAfiliasi `Cucu`}}selected{{end}}>Cucu</option>
-              <option value="Saudara Ipar" {{if eq .HubunganAfiliasi `Saudara Ipar`}}selected{{end}}>Saudara Ipar</option>
-              <option value="Besan" {{if eq .HubunganAfiliasi `Besan`}}selected{{end}}>Besan</option>
+                  <!-- <option value="Adik" {{if eq .HubunganAfiliasi `Adik`}}selected{{end}}>Adik</option>
+                  <option value="Anak" {{if eq .HubunganAfiliasi `Anak`}}selected{{end}}>Anak</option>
+                  <option value="Ayah" {{if eq .HubunganAfiliasi `Ayah`}}selected{{end}}>Ayah</option>
+                  <option value="Besan" {{if eq .HubunganAfiliasi `Besan`}}selected{{end}}>Besan</option>
+                  <option value="Cucu" {{if eq .HubunganAfiliasi `Cucu`}}selected{{end}}>Cucu</option>
+                  <option value="Direktur" {{if eq .HubunganAfiliasi `Direktur`}}selected{{end}}>Direktur</option>
+                  <option value="Ibu" {{if eq .HubunganAfiliasi `Ibu`}}selected{{end}}>Ibu</option>
+                  <option value="Istri" {{if eq .HubunganAfiliasi `Istri`}}selected{{end}}>Istri</option>
+                  <option value="Kakak" {{if eq .HubunganAfiliasi `Kakak`}}selected{{end}}>Kakak</option>
+                  <option value="Kakek" {{if eq .HubunganAfiliasi `Kakek`}}selected{{end}}>Kakek</option>
+                  <option value="Keponakan" {{if eq .HubunganAfiliasi `Keponakan`}}selected{{end}}>Keponakan</option>
+                  <option value="Komisaris" {{if eq .HubunganAfiliasi `Komisaris`}}selected{{end}}>Komisaris</option>
+                  <option value="Mertua" {{if eq .HubunganAfiliasi `Mertua`}}selected{{end}}>Mertua</option>
+                  <option value="Nenek" {{if eq .HubunganAfiliasi `Nenek`}}selected{{end}}>Nenek</option>
+                  <option value="Owner/Pemegang Saham" {{if eq .HubunganAfiliasi `Owner/Pemegang Saham`}}selected{{end}}>Owner/Pemegang Saham</option>
+                  <option value="Paman" {{if eq .HubunganAfiliasi `Paman`}}selected{{end}}>Paman</option>
+                  <option value="Saudara Ipar" {{if eq .HubunganAfiliasi `Saudara Ipar`}}selected{{end}}>Saudara Ipar</option>
+                  <option value="Sepupu" {{if eq .HubunganAfiliasi `Sepupu`}}selected{{end}}>Sepupu</option>
+                  <option value="Suami" {{if eq .HubunganAfiliasi `Suami`}}selected{{end}}>Suami</option>
+                  <option value="Tante" {{if eq .HubunganAfiliasi `Tante`}}selected{{end}}>Tante</option> -->
+
+                  <option value="Adik" {{if eq .HubunganAfiliasi `Adik`}}selected{{end}}>Adik</option>
+                  <option value="Anak" {{if eq .HubunganAfiliasi `Anak`}}selected{{end}}>Anak</option>
+                  <option value="Ayah" {{if eq .HubunganAfiliasi `Ayah`}}selected{{end}}>Ayah</option>
+                  <option value="Direktur" {{if eq .HubunganAfiliasi `Direktur`}}selected{{end}}>Direktur</option>
+                  <option value="Ibu" {{if eq .HubunganAfiliasi `Ibu`}}selected{{end}}>Ibu</option>
+                  <option value="Istri" {{if eq .HubunganAfiliasi `Istri`}}selected{{end}}>Istri</option>
+                  <option value="Kakak" {{if eq .HubunganAfiliasi `Kakak`}}selected{{end}}>Kakak</option>
+                  <option value="Komisaris" {{if eq .HubunganAfiliasi `Komisaris`}}selected{{end}}>Komisaris</option>
+                  <option value="Owner/Pemegang Saham" {{if eq .HubunganAfiliasi `Owner/Pemegang Saham`}}selected{{end}}>Owner/Pemegang Saham</option>
+                  <option value="Suami" {{if eq .HubunganAfiliasi `Suami`}}selected{{end}}>Suami</option>
             </select><br>
     
             <input type="hidden" name="original_afiliasi[]" value="{{ .NamaAfiliasi }}">

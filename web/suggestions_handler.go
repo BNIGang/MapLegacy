@@ -21,16 +21,21 @@ func AutoFillHandler(c *fiber.Ctx) error {
 	defer db.Close()
 
 	query := `
+	SELECT * FROM (
 		SELECT 
-			a.id_parent, dn.nama_pengusaha
+			id_child, nama_child 
+		AS 
+			combined_column 
 		FROM 
-			afiliasi a
-		LEFT JOIN 
-			data_nasabah dn 
-		ON 
-			a.id_parent = dn.id
-		WHERE 
-			dn.nama_pengusaha LIKE ?
+			afiliasi
+		UNION
+		SELECT 
+			id, nama_pengusaha 
+		FROM 
+			data_nasabah
+	) AS subquery
+	WHERE 
+		combined_column LIKE ?;
 	`
 
 	rows, err := db.Query(query, "%"+nama_pengusaha+"%")
@@ -39,7 +44,6 @@ func AutoFillHandler(c *fiber.Ctx) error {
 	}
 	defer rows.Close()
 
-	uniqueNames := make(map[string]bool)
 	suggestions := []Suggestion{}
 	for rows.Next() {
 		var idParent, namaPengusaha string
@@ -47,16 +51,11 @@ func AutoFillHandler(c *fiber.Ctx) error {
 			log.Fatal(err)
 		}
 
-		// Check if the name is already in the map
-		if _, ok := uniqueNames[idParent]; !ok {
-			uniqueNames[idParent] = true
-
-			suggestion := Suggestion{
-				ID:   idParent,
-				Name: namaPengusaha,
-			}
-			suggestions = append(suggestions, suggestion)
+		suggestion := Suggestion{
+			ID:   idParent,
+			Name: namaPengusaha,
 		}
+		suggestions = append(suggestions, suggestion)
 	}
 
 	response := map[string]interface{}{
