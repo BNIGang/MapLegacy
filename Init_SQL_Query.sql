@@ -597,9 +597,9 @@ CREATE TABLE IF NOT EXISTS afiliasi(
 
 INSERT INTO afiliasi (id_child, id_parent, nama_child, hubungan, added_by) VALUES
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Muhammad Sumbul', 'Anak', (SELECT user_id FROM users WHERE username='user1')),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Covidin Demamio', 'Ayah/Ibu', (SELECT user_id FROM users WHERE username='user6')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), 'Covidin Demamio', 'Ayah', (SELECT user_id FROM users WHERE username='user6')),
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Joseph Joestar', 'Adik', (SELECT user_id FROM users WHERE username='user1')),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lanaya', 'Mertua', (SELECT user_id FROM users WHERE username='user5')),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lyralei', 'Tante', (SELECT user_id FROM users WHERE username='user4')),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Dio Brando'), 'Utsman Abdul Jalil Shisha', 'Owner/Pemegang', (SELECT user_id FROM users WHERE username='user1')),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Cucu', (SELECT user_id FROM users WHERE username='user3'));
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lanaya', 'Direktur', (SELECT user_id FROM users WHERE username='user5')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lyralei', 'Komisaris', (SELECT user_id FROM users WHERE username='user4')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Dio Brando'), 'Utsman Abdul Jalil Shisha', 'Owner/Pemegang Saham', (SELECT user_id FROM users WHERE username='user1')),
+  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Ibu', (SELECT user_id FROM users WHERE username='user3'));

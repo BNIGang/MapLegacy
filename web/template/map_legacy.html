@@ -224,6 +224,8 @@
         d.y = parentY; // Set the Y-coordinate of the spouse node to be equal to the parent node's Y-coordinate
     });
 
+    //-------------------------DUPLICATE OVER-------------------------//
+
     var connections = svg.append("g").selectAll("path")
                         .data(information.links());
                         connections.enter().append("path")
