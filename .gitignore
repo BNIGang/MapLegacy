@@ -4,4 +4,10 @@ MapLegacy.exe
 *.exe
 
 # Database Connector
-web/database.go
+# web/database.go
+
+# Main
+cmd/api/main/*
+
+# Get the folder name but not it's content
+mysql_data/*
