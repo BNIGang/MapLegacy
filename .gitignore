@@ -7,7 +7,7 @@ MapLegacy.exe
 # web/database.go
 
 # Main
-cmd/api/main/*
+# cmd/api/main/*
 
 # Get the folder name but not it's content
 mysql_data/*
