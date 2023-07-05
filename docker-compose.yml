@@ -25,7 +25,7 @@ services:
 
     # we mount a data volume to make sure we don't lose data
     volumes:
-      - ${HOME}/mysql_data:/var/lib/mysql
+      - ${HOME}/workspace/mysql_data:/var/lib/mysql
   api:
     container_name:  "bni_map_legacy"
     # we want to use the image which is build from our Dockerfile

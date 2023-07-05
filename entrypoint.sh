@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p $HOME/mysql_data
+mkdir -p $HOME/workspace/mysql_data
 
 docker compose down
 
