@@ -1,14 +1,4 @@
 /* 
-create the bni_map_legacy database
-*/
-CREATE DATABASE IF NOT EXISTS bni_map_legacy;
-
-/* 
-switch to the bni_map_legacy database
-*/
-USE bni_map_legacy;
-
-/* 
 create the users table
 */
 CREATE TABLE IF NOT EXISTS users (
