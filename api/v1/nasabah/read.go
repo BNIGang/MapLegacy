@@ -145,6 +145,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 			dn.*, 
 			GROUP_CONCAT(a.nama_child) AS nama_child, 
 			GROUP_CONCAT(a.hubungan) AS hubungan, 
+			GROUP_CONCAT(a.id_child) AS id_child, 
 			u.name 
 		FROM 
 			data_nasabah dn 
@@ -172,7 +173,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 
 	for rows.Next() {
 		var nasabah Nasabah
-		var afiliasi, hubunganAfiliasi sql.NullString
+		var afiliasi, hubunganAfiliasi, id_child sql.NullString
 
 		err = rows.Scan(
 			&nasabah.Id,
@@ -199,6 +200,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 			&nasabah.Added_by,
 			&afiliasi,
 			&hubunganAfiliasi,
+			&id_child,
 			&nasabah.Username,
 		)
 		if err != nil {
@@ -216,6 +218,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 		if afiliasi.Valid {
 			afiliasiSlice := strings.Split(afiliasi.String, ",")
 			hubunganAfiliasiSlice := strings.Split(hubunganAfiliasi.String, ",")
+			idChildSlice := strings.Split(id_child.String, ",")
 			for i := range afiliasiSlice {
 				// Check if the afiliasi is already in the nasabah's list
 				alreadyExists := false
@@ -230,6 +233,7 @@ func GetNasabahDataByUser(user_id string, wilayah_id string, cabang_id string, p
 					nasabahMap[nasabah.Id].AfiliasiList = append(nasabahMap[nasabah.Id].AfiliasiList, Afiliasi{
 						NamaAfiliasi:     afiliasiSlice[i],
 						HubunganAfiliasi: hubunganAfiliasiSlice[i],
+						IdChild:          idChildSlice[i],
 					})
 				}
 			}
