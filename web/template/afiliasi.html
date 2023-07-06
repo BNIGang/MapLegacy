@@ -70,8 +70,8 @@
     function handleSearch() {
         var searchQuery = document.getElementById("search_button").value;
 
-        if (searchQuery.trim() === "") {
-            searchQuery = ""; // Replace "all" with the appropriate value for your API
+        if (searchQuery === "") {
+            searchQuery = "%";
         }
 
         // Make an AJAX request to the search endpoint
@@ -81,8 +81,6 @@
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
                 var afiliasiData = response.afiliasi;
-
-                console.log(afiliasiData)
 
                 // Update the table with the search results
                 updateTable(afiliasiData);

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/url"
 	"sort"
 	"strings"
 
@@ -409,6 +410,13 @@ func SearchNasabah(user_id string, wilayah_id string, cabang_id string, privileg
 		// Extract the query parameter from the request URL
 		match := c.Params("query")
 
+		// Decode the URL-encoded query parameter
+		match, err := url.QueryUnescape(match)
+		if err != nil {
+			// Handle the error, e.g., return an error response
+			return err
+		}
+
 		db, err := web.Connect()
 		if err != nil {
 			return c.SendStatus(fiber.StatusInternalServerError)
@@ -618,6 +626,13 @@ func SearchNasabah(user_id string, wilayah_id string, cabang_id string, privileg
 func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privilege string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		match := c.Params("query")
+
+		// Decode the URL-encoded query parameter
+		match, err := url.QueryUnescape(match)
+		if err != nil {
+			// Handle the error, e.g., return an error response
+			return err
+		}
 
 		mergedMap = make(map[string]MergedRow)
 

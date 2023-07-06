@@ -135,6 +135,7 @@
             <input type="hidden" class="original_hubungan_afiliasi" id="original_hubungan_afiliasi" name="original_hubungan_afiliasi[]">
             <input type="hidden" class="id_child" name="id_child[]">
 
+            <!-- delete button -->
               <button class="delete-afiliasi-btn" type="button" onclick="confirmDelete(this)">
                   <i class="fa fa-times"></i>
               </button>
@@ -187,6 +188,7 @@
             <input type="hidden" class="original_hubungan_afiliasi" id="original_hubungan_afiliasi{{$index}}" name="original_hubungan_afiliasi[]" value="{{ .HubunganAfiliasi }}">
             <input type="hidden" class="id_child" id="id_child{{$index}}" name="id_child[]" value="{{ $afiliasi.IdChild }}">
 
+            <!-- delete button -->
             <button class="delete-afiliasi-btn" type="button" onclick="confirmDelete(this)">
                 <i class="fa fa-times"></i>
             </button>

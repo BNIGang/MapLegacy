@@ -2,6 +2,7 @@ package web
 
 import (
 	"log"
+	"net/url"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,6 +14,13 @@ type Suggestion struct {
 
 func AutoFillHandler(c *fiber.Ctx) error {
 	nama_pengusaha := c.Params("nama_pengusaha")
+
+	// Decode the URL-encoded query parameter
+	nama_pengusaha, err := url.QueryUnescape(nama_pengusaha)
+	if err != nil {
+		// Handle the error, e.g., return an error response
+		return err
+	}
 
 	db, err := Connect()
 	if err != nil {
@@ -35,7 +43,9 @@ func AutoFillHandler(c *fiber.Ctx) error {
 			data_nasabah
 	) AS subquery
 	WHERE 
-		combined_column LIKE ?;
+		combined_column LIKE ?
+	LIMIT
+		5;
 	`
 
 	rows, err := db.Query(query, "%"+nama_pengusaha+"%")
