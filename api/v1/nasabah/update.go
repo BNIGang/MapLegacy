@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"fmt"
-
 	"github.com/BNIGang/MapLegacy/web"
 	"github.com/gofiber/fiber/v2"
 )
@@ -110,6 +108,7 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 		afiliasiValues := form.Value["afiliasi[]"]
 		hubunganAfiliasiValues := form.Value["hubungan_afiliasi[]"]
 		originalAfiliasiValues := form.Value["original_afiliasi[]"]
+		originalHubunganAfiliasiValues := form.Value["original_hubungan_afiliasi[]"]
 		idChildValues := form.Value["id_child[]"]
 		deletedAfiliasiValues := form.Value["deleted_afiliasi[]"]
 
@@ -118,13 +117,12 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 			afiliasi := afiliasiValues[i]
 			hubunganAfiliasi := hubunganAfiliasiValues[i]
 			originalAfiliasi := originalAfiliasiValues[i]
+			originalHubunganAfiliasi := originalHubunganAfiliasiValues[i]
 			idChild := idChildValues[i]
 
 			if afiliasi != "" {
 				if originalAfiliasi == "" {
 					// Run the INSERT query
-					fmt.Println("reached here")
-
 					stmt2, err2 := db.Prepare(`
 						INSERT INTO afiliasi 
 						(
@@ -151,12 +149,12 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 					if err != nil {
 						return err
 					}
-				} else if originalAfiliasi != afiliasi {
+				}
+				if originalHubunganAfiliasi != hubunganAfiliasi {
 					// Run the UPDATE query
-					fmt.Println("reached here instead")
 					stmt2, err2 := db.Prepare(`
 						UPDATE afiliasi
-						SET nama_child = ?, hubungan = ?
+						SET hubungan = ?
 						WHERE id_child = ?
 					`)
 					if err2 != nil {
@@ -164,7 +162,24 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 					}
 					defer stmt2.Close()
 
-					_, err := stmt2.Exec(afiliasi, hubunganAfiliasi, idChild)
+					_, err := stmt2.Exec(hubunganAfiliasi, idChild)
+					if err != nil {
+						return err
+					}
+				}
+				if originalAfiliasi != afiliasi {
+					// Run the UPDATE query
+					stmt2, err2 := db.Prepare(`
+						UPDATE afiliasi
+						SET nama_child = ?
+						WHERE id_child = ?
+					`)
+					if err2 != nil {
+						return err2
+					}
+					defer stmt2.Close()
+
+					_, err := stmt2.Exec(afiliasi, idChild)
 					if err != nil {
 						return err
 					}
