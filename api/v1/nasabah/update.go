@@ -67,8 +67,8 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 					mitra_bank_dominan = ?,
 					aum_di_bank_lain = ?,
 					kredit_di_bank_lain = ?,
-					latitude = ?,
-					longtitude = ?
+					latitude = IF(? = "", 0, ?),
+					longtitude = IF(? = "", 0, ?)
 				WHERE 
 					id = ?
 				`)
@@ -98,6 +98,8 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 			aum_di_bank_lain,
 			kredit_di_bank_lain,
 			latitude,
+			latitude,
+			longtitude,
 			longtitude,
 			nasabah_id,
 		)
