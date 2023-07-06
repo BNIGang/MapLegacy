@@ -109,6 +109,8 @@
       <label for="Longtitude">Longtitude:</label>
       <input type="number" id="longtitude" name="longtitude" class="form-control" value="{{ .data_nasabah.Longtitude}}" step="any">
 
+      <div id="deleted-afiliasi-container"></div>
+
       <div id="afiliasi-container">
         {{ if not .data_nasabah.AfiliasiList }}
             <div class="afiliasi-group">
@@ -128,16 +130,25 @@
                   <option value="Owner/Pemegang Saham">Owner/Pemegang Saham</option>
                   <option value="Suami">Suami</option>
               </select><br>
+
+            <input type="hidden" class="original_afiliasi" name="original_afiliasi[]">
+            <input type="hidden" class="id_child" name="id_child[]">
+
+              <button class="delete-afiliasi-btn" type="button" onclick="confirmDelete(this)">
+                  <i class="fa fa-times"></i>
+              </button>
+
           </div>
         {{ end }}
 
-        {{ range .data_nasabah.AfiliasiList }}
-          <div class="afiliasi-group">
-            <label for="afiliasi">Afiliasi:</label><br>
-            <input class="form-control" type="text" id="afiliasi" class="afiliasi" name="afiliasi[]" value="{{ .NamaAfiliasi}}"><br>
 
-            <label for="hubungan_afiliasi">Hubungan Afiliasi:</label><br>
-            <select class="form-control" id="hubungan_afiliasi" class="hubungan_afiliasi" name="hubungan_afiliasi[]">
+        {{ range $index, $afiliasi := .data_nasabah.AfiliasiList }}
+          <div class="afiliasi-group">
+            <label for="afiliasi{{$index}}">Afiliasi:</label><br>
+            <input class="form-control afiliasi" type="text" id="afiliasi{{$index}}" name="afiliasi[]" value="{{ $afiliasi.NamaAfiliasi }}"><br>
+
+            <label for="hubungan_afiliasi{{$index}}">Hubungan Afiliasi:</label><br>
+            <select class="form-control hubungan_afiliasi" id="hubungan_afiliasi{{$index}}" name="hubungan_afiliasi[]">
                   <!-- <option value="Adik" {{if eq .HubunganAfiliasi `Adik`}}selected{{end}}>Adik</option>
                   <option value="Anak" {{if eq .HubunganAfiliasi `Anak`}}selected{{end}}>Anak</option>
                   <option value="Ayah" {{if eq .HubunganAfiliasi `Ayah`}}selected{{end}}>Ayah</option>
@@ -171,13 +182,18 @@
                   <option value="Suami" {{if eq .HubunganAfiliasi `Suami`}}selected{{end}}>Suami</option>
             </select><br>
     
-            <input type="hidden" name="original_afiliasi[]" value="{{ .NamaAfiliasi }}">
+            <input type="hidden" class="original_afiliasi" id="original_afiliasi{{$index}}" name="original_afiliasi[]" value="{{ $afiliasi.NamaAfiliasi }}">
+            <input type="hidden" class="id_child" id="id_child{{$index}}" name="id_child[]" value="{{ $afiliasi.IdChild }}">
+
+            <button class="delete-afiliasi-btn" type="button" onclick="confirmDelete(this)">
+                <i class="fa fa-times"></i>
+            </button>
+
           </div>
         {{ end }}
       </div>
 
       <button class="btn btn-success btn-sm" id="add-afiliasi-btn" type="button">Tambah Afiliasi</button>
-      <button class="btn btn-danger btn-sm" id="remove-afiliasi-btn" type="button">Buang Afiliasi</button>
 
         <br>
         <div class="modal-footer">
@@ -321,20 +337,45 @@
   THIS PART TO CREATE MULTIPLE AFILIASI BUTTON
   
   */
+
   $(document).ready(function() {
     // Add Afiliasi fields when the button is clicked
     $("#add-afiliasi-btn").click(function() {
       var afiliasiGroup = $(".afiliasi-group").first().clone(); // Clone the first group
+
+      // Empty the input values and attributes
       afiliasiGroup.find("input, select").val(""); // Clear the input values
+      afiliasiGroup.find("input[name='original_afiliasi[]']").val(""); // Empty the 'original_afiliasi' value
+      afiliasiGroup.find("input[name='id_child[]']").val(""); // Empty the 'id_child' value
+
+      // Generate unique IDs for the cloned elements
+      var newIndex = $(".afiliasi-group").length;
+      afiliasiGroup.find("input.afiliasi").attr("id", "afiliasi" + newIndex);
+      afiliasiGroup.find("select.hubungan_afiliasi").attr("id", "hubungan_afiliasi" + newIndex);
+
       $("#afiliasi-container").append(afiliasiGroup); // Append the cloned group to the container
     });
-
-    // Remove the last added Afiliasi group when the button is clicked
-    $("#remove-afiliasi-btn").click(function() {
-      var afiliasiGroups = $(".afiliasi-group");
-      if (afiliasiGroups.length > 1) {
-        afiliasiGroups.last().remove(); // Remove the last group
-      }
-    });
   });
+
+  function confirmDelete(button) {
+  if (confirm("Are you sure you want to delete this afiliasi?")) {
+    var afiliasiGroup = $(button).closest('.afiliasi-group');
+    var idValue = afiliasiGroup.find('.id_child').attr('value');
+
+    // Create a new input element for deleted afiliasi
+    var newDeletedAfiliasiInput = $('<input>').attr({
+      type: 'hidden',
+      name: 'deleted_afiliasi[]',
+      value: idValue
+    });
+
+    // Add the new input element to the deleted-afiliasi-container
+    $('#deleted-afiliasi-container').append(newDeletedAfiliasiInput);
+
+    // Remove the afiliasi-group from the DOM
+    afiliasiGroup.remove();
+  }
+}
+
+  
 </script>

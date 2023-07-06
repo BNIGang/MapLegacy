@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"fmt"
+
 	"github.com/BNIGang/MapLegacy/web"
 	"github.com/gofiber/fiber/v2"
 )
@@ -105,76 +107,85 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 			return err
 		}
 
-		// Retrieve the array values
 		afiliasiValues := form.Value["afiliasi[]"]
 		hubunganAfiliasiValues := form.Value["hubungan_afiliasi[]"]
 		originalAfiliasiValues := form.Value["original_afiliasi[]"]
+		idChildValues := form.Value["id_child[]"]
+		deletedAfiliasiValues := form.Value["deleted_afiliasi[]"]
 
-		// if afiliasi is empty from the start
-		if len(originalAfiliasiValues) > 0 {
-			// This part to add data afiliasi to afiliasi table
-			stmt2, err2 := db.Prepare(`
-					UPDATE 
-						afiliasi 
-					SET
-						nama_child = ?,
-						hubungan = ?
-					WHERE 
-						nama_child = ?
-				`)
-			if err2 != nil {
-				return err
-			}
-			defer stmt2.Close()
+		// Update or insert afiliasi data
+		for i := 0; i < len(afiliasiValues); i++ {
+			afiliasi := afiliasiValues[i]
+			hubunganAfiliasi := hubunganAfiliasiValues[i]
+			originalAfiliasi := originalAfiliasiValues[i]
+			idChild := idChildValues[i]
 
-			// Iterate over the array values and process them accordingly
-			for i := 0; i < len(afiliasiValues); i++ {
-				afiliasi := afiliasiValues[i]
-				hubunganAfiliasi := hubunganAfiliasiValues[i]
-				originalAfiliasi := originalAfiliasiValues[i]
+			if afiliasi != "" {
+				if originalAfiliasi == "" {
+					// Run the INSERT query
+					fmt.Println("reached here")
 
-				// Execute the SQL statement with the current values
-				_, err := stmt2.Exec(afiliasi, hubunganAfiliasi, originalAfiliasi)
-				if err != nil {
-					return err
-				}
-			}
-		} else {
-			// This part to add data afiliasi to afiliasi table
-			stmt2, err2 := db.Prepare(`
-					INSERT INTO afiliasi 
-					(
-						id_child,
-						id_parent,
-						nama_child,
-						hubungan,
-						added_by
-					) VALUES 
-					(
-						UUID(),
-						(SELECT id FROM data_nasabah WHERE nama_pengusaha = ?),
-						?,
-						?,
-						?
-					)
+					stmt2, err2 := db.Prepare(`
+						INSERT INTO afiliasi 
+						(
+							id_child,
+							id_parent,
+							nama_child,
+							hubungan,
+							added_by
+						) VALUES 
+						(
+							UUID(),
+							(SELECT id FROM data_nasabah WHERE nama_pengusaha = ?),
+							?,
+							?,
+							?
+						)
 					`)
-			if err2 != nil {
-				return err
-			}
-			defer stmt2.Close()
+					if err2 != nil {
+						return err2
+					}
+					defer stmt2.Close()
 
-			// Iterate over the array values and process them accordingly
-			for i := 0; i < len(afiliasiValues); i++ {
-				afiliasi := afiliasiValues[i]
-				hubunganAfiliasi := hubunganAfiliasiValues[i]
+					_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi, user_id)
+					if err != nil {
+						return err
+					}
+				} else if originalAfiliasi != afiliasi {
+					// Run the UPDATE query
+					fmt.Println("reached here instead")
+					stmt2, err2 := db.Prepare(`
+						UPDATE afiliasi
+						SET nama_child = ?, hubungan = ?
+						WHERE id_child = ?
+					`)
+					if err2 != nil {
+						return err2
+					}
+					defer stmt2.Close()
 
-				// Execute the SQL statement with the current values
-				_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi, user_id)
-				if err != nil {
-					return err
+					_, err := stmt2.Exec(afiliasi, hubunganAfiliasi, idChild)
+					if err != nil {
+						return err
+					}
 				}
 			}
+		}
 
+		// Delete afiliasi data
+		for _, deletedAfiliasi := range deletedAfiliasiValues {
+			stmtDelete, errDelete := db.Prepare(`
+				DELETE FROM afiliasi WHERE id_child = ?
+			`)
+			if errDelete != nil {
+				return errDelete
+			}
+			defer stmtDelete.Close()
+
+			_, err := stmtDelete.Exec(deletedAfiliasi)
+			if err != nil {
+				return err
+			}
 		}
 
 		return c.Redirect("/home")

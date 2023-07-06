@@ -602,4 +602,4 @@ INSERT INTO afiliasi (id_child, id_parent, nama_child, hubungan, added_by) VALUE
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lanaya', 'Direktur', (SELECT user_id FROM users WHERE username='user5')),
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Ismail Ahmad Khan Kabawi'), 'Lyralei', 'Komisaris', (SELECT user_id FROM users WHERE username='user4')),
   (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Dio Brando'), 'Utsman Abdul Jalil Shisha', 'Owner/Pemegang Saham', (SELECT user_id FROM users WHERE username='user1')),
-  (UUID(), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Ibu', (SELECT user_id FROM users WHERE username='user3'));
+  ((SELECT id FROM data_nasabah WHERE nama_pengusaha='Khidr Karawita'), (SELECT id FROM data_nasabah WHERE nama_pengusaha='Khalid Kashmiri'), 'Khidr Karawita', 'Ibu', (SELECT user_id FROM users WHERE username='user3'));
