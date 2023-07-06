@@ -270,7 +270,7 @@ func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	return nasabah, nil
 }
 
-func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) (map[string]MergedRow, error) {
+func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]MergedRow, error) {
 	mergedMap = make(map[string]MergedRow)
 
 	db, err := web.Connect()
@@ -360,9 +360,10 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 			return nil, err // database error
 		}
 
-		// Check if the NamaPengusaha is already in the mergedMap
+		// Check if the Pengusaha is already in the mergedMap
 		if _, ok := mergedMap[afiliasi.IdParent]; !ok {
 			mergedMap[afiliasi.IdParent] = MergedRow{
+				NamaPengusaha:  afiliasi.NamaPengusaha,
 				MergedAfiliasi: []Afiliasi{afiliasi},
 				RowCount:       1,
 			}
@@ -388,7 +389,18 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		})
 	}
 
-	return mergedMap, nil
+	// Create a slice of MergedRow from the values in the mergedMap
+	mergedRows := make([]MergedRow, 0, len(mergedMap))
+	for _, mergedRow := range mergedMap {
+		mergedRows = append(mergedRows, mergedRow)
+	}
+
+	// Sort the mergedRows slice based on NamaPengusaha
+	sort.Slice(mergedRows, func(i, j int) bool {
+		return mergedRows[i].NamaPengusaha < mergedRows[j].NamaPengusaha
+	})
+
+	return mergedRows, nil
 }
 
 func GetAfiliasiById(id_child string) (*Afiliasi, error) {
@@ -733,6 +745,7 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			// Check if the NamaPengusaha is already in the mergedMap
 			if _, ok := mergedMap[afiliasi.IdParent]; !ok {
 				mergedMap[afiliasi.IdParent] = MergedRow{
+					NamaPengusaha:  afiliasi.NamaPengusaha,
 					MergedAfiliasi: []Afiliasi{afiliasi},
 					RowCount:       1,
 				}
@@ -758,8 +771,19 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			})
 		}
 
+		// Create a slice of MergedRow from the values in the mergedMap
+		mergedRows := make([]MergedRow, 0, len(mergedMap))
+		for _, mergedRow := range mergedMap {
+			mergedRows = append(mergedRows, mergedRow)
+		}
+
+		// Sort the mergedRows slice based on NamaPengusaha
+		sort.Slice(mergedRows, func(i, j int) bool {
+			return mergedRows[i].NamaPengusaha < mergedRows[j].NamaPengusaha
+		})
+
 		response := map[string]interface{}{
-			"afiliasi": mergedMap,
+			"afiliasi": mergedRows,
 		}
 
 		return c.JSON(response)
