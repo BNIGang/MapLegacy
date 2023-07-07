@@ -191,15 +191,16 @@ func UpdateNasabahData(user_id string) fiber.Handler {
 
 		// Delete afiliasi data
 		for _, deletedAfiliasi := range deletedAfiliasiValues {
+
 			stmtDelete, errDelete := db.Prepare(`
-				DELETE FROM afiliasi WHERE id_child = ?
+				DELETE FROM afiliasi WHERE (id_child = ? OR id_parent = ?)
 			`)
 			if errDelete != nil {
 				return errDelete
 			}
 			defer stmtDelete.Close()
 
-			_, err := stmtDelete.Exec(deletedAfiliasi)
+			_, err := stmtDelete.Exec(deletedAfiliasi, deletedAfiliasi)
 			if err != nil {
 				return err
 			}

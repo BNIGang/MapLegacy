@@ -342,44 +342,49 @@
   
   */
 
+  function confirmDelete(button) {
+    if (confirm("Are you sure you want to delete this afiliasi?")) {
+      var afiliasiGroup = $(button).closest('.afiliasi-group');
+      var idValue = afiliasiGroup.find('.id_child').attr('value');
+
+      // Create a new input element for deleted afiliasi
+      var newDeletedAfiliasiInput = $('<input>').attr({
+        type: 'hidden',
+        name: 'deleted_afiliasi[]',
+        value: idValue
+      });
+
+      // Add the new input element to the deleted-afiliasi-container
+      $('#deleted-afiliasi-container').append(newDeletedAfiliasiInput);
+
+      // Check the number of afiliasi-groups
+      var afiliasiGroups = $('.afiliasi-group');
+      if (afiliasiGroups.length === 1) {
+        cloneAfiliasiGroup(); // Call the clone function
+      }
+
+      // Remove the afiliasi-group from the DOM
+      afiliasiGroup.remove();
+    }
+  }
+
+  function cloneAfiliasiGroup() {
+    var afiliasiGroup = $('.afiliasi-group').first().clone(); // Clone the first group
+    afiliasiGroup.find('input').val(''); // Clear the input values
+
+    // Generate unique IDs for the cloned elements
+    var newIndex = $('.afiliasi-group').length;
+    afiliasiGroup.find('input.afiliasi').attr('id', 'afiliasi' + newIndex);
+    afiliasiGroup.find('select.hubungan_afiliasi').attr('id', 'hubungan_afiliasi' + newIndex);
+
+    $('#afiliasi-container').append(afiliasiGroup); // Append the cloned group to the container
+  }
+
   $(document).ready(function() {
     // Add Afiliasi fields when the button is clicked
     $("#add-afiliasi-btn").click(function() {
-      var afiliasiGroup = $(".afiliasi-group").first().clone(); // Clone the first group
-
-      // Empty the input values and attributes
-      afiliasiGroup.find("input").val(""); // Clear the input values
-      afiliasiGroup.find("input[name='original_afiliasi[]']").val(""); // Empty the 'original_afiliasi' value
-      afiliasiGroup.find("input[name='id_child[]']").val(""); // Empty the 'id_child' value
-
-      // Generate unique IDs for the cloned elements
-      var newIndex = $(".afiliasi-group").length;
-      afiliasiGroup.find("input.afiliasi").attr("id", "afiliasi" + newIndex);
-      afiliasiGroup.find("select.hubungan_afiliasi").attr("id", "hubungan_afiliasi" + newIndex);
-
-      $("#afiliasi-container").append(afiliasiGroup); // Append the cloned group to the container
-    });
-  });
-
-  function confirmDelete(button) {
-  if (confirm("Are you sure you want to delete this afiliasi?")) {
-    var afiliasiGroup = $(button).closest('.afiliasi-group');
-    var idValue = afiliasiGroup.find('.id_child').attr('value');
-
-    // Create a new input element for deleted afiliasi
-    var newDeletedAfiliasiInput = $('<input>').attr({
-      type: 'hidden',
-      name: 'deleted_afiliasi[]',
-      value: idValue
-    });
-
-    // Add the new input element to the deleted-afiliasi-container
-    $('#deleted-afiliasi-container').append(newDeletedAfiliasiInput);
-
-    // Remove the afiliasi-group from the DOM
-    afiliasiGroup.remove();
-  }
-}
-
+      cloneAfiliasiGroup();
+    })
+  })
   
 </script>
