@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/url"
 	"sort"
 	"strings"
 
@@ -269,7 +270,7 @@ func GetNasabahByID(nasabah_id string) (*Nasabah, error) {
 	return nasabah, nil
 }
 
-func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) (map[string]MergedRow, error) {
+func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, privilege string) ([]MergedRow, error) {
 	mergedMap = make(map[string]MergedRow)
 
 	db, err := web.Connect()
@@ -283,23 +284,26 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 
 	query = `
 	SELECT 
-		a.*, 
-		COALESCE(dn.nama_pengusaha, af.nama_child) AS nama_pengusaha, 
-		u.name
-	FROM 
-		afiliasi a
-	LEFT JOIN 
-		data_nasabah dn 
-	ON 
-		a.id_parent = dn.id
-	LEFT JOIN 
-		afiliasi af 
-	ON 
-		a.id_parent = af.id_child
-	LEFT JOIN 
-		users u 
-	ON 
-		a.added_by = u.user_id
+		*
+	FROM (
+		SELECT 
+			a.*, 
+			COALESCE(dn.nama_pengusaha, af.nama_child) AS parent_name, 
+			u.name
+		FROM 
+			afiliasi a
+		LEFT JOIN 
+			data_nasabah dn 
+		ON 
+			a.id_parent = dn.id
+		LEFT JOIN 
+			afiliasi af 
+		ON 
+			a.id_parent = af.id_child
+		LEFT JOIN 
+			users u 
+		ON 
+			a.added_by = u.user_id
 	`
 
 	if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {
@@ -311,7 +315,7 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		}
 
 		// Add WHERE clause to the query
-		query += " WHERE dn.cabang = ?"
+		query += " WHERE dn.cabang = ?) AS subquery"
 		args = append(args, cabangName)
 	} else if privilege == "individu" {
 		// Retrieve username based on user_id
@@ -322,12 +326,16 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		}
 
 		// Add WHERE clause to the query
-		query += " WHERE u.name = ?"
+		query += " WHERE u.name = ?) AS subquery"
 		args = append(args, name)
+	} else {
+		// Admin
+		query += ") AS subquery"
+		args = append(args)
 	}
 
 	// Append the ORDER BY clause to the query
-	query += " ORDER BY dn.nama_pengusaha ASC"
+	query += " ORDER BY parent_name ASC"
 
 	// Execute the query
 	rows, err := db.Query(query, args...)
@@ -352,9 +360,10 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 			return nil, err // database error
 		}
 
-		// Check if the NamaPengusaha is already in the mergedMap
+		// Check if the Pengusaha is already in the mergedMap
 		if _, ok := mergedMap[afiliasi.IdParent]; !ok {
 			mergedMap[afiliasi.IdParent] = MergedRow{
+				NamaPengusaha:  afiliasi.NamaPengusaha,
 				MergedAfiliasi: []Afiliasi{afiliasi},
 				RowCount:       1,
 			}
@@ -380,7 +389,18 @@ func GetAfiliasiByUser(user_id string, wilayah_id string, cabang_id string, priv
 		})
 	}
 
-	return mergedMap, nil
+	// Create a slice of MergedRow from the values in the mergedMap
+	mergedRows := make([]MergedRow, 0, len(mergedMap))
+	for _, mergedRow := range mergedMap {
+		mergedRows = append(mergedRows, mergedRow)
+	}
+
+	// Sort the mergedRows slice based on NamaPengusaha
+	sort.Slice(mergedRows, func(i, j int) bool {
+		return mergedRows[i].NamaPengusaha < mergedRows[j].NamaPengusaha
+	})
+
+	return mergedRows, nil
 }
 
 func GetAfiliasiById(id_child string) (*Afiliasi, error) {
@@ -408,6 +428,13 @@ func SearchNasabah(user_id string, wilayah_id string, cabang_id string, privileg
 
 		// Extract the query parameter from the request URL
 		match := c.Params("query")
+
+		// Decode the URL-encoded query parameter
+		match, err := url.QueryUnescape(match)
+		if err != nil {
+			// Handle the error, e.g., return an error response
+			return err
+		}
 
 		db, err := web.Connect()
 		if err != nil {
@@ -619,6 +646,13 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 	return func(c *fiber.Ctx) error {
 		match := c.Params("query")
 
+		// Decode the URL-encoded query parameter
+		match, err := url.QueryUnescape(match)
+		if err != nil {
+			// Handle the error, e.g., return an error response
+			return err
+		}
+
 		mergedMap = make(map[string]MergedRow)
 
 		db, err := web.Connect()
@@ -632,23 +666,26 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 
 		query = `
 			SELECT 
-				a.*, 
-				COALESCE(dn.nama_pengusaha, af.nama_child) AS nama_pengusaha, 
-				u.name
-			FROM 
-				afiliasi a
-			LEFT JOIN 
-				data_nasabah dn 
-			ON 
-				a.id_parent = dn.id
-			LEFT JOIN 
-				afiliasi af 
-			ON 
-				a.id_parent = af.id_child
-			LEFT JOIN 
-				users u 
-			ON 
-				a.added_by = u.user_id
+				*
+			FROM (
+				SELECT 
+					a.*, 
+					COALESCE(dn.nama_pengusaha, af.nama_child) AS parent_name, 
+					u.name
+				FROM 
+					afiliasi a
+				LEFT JOIN 
+					data_nasabah dn 
+				ON 
+					a.id_parent = dn.id
+				LEFT JOIN 
+					afiliasi af 
+				ON 
+					a.id_parent = af.id_child
+				LEFT JOIN 
+					users u 
+				ON 
+					a.added_by = u.user_id
 		`
 
 		if privilege == "pemimpin_cabang" || privilege == "pemimpin_cabang_pembantu" {
@@ -660,7 +697,7 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			}
 
 			// Add WHERE clause to the query
-			query += " WHERE dn.cabang = ? AND dn.nama_pengusaha LIKE ?"
+			query += " WHERE dn.cabang = ?) AS subquery WHERE parent_name LIKE ?"
 			args = append(args, cabangName, "%"+match+"%")
 		} else if privilege == "individu" {
 			// Retrieve username based on user_id
@@ -671,16 +708,16 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			}
 
 			// Add WHERE clause to the query
-			query += " WHERE u.name = ? AND dn.nama_pengusaha LIKE ?"
+			query += " WHERE u.name = ?) AS subquery WHERE parent_name LIKE ?"
 			args = append(args, name, "%"+match+"%")
 		} else {
 			// Admin
-			query += " WHERE dn.nama_pengusaha LIKE ?"
+			query += ") AS subquery WHERE parent_name LIKE ?"
 			args = append(args, "%"+match+"%")
 		}
 
 		// Append the ORDER BY clause to the query
-		query += " ORDER BY dn.nama_pengusaha ASC"
+		query += " ORDER BY parent_name ASC"
 
 		// Execute the query
 		rows, err := db.Query(query, args...)
@@ -708,6 +745,7 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			// Check if the NamaPengusaha is already in the mergedMap
 			if _, ok := mergedMap[afiliasi.IdParent]; !ok {
 				mergedMap[afiliasi.IdParent] = MergedRow{
+					NamaPengusaha:  afiliasi.NamaPengusaha,
 					MergedAfiliasi: []Afiliasi{afiliasi},
 					RowCount:       1,
 				}
@@ -733,8 +771,19 @@ func SearchAfiliasi(user_id string, wilayah_id string, cabang_id string, privile
 			})
 		}
 
+		// Create a slice of MergedRow from the values in the mergedMap
+		mergedRows := make([]MergedRow, 0, len(mergedMap))
+		for _, mergedRow := range mergedMap {
+			mergedRows = append(mergedRows, mergedRow)
+		}
+
+		// Sort the mergedRows slice based on NamaPengusaha
+		sort.Slice(mergedRows, func(i, j int) bool {
+			return mergedRows[i].NamaPengusaha < mergedRows[j].NamaPengusaha
+		})
+
 		response := map[string]interface{}{
-			"afiliasi": mergedMap,
+			"afiliasi": mergedRows,
 		}
 
 		return c.JSON(response)

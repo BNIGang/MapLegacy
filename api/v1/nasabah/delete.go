@@ -53,13 +53,13 @@ func DeleteAfiliasiData(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("DELETE FROM afiliasi WHERE id_child=?")
+	stmt, err := db.Prepare("DELETE FROM afiliasi WHERE (id_child=? OR id_parent=?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	_, err2 := stmt.Exec(afiliasi_id)
+	_, err2 := stmt.Exec(afiliasi_id, afiliasi_id)
 	if err2 != nil {
 		log.Fatal(err)
 	}

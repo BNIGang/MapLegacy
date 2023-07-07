@@ -320,7 +320,7 @@
           // Add Afiliasi fields when the button is clicked
           $("#add-afiliasi-btn").click(function() {
             var afiliasiGroup = $(".afiliasi-group").first().clone(); // Clone the first group
-            afiliasiGroup.find("input, select").val(""); // Clear the input values
+            afiliasiGroup.find("input").val(""); // Clear the input values
             $("#afiliasi-container").append(afiliasiGroup); // Append the cloned group to the container
           });
 

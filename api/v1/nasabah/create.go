@@ -90,8 +90,8 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 								?,
 								?,
 								?,
-								?,
-								?,
+								IF(? = "", 0, ?),
+								IF(? = "", 0, ?),
 								?
 							)`)
 		if err != nil {
@@ -120,6 +120,8 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 			aum_di_bank_lain,
 			kredit_di_bank_lain,
 			latitude,
+			latitude,
+			longtitude,
 			longtitude,
 			user_id,
 		)
@@ -135,16 +137,17 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 			id_parent,
 			nama_child,
 			hubungan,
-			added_by,
+			added_by
 		) VALUES 
 		(
 			UUID(),
 			(SELECT id FROM data_nasabah WHERE nama_pengusaha = ?),
 			?,
 			?,
-			?,
+			?
 		)
 		`)
+
 		if err2 != nil {
 			return err
 		}
@@ -159,10 +162,12 @@ func AddNasabahHandler(user_id string) fiber.Handler {
 			afiliasi := afiliasiValues[i]
 			hubunganAfiliasi := hubunganAfiliasiValues[i]
 
-			// Execute the SQL statement with the current values
-			_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi, user_id)
-			if err != nil {
-				return err
+			if afiliasi != "" {
+				// Execute the SQL statement with the current values
+				_, err := stmt2.Exec(pengusaha, afiliasi, hubunganAfiliasi, user_id)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
